@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תודה! | דד נאור</title>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Google Analytics GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W0DP7RG7V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5W0DP7RG7V');
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #071419;
+      --bg2: #0b1e26;
+      --accent: #5bd4ff;
+      --accent2: #087fa3;
+      --text: #e2edf2;
+      --muted: #8aa4af;
+      --border: rgba(8,127,163,0.3);
+    }
+
+    body {
+      font-family: 'Assistant', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .checkmark {
+      width: 72px;
+      height: 72px;
+      background: rgba(8,127,163,0.15);
+      border: 2px solid var(--accent2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+      font-size: 2rem;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+
+    h1 span { color: var(--accent); }
+
+    p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent2);
+      color: #fff;
+      border-radius: 10px;
+      padding: 0.85rem 2rem;
+      font-family: 'Assistant', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      color: var(--bg);
+      transform: translateY(-1px);
+    }
+
+    /* VSL placeholder — replace src with YouTube embed when ready */
+    .vsl-wrap {
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 16/9;
+      background: rgba(8,127,163,0.07);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .vsl-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border-radius: 14px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkmark">✓</div>
+  <h1>קיבלתי! <span>תודה רבה</span> 🙌</h1>
+  <p>
+    פרטייך התקבלו בהצלחה.<br>
+    אחזור אליך תוך 24 שעות לתיאום שיחת ההתאמה החינמית.
+  </p>
+
+  <!-- VSL section — replace the div with an iframe when YouTube link is ready -->
+  <div class="vsl-wrap">
+    <!-- <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID" allowfullscreen></iframe> -->
+    סרטון יועלה בקרוב
+  </div>
+
+  <a class="btn" href="/">חזרה לדף הבית</a>
+
+</body>
+</html>
