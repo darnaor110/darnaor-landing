@@ -1,0 +1,3260 @@
+﻿<!DOCTYPE html>
+<html class="dark" dir="rtl" lang="he" style="overflow-x: hidden;">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&amp;family=Inter:wght@400;500;700&amp;display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('fPlut7Nf6sXIEMUU7');</script>
+  <script
+    id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-secondary-fixed-variant": "#1e4c5d", "secondary-fixed": "#bce9fe", "tertiary-fixed": "#ffdcc1", "on-error-container": "#ffdad6", error: "#ffb4ab", "on-background": "#dee3e7", "on-surface-variant": "#bcc8cf", "surface-bright": "#343a3d", secondary: "#a1cde1", "on-tertiary": "#4c2700", "error-container": "#93000a", "on-surface": "#dee3e7", "surface-container-lowest": "#090f12", "surface-dim": "#0e1417", "on-error": "#690005", outline: "#869399", "surface-variant": "#303639", "surface-container": "#1b2023", "on-tertiary-fixed": "#2e1500", "inverse-primary": "#006781", background: "#0e1417", "primary-fixed-dim": "#5bd4ff", "on-primary": "#003545", "on-secondary": "#003545", tertiary: "#ffb877", "primary-fixed": "#baeaff", "surface-container-highest": "#303639", "on-secondary-fixed": "#001f29", "on-primary-fixed": "#001f29", "on-tertiary-fixed-variant": "#6c3a00", "surface-container-low": "#171c1f", "outline-variant": "#3d494e", primary: "#5bd4ff", "surface-tint": "#5bd4ff", "inverse-surface": "#dee3e7", "on-primary-fixed-variant": "#004d62", "on-secondary-container": "#90bccf", surface: "#0e1417", "on-primary-container": "#004456", "secondary-container": "#1e4c5d", "primary-container": "#02b7e4", "tertiary-container": "#ef9334", "tertiary-fixed-dim": "#ffb877", "secondary-fixed-dim": "#a1cde1", "surface-container-high": "#252b2e", "inverse-on-surface": "#2b3134", "on-tertiary-container": "#5f3300" }, fontFamily: { headline: ["Assistant"], body: ["sans-serif"], label: ["Inter"], display: "Assistant" }, borderRadius: { DEFAULT: "0.125rem", lg: "0.25rem", xl: "0.5rem", full: "0.75rem" } } } };</script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .font-headline {
+      font-family: 'Assistant', sans-serif;
+      font-weight: 700;
+    }
+
+    /* אנימציית fade-in לכרטיסי הגיל */
+    @keyframes journeyCardIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* fade-in על scroll — בסיס */
+    .scroll-fade {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .scroll-fade.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .glass-effect {
+      background: rgba(30, 32, 33, 0.7);
+      backdrop-filter: blur(24px);
+    }
+
+    body {
+      background-color: #0c0e0f;
+      color: #e2e2e3;
+      font-family: 'Assistant', sans-serif;
+      font-weight: 400;
+      scroll-behavior: smooth;
+    }
+
+    #mobile-menu {
+      transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    /* Thank-you Modal */
+    #thank-you-modal {
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #thank-you-modal.hidden-modal {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    #thank-you-modal .modal-card {
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    #thank-you-modal:not(.hidden-modal) .modal-card {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    /* 3D Carousel Styles */
+    .carousel-3d-container {
+      perspective: 2000px;
+      padding: 40px 0;
+      overflow: hidden;
+    }
+
+    .carousel-3d-inner {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      transform-style: preserve-3d;
+      animation: carousel-spin 40s linear infinite;
+    }
+
+    .carousel-3d-inner:hover {
+      animation-play-state: paused;
+    }
+
+    .carousel-3d-item {
+      position: absolute;
+      width: 280px;
+      height: 380px;
+      left: calc(50% - 140px);
+      top: 0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(8, 127, 163, 0.3);
+      transition: transform 0.5s ease, filter 0.5s ease;
+      backface-visibility: hidden;
+    }
+
+    /* Mathematics for 8 items: 360 / 8 = 45 degrees */
+    /* Radius: ~350px - 450px for good spacing */
+    .carousel-3d-item:nth-child(1) {
+      transform: rotateY(0deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(2) {
+      transform: rotateY(45deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(3) {
+      transform: rotateY(90deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(4) {
+      transform: rotateY(135deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(5) {
+      transform: rotateY(180deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(6) {
+      transform: rotateY(225deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(7) {
+      transform: rotateY(270deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:nth-child(8) {
+      transform: rotateY(315deg) translateZ(450px);
+    }
+
+    .carousel-3d-item:hover {
+      filter: brightness(1.2) contrast(1.1);
+      border-color: #5bd4ff;
+    }
+
+    @keyframes carousel-spin {
+      from {
+        transform: rotateY(0);
+      }
+
+      to {
+        transform: rotateY(-360deg);
+      }
+    }
+
+    /* Responsive adjustments for 3D carousel */
+    @media (max-width: 768px) {
+      .carousel-3d-inner {
+        height: 320px;
+      }
+
+      .carousel-3d-item {
+        width: 200px;
+        height: 300px;
+        left: calc(50% - 100px);
+      }
+
+      .carousel-3d-item:nth-child(1) {
+        transform: rotateY(0deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(2) {
+        transform: rotateY(45deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(3) {
+        transform: rotateY(90deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(4) {
+        transform: rotateY(135deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(5) {
+        transform: rotateY(180deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(6) {
+        transform: rotateY(225deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(7) {
+        transform: rotateY(270deg) translateZ(300px);
+      }
+
+      .carousel-3d-item:nth-child(8) {
+        transform: rotateY(315deg) translateZ(300px);
+      }
+    }
+
+    /* WhatsApp Floating Button */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 2rem;
+      left: 0;
+      background-color: #25D366;
+      color: #fff;
+      padding: 8px 12px 8px 20px;
+      border-radius: 0 40px 40px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      z-index: 9999;
+      box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      font-family: 'Assistant', sans-serif;
+      font-weight: 700;
+      transform: translateX(-10px);
+      direction: ltr !important;
+    }
+
+    .whatsapp-float:hover {
+      transform: translateX(0);
+      background-color: #22c35e;
+      box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.4);
+      padding-left: 20px;
+    }
+
+    .whatsapp-icon {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    @media (max-width: 768px) {
+      .whatsapp-float {
+        bottom: 1.5rem;
+        padding: 6px 10px 6px 16px;
+      }
+
+      .whatsapp-float span {
+        font-size: 1rem;
+      }
+    }
+
+    /* Program Details Dropdown & Square Card Styles */
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #3f484d;
+      border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #087fa3;
+    }
+
+    #program-dropdown-menu {
+      transform-origin: top;
+      animation: slideDown 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: scaleY(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+      max-width: 100vw;
+    }
+
+    /* Hide scrollbar for tabs on mobile */
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Prevent tab buttons from shrinking on mobile */
+    .program-tab {
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* How-it-works infinite carousel */
+    #how-outer { overflow: hidden; }
+    #how-track { display: flex; will-change: transform; user-select: none; cursor: grab; }
+    .how-card {
+      flex-shrink: 0;
+      width: 62px; height: 62px;
+      border: 2px solid rgba(8,127,163,0.3);
+      border-radius: 14px;
+      background: rgba(8,127,163,0.07);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: transform 0.35s ease, border-color 0.3s, background 0.3s, box-shadow 0.3s, color 0.3s;
+      color: #3f6a7a;
+      position: relative;
+    }
+    @media (min-width: 768px) { .how-card { width: 80px; height: 80px; } }
+    .how-card.active {
+      border-color: #5bd4ff;
+      background: rgba(8,127,163,0.22);
+      box-shadow: 0 0 28px rgba(8,127,163,0.55);
+      color: #5bd4ff;
+      transform: scale(1.28);
+      z-index: 2;
+    }
+    .how-card:hover:not(.active) { border-color: #087fa3; color: #5bd4ff; }
+    .how-card .material-symbols-outlined { font-size: 2rem !important; transition: font-size 0.3s; }
+    @media (min-width: 768px) { .how-card .material-symbols-outlined { font-size: 2.6rem !important; } }
+    .how-card.active .material-symbols-outlined { font-size: 2.4rem !important; }
+    @media (min-width: 768px) { .how-card.active .material-symbols-outlined { font-size: 3rem !important; } }
+    .how-card-num {
+      position: absolute; bottom: 4px; right: 5px;
+      font-size: 0.48rem; font-weight: 700;
+      color: rgba(8,127,163,0.5);
+      font-family: 'Inter', monospace;
+      letter-spacing: 0.04em; line-height: 1;
+      transition: color 0.3s;
+    }
+    .how-card.active .how-card-num { color: rgba(91,212,255,0.75); }
+    .how-fade-right {
+      position: absolute; right: 0; top: 0; bottom: 0; width: 64px;
+      background: linear-gradient(to left, #0c0e0f, transparent);
+      pointer-events: none; z-index: 10;
+    }
+    .how-fade-left {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 64px;
+      background: linear-gradient(to right, #0c0e0f, transparent);
+      pointer-events: none; z-index: 10;
+    }
+    #how-title-text { animation: howFadeIn 0.4s ease-out forwards; }
+
+    /* Map-Like Timeline Styles */
+    .timeline-container {
+      position: relative;
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+
+    .timeline-path-svg {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Curved Timeline Styles */
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: 1rem;
+      row-gap: 5rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .how-grid-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+    }
+
+    .how-grid-label {
+      font-family: 'Assistant', sans-serif;
+      font-weight: 700;
+      font-size: 4rem;
+      color: #8aa4af;
+      text-align: center;
+      line-height: 1.2;
+      min-height: 2.5em;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transition: color 0.3s;
+    }
+
+    .how-grid-item.active .how-grid-label,
+    .how-grid-item:hover .how-grid-label {
+      color: #5bd4ff;
+    }
+
+    .how-grid-icon-box {
+      width: 62%;
+      aspect-ratio: 1 / 1;
+      border: 1.5px solid rgba(8, 127, 163, 0.35);
+      border-radius: 12px;
+      background: rgba(8, 127, 163, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      color: #3f6a7a;
+    }
+
+    .how-grid-item.active .how-grid-icon-box {
+      border-color: #5bd4ff;
+      background: rgba(8, 127, 163, 0.22);
+      box-shadow: 0 0 18px rgba(8, 127, 163, 0.45);
+      color: #5bd4ff;
+    }
+
+    .how-grid-item:hover .how-grid-icon-box {
+      border-color: #087fa3;
+      background: rgba(8, 127, 163, 0.15);
+      color: #5bd4ff;
+    }
+
+    .how-explanation-box {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1.5px solid rgba(8, 127, 163, 0.3);
+      border-radius: 14px;
+      background: rgba(8, 127, 163, 0.06);
+      padding: 1.2rem 1.8rem;
+      min-height: 130px; /* גובה הטקסט הארוך ביותר — מונע קפיצות */
+      text-align: center;
+      color: #c8d8e0;
+      font-family: 'Assistant', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.65;
+      transition: opacity 0.4s ease, background 0.4s ease;
+    }
+
+    @keyframes howFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .how-explanation-box p {
+      animation: howFadeIn 0.4s ease-out forwards;
+    }
+
+    .video-showcase-container {
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(8, 127, 163, 0.15);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(8, 127, 163, 0.08);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .video-showcase-container:hover {
+      border-color: rgba(91, 212, 255, 0.3);
+      box-shadow: 0 0 60px rgba(8, 127, 163, 0.15);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 767px) {
+      .how-grid {
+        column-gap: 0.6rem;
+        row-gap: 2rem;
+      }
+
+      .how-grid-label {
+        font-size: 1rem;
+      }
+
+      .how-grid-icon-box .material-symbols-outlined {
+        font-size: 2.5rem !important;
+      }
+
+      .how-explanation-box {
+        font-size: 0.9rem;
+        padding: 1.1rem 1.2rem;
+      }
+    }
+
+    /* Mobile text sizes for philosophy/faq content */
+    @media (max-width: 767px) {
+      body {
+        min-height: 100dvh;
+      }
+
+      #philosophy .text-lg {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      #philosophy .text-xl {
+        font-size: 1rem;
+      }
+
+      .faq-item .text-lg {
+        font-size: 0.875rem;
+      }
+
+      .faq-answer .text-base,
+      .faq-answer p {
+        font-size: 0.8125rem;
+      }
+
+      .tab-panel .text-lg {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      #how-it-works .text-xl {
+        font-size: 1.125rem;
+      }
+
+      #how-it-works p {
+        font-size: 0.9rem;
+      }
+
+      #about .text-lg {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      #about .text-5xl {
+        font-size: 1.5rem;
+      }
+
+      /* Fix CTA buttons text */
+      .font-headline.text-2xl {
+        font-size: 1.25rem;
+      }
+
+      /* Fix section horizontal padding */
+      section {
+        overflow-x: hidden;
+      }
+    }
+  </style>
+</head>
+
+<body class="overflow-x-hidden">
+  <!-- Top Navigation Anchor -->
+  <nav
+    class="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-3 max-w-none bg-[#121415] dark:bg-[#0c0e0f] transition-all duration-300">
+    <div class="flex items-center gap-0.5">
+      <button onclick="toggleMenu()"
+        class="flex items-center justify-center w-8 h-8 hover:bg-[#1a1c1d] transition-colors rounded-sm"
+        aria-label="תפריט">
+        <span id="menu-icon" class="material-symbols-outlined text-[#087fa3]">menu</span>
+      </button>
+      <div
+        class="text-[1.55rem] font-black leading-none tracking-tighter text-[#e2e2e3] uppercase font-headline drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
+        דר נאור -<span class="text-[#087fa3] ms-1.5"> חטובים לנצח</span></div>
+    </div>
+    <div class="hidden lg:flex items-center gap-2 xl:gap-4">
+      <a href="#hero"
+        class="text-[#79d1f9] border-b-2 border-[#087fa3] pb-1 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold">ראשי</a>
+      <a href="#story-intro"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">נעים להכיר</a>
+      <a href="#transformations"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">המלצות</a>
+      <a href="#not-your-fault"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">
+        השיטה</a>
+      <a href="#how-it-works"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">איך עובד התהליך</a>
+      <a href="#buttons"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">מה מקבלים</a>
+      <a href="#faq"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">שאלות ותשובות  </a>
+    <a href="#contact"
+        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">צור קשר   </a>
+  
+    </div>
+    <div class="flex items-center">
+      <a href="#contact"
+        class="bg-[#087fa3] hover:bg-[#0a8fb5] text-white font-headline font-bold text-[15px] px-3 py-2 lg:px-5 rounded-xl transition-colors whitespace-nowrap">לשיחת
+        התאמה</a>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu" class="fixed inset-0 z-40 bg-[#0c0e0f] flex flex-col justify-center translate-x-full">
+    <div class="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none"
+      style="background: linear-gradient(135deg, #087fa3 0%, transparent 60%);"></div>
+    <div class="relative px-10 md:px-20 w-full max-h-[80vh] overflow-y-auto py-10 scrollbar-hide">
+      <a href="#hero" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">01</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">ראשי</span>
+      </a>
+      <a href="#story-intro" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">02</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">נעים להכיר
+          </span>
+      </a>
+      <a href="#transformations" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">03</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">המלצות</span>
+      </a>
+      <a href="#not-your-fault" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">04</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">
+          השיטה</span>
+      </a>
+      <a href="#buttons" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">05</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none"> איך עובד התהליך </span>
+      </a>
+      <a href="#how-it-works" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">06</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">מה מקבלים</span>
+      </a>
+      <a href="#faq" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">07</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">שאלות ותשובות  </span>
+      </a>
+      <a href="#contact" onclick="closeMenu()"
+        class="flex items-end gap-6 py-4 border-b border-[#1a1c1d] group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">08</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none">
+          צור קשר </span>
+      </a>
+      <a href="#audio-testimonials" onclick="closeMenu()" class="flex items-end gap-6 py-4 group cursor-pointer no-underline">
+        <span class="font-label text-xs tracking-[0.4em] text-[#087fa3] mb-2 shrink-0">09</span>
+        <span
+          class="text-4xl md:text-5xl font-headline text-[#e2e2e3] group-hover:text-[#087fa3] transition-colors duration-300 leading-none"> הם מספרים
+          </span>
+      </a>
+    </div>
+  </div>
+
+  <section id="hero" class="w-full flex flex-col items-center text-center px-5 md:px-10 pt-12 pb-0 md:pb-8 bg-[#0d272f]"
+    style="box-shadow: inset 0 0 120px rgba(0,0,0,0.7), inset 0 -60px 80px rgba(0,0,0,0.5);">
+
+    <!-- Subtitle -->
+    <p
+      class="text-sm text-[#8fa8b5] font-body leading-snug max-w-sm md:max-w-xl mx-auto mb-5 mt-6 md:mt-10">
+      למתאמנים שמשקיעים במכון בשביל גוף חטוב ובריא<br>אבל נמאס להם מתוצאות בינוניות או זמניות
+    </p>
+
+    <!-- Main Headline -->
+    <h1
+      class="text-[1rem] md:text-3xl font-headline font-black text-[#e2e2e3] leading-tight max-w-sm md:max-w-2xl mx-auto mb-5 drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+      style="-webkit-text-stroke: 0.1px rgba(91,212,255,0.2); text-shadow: 0 0 20px rgba(91,212,255,0.2), 0 0 40px rgba(8,127,163,0.15);">
+      איך עזרתי ל-280+ מתאמנים להיפטר מהבטן התחתונה,<br />לבנות גוף חטוב, שגרה בריאה ולהבין איך להצליח לבד —<br /><span class="text-[#5bd4ff]">כדי שיהפכו לחטובים לנצח</span>
+    </h1>
+
+    <!-- Fine print  -->
+    <div class="text-sm md:text-base font-body mb-7 max-w-xs md:max-w-md mx-auto flex flex-col gap-1 items-center"
+      dir="rtl">
+      <div class="flex items-center gap-2 flex-wrap justify-center">
+        <div class="flex items-center gap-1.5">
+          <span class="text-red-400">✕</span>
+          <span class="text-[#5a6e78]">בלי ריצות</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-red-400">✕</span>
+          <span class="text-[#5a6e78]">בלי רעב</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-red-400">✕</span>
+          <span class="text-[#5a6e78]">או תפריטים מוזרים</span>
+        </div>
+      </div>
+      <div class="flex items-start gap-1.5">
+        <span class="text-green-400 mt-px">✓</span>
+        <span class="text-[#5a6e78]">גם למי שעסוק מידי ומתקשה להתמיד <span class="text-[#5bd4ff]/70">(ככה 👇)</span></span>
+      </div>
+    </div>
+
+    <!-- Video Player -->
+    <div
+      class="video-showcase-container w-full max-w-[480px] md:max-w-[480px] aspect-[16/9] relative cursor-pointer group"
+      onclick="document.getElementById('video-modal').classList.remove('hidden')">
+      <div
+        class="absolute inset-0 rounded-3xl bg-[#161a1c] border border-[#2a3438] flex items-center justify-center shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        <div class="flex flex-col items-center gap-3 z-10 relative">
+          <!-- Pulse ring -->
+          <div class="absolute w-24 h-24 rounded-full border-2 border-[#0a9bc4]/40 animate-ping"></div>
+          <!-- Button -->
+          <div
+            class="w-20 h-20 rounded-full bg-[#087fa3] flex items-center justify-center shadow-[0_0_32px_rgba(10,155,196,0.5)] group-hover:scale-110 group-hover:shadow-[0_0_48px_rgba(10,155,196,0.8)] transition-all duration-300">
+            <span class="material-symbols-outlined text-5xl text-white translate-x-0.5">play_arrow</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Before/After Gallery Strip -->
+    <div class="w-full mt-7 overflow-hidden" dir="ltr">
+      <div id="hero-ba-viewport" class="overflow-hidden w-full" style="cursor: grab; touch-action: pan-y;">
+        <div id="hero-ba-track" class="flex gap-3" style="will-change: transform; user-select: none;">
+          <!-- Card 1 — real image -->
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/b1.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <!-- Card 2 — real image -->
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/b2.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <!-- Cards 3–8 — real images -->
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/3.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/5.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/6.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/12.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+           <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/13.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+           <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/14.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/8.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Showcase Video Section (id kept for scroll anchoring) -->
+  <section id="showcase-video" class="hidden"></section>
+
+  <!-- Desktop Vertical Video & CTA Section (Hidden on Mobile) -->
+  <section id="hero-extra-content"
+    class="hidden md:flex py-4 px-6 bg-[#0c0e0f] flex-col items-center gap-12 border-t border-[#1a1c1d]">
+    <!-- Contact Button (Desktop) -->
+    <a href="#contact"
+      class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
+      <span class="font-headline font-bold text-xl leading-none">רוצה לדעת אם זה מתאים לך?</span>
+    </a>
+  </section>
+
+  <!-- Video Modal -->
+  <div id="video-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden"
+    onclick="closeVideoModal(event)">
+    <div class="relative w-full max-w-3xl mx-6">
+      <button onclick="closeVideoModal()"
+        class="absolute -top-10 left-0 text-[#e2e2e3] hover:text-white font-label text-xs tracking-widest uppercase flex items-center gap-2">
+        <span class="material-symbols-outlined">close</span> סגור
+      </button>
+      <div class="relative aspect-video bg-[#1a1c1d] flex items-center justify-center">
+        <video id="hero-video" class="w-full h-full object-cover" controls>
+          <source src="" type="video/mp4">
+        </video>
+        <div id="video-placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+          <span class="material-symbols-outlined text-6xl text-[#087fa3]">play_circle</span>
+          <p class="font-label text-xs tracking-widest uppercase text-[#3f484d]">הוידאו יתווסף בקרוב</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Before/After Strip (Hero) -->
+  <section class="block pt-0 pb-0 bg-[#0c0e0f] overflow-hidden" id="ba-viewport"
+    style="cursor: grab; touch-action: pan-y;">
+    <div id="ba-track" style="display: flex; gap: 16px; will-change: transform; user-select: none;">
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/12.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/13.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/14.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/15.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/16.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/17.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+      <div class="flex-shrink-0 w-[100px] md:w-[220px] aspect-[3/4] rounded-2xl overflow-hidden">
+        <img src="images/18.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Button -->
+<div class="relative z-2 bg-[#0c0e0f] mt-[-80px] md:mt-0">
+    <div class="flex flex-col items-center px-0 md:px-6 pb-0 md:pb-8">
+      <a href="#contact"
+        class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
+        <span class="font-headline font-bold text-xl leading-none">השכנעתי, אשמח לשמוע עוד</span>
+      </a>
+    </div>
+</div>
+
+  <!-- spacer strip between hero CTA and story section -->
+  <div style="height:40px; background:#0c0e0f;"></div>
+
+  <!-- Story Intro — After Fold -->
+  <section id="story-intro" class="relative overflow-hidden pt-12 md:pt-16 pb-2 md:pb-4 px-4 md:px-20 bg-[#121415] border-t border-b border-[#087fa3]/25">
+    <!-- Gradient frame top/bottom -->
+    <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to bottom, rgba(8,127,163,0.06) 0%, transparent 12%, transparent 88%, rgba(8,127,163,0.06) 100%);"></div>
+    <!-- Corner ribbon "הסיפור שלי" -->
+    <div class="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
+      <div class="absolute top-[22px] right-[-32px] w-[130px] bg-[#087fa3] text-white text-[9px] font-label tracking-[0.14em] uppercase py-[5px] rotate-45 text-center shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+        הסיפור שלי
+      </div>
+    </div>
+    <div class="max-w-4xl mx-auto space-y-8 md:space-y-10">
+      <h1 class="text-4xl md:text-8xl font-bold font-headline text-center drop-shadow-[0_0_20px_rgba(91,212,255,0.6)]">
+        נעים להכיר — דר נאור</h1>
+      <div class="text-center !mt-2 md:!mt-4">
+        <h2 class="text-base md:text-xl font-semibold font-headline text-[#8aa4af] leading-relaxed">
+          מנער בעודף משקל – לזה שהופך אנשים לחטובים לנצח
+        </h2>
+      </div>
+
+      <!-- Journey Timeline — below subtitle -->
+      <div style="margin-top:10px; margin-bottom:10px;">
+        <!-- flex center with items centered vertically — arrows align automatically -->
+        <div style="display:flex; flex-direction:row; flex-wrap:nowrap; justify-content:center; align-items:center; gap:8px;">
+
+          <!-- Stage 1: age 17 — rightmost in RTL -->
+          <div style="flex-shrink:0; animation: journeyCardIn 0.4s ease-out 0.05s both;">
+            <div style="width:95px; border-radius:12px; border:2px solid rgba(8,127,163,0.3); overflow:hidden; background:#0a0a0a;">
+              <img src="images/age17.png" alt="גיל 17" style="width:100%; height:185px; object-fit:cover; object-position:top; display:block;">
+              <div style="padding:6px 6px; text-align:center; border-top:1px solid rgba(8,127,163,0.25); background:rgba(4,12,18,0.95);">
+                <p style="font-size:12px; color:#5bd4ff; margin:0; font-weight:700; line-height:1.3; font-family:'Assistant',sans-serif;">גיל 17</p>
+                <p style="font-size:11px; color:#8aa4af; margin:0; line-height:1.3; font-family:'Assistant',sans-serif; font-weight:600;">65ק"ג</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow pointing LEFT -->
+          <div style="flex-shrink:0; animation: journeyCardIn 0.3s ease-out 0.2s both;">
+            <svg width="28" height="16" viewBox="0 0 28 16" fill="none">
+              <path d="M26 8H4" stroke="#5bd4ff" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.45"/>
+              <path d="M10 2L4 8L10 14" stroke="#5bd4ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.8"/>
+            </svg>
+          </div>
+
+          <!-- Stage 2: age 18 — center -->
+          <div style="flex-shrink:0; animation: journeyCardIn 0.4s ease-out 0.25s both;">
+            <div style="width:95px; border-radius:12px; border:2px solid rgba(8,127,163,0.55); overflow:hidden; background:#0a0a0a;">
+              <img src="images/age18.png" alt="גיל 18" style="width:100%; height:185px; object-fit:cover; object-position:top; display:block;">
+              <div style="padding:6px 6px; text-align:center; border-top:1px solid rgba(8,127,163,0.4); background:rgba(4,12,18,0.95);">
+                <p style="font-size:12px; color:#5bd4ff; margin:0; font-weight:700; line-height:1.3; font-family:'Assistant',sans-serif;">גיל 18</p>
+                <p style="font-size:11px; color:#8aa4af; margin:0; line-height:1.3; font-family:'Assistant',sans-serif; font-weight:600;">85ק"ג</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow pointing LEFT -->
+          <div style="flex-shrink:0; animation: journeyCardIn 0.3s ease-out 0.4s both;">
+            <svg width="28" height="16" viewBox="0 0 28 16" fill="none">
+              <path d="M26 8H4" stroke="#5bd4ff" stroke-width="1.5" stroke-linecap="round" stroke-opacity="0.45"/>
+              <path d="M10 2L4 8L10 14" stroke="#5bd4ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.8"/>
+            </svg>
+          </div>
+
+          <!-- Stage 3: age 20 — leftmost, floating arrow down to main photo -->
+          <div style="position:relative; flex-shrink:0; animation: journeyCardIn 0.4s ease-out 0.45s both;">
+            <div style="width:95px; border-radius:12px; border:2px solid #087fa3; box-shadow:0 0 20px rgba(8,127,163,0.4); overflow:hidden; background:#0a0a0a;">
+              <img src="images/age20new.png" alt="גיל 20" style="width:100%; height:185px; object-fit:cover; object-position:top; display:block;">
+              <div style="padding:6px 6px; text-align:center; border-top:1px solid rgba(8,127,163,0.6); background:rgba(4,12,18,0.95);">
+                <p style="font-size:12px; color:#5bd4ff; margin:0; font-weight:700; line-height:1.3; font-family:'Assistant',sans-serif;">גיל 20</p>
+                <p style="font-size:11px; color:#8aa4af; margin:0; line-height:1.3; font-family:'Assistant',sans-serif; font-weight:600;">67ק"ג</p>
+              </div>
+            </div>
+            <!-- floating dashed arrow — extended to reach head in main photo -->
+            <div style="position:absolute; bottom:-96px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:3px;">
+              <svg width="16" height="76" viewBox="0 0 16 76" fill="none">
+                <path d="M8 2L8 62" stroke="#5bd4ff" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 3" stroke-opacity="0.5"/>
+                <path d="M2 56L8 62L14 56" stroke="#5bd4ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center max-w-3xl mx-auto !mt-3 md:!mt-8 overflow-visible">
+        <div class="flex-1 space-y-4 text-lg md:text-2xl text-[#c8d8e0] font-headline leading-relaxed text-right relative z-10 pr-2 -ml-10" style="text-shadow: 0 1px 10px rgba(0,0,0,1), 0 2px 24px rgba(0,0,0,0.9)">
+          <p>אני יודע איך זה מרגיש, להשקיע ולהיות מתוסכל מהתוצאות. גם אני הייתי שם.</p>
+          <p>אני חי כושר ותזונה כבר 9 שנים. הכל התחיל כשהשמנתי 20 קילו בגיל 17 <em>שאחריהם</em> לקח לי 3 שנים להיות מרוצה מהגוף שלי, כי ניסיתי לבד.</p>
+          <p>חשבתי שמה שחסר לי זה לעבוד קשה יותר. זה אמנם עבד, אבל סתם סבלתי בדרך.</p>
+        </div>
+        <div class="flex-shrink-0 w-[90%] -mr-36" style="position:relative;">
+          <img src="images/transperntdar.png" alt="דר נאור" class="w-full object-contain">
+          <!-- fade bottom so image blends into section -->
+          <div style="position:absolute; bottom:0; left:0; right:0; height:40%; background:linear-gradient(to bottom, transparent 0%, #121415 85%); pointer-events:none;"></div>
+        </div>
+      </div>
+      <!-- summary text — styled like subtitle, slightly smaller -->
+      <p class="font-headline text-[#c8d8e0] leading-relaxed text-center max-w-xs md:max-w-lg mx-auto" style="font-size:clamp(0.9rem,1.8vw,1.15rem); margin-top:6px; margin-bottom:8px;">
+        היום, מה שלקח לי שנים לוקח למתאמנים שלי חודשים בודדים – כי למדתי על בשרי שחלבון וקלוריות זה לא הכל, וחייבים שיטה מסודרת כדי להצליח. <strong>כמוהם</strong> 👇
+      </p>
+
+      <div class="space-y-6 text-base md:text-lg text-[#c8d8e0] font-body leading-relaxed text-center max-w-3xl mx-auto">
+        <p style="display:none;"></p>
+ <div class="w-full mt-7 overflow-hidden" dir="ltr">
+      <div id="ba-viewport-3" class="overflow-hidden w-full" style="cursor: grab; touch-action: pan-y;">
+        <div id="ba-track-3" class="flex gap-3" style="will-change: transform; user-select: none;">
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/7.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/19.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/20.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/30.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/29.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/28.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/27.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <!-- section title -->
+        <div class="text-center" style="margin-bottom:20px;">
+          <h3 class="font-headline font-bold text-2xl md:text-4xl text-center text-[#e2edf2] drop-shadow-[0_0_20px_rgba(91,212,255,0.5)]" style="margin-bottom:10px;">איך חטובים לנצח נוצר</h3>
+          <div style="width:60px; height:3px; background:#087fa3; margin:0 auto;"></div>
+        </div>
+
+        <!-- paragraph 1 — right-aligned, with bolds -->
+        <p class="scroll-fade text-sm md:text-base font-semibold font-headline text-[#8aa4af] leading-relaxed text-right max-w-sm md:max-w-xl mx-auto" style="margin-bottom:18px;">
+          <strong class="text-[#c8d8e0]">לא חשבתי לעסוק בכושר.</strong> את קורס המאמנים שסיימתי בהצטיינות עשיתי נטו בשביל עצמי — הכיוון שלי היה בכלל מחשבים. רק <strong class="text-[#c8d8e0]">שבנתיים הציעו לי לעבוד במשרד קטן לייעוצי תזונה</strong> — ושם הבנתי שני דברים:
+        </p>
+
+        <!-- two bullet points — centered -->
+        <div class="scroll-fade max-w-sm md:max-w-xl mx-auto" style="display:flex; flex-direction:column; align-items:center; gap:8px; margin:18px 0;">
+          <div style="display:flex; align-items:center; gap:10px; direction:rtl;">
+            <span style="color:#e2edf2; font-size:9px; flex-shrink:0;">◆</span>
+            <span class="font-headline font-bold text-xl text-[#e2e2e3]">כיף לי לעזור לאנשים להשתפר</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; direction:rtl;">
+            <span style="color:#e2edf2; font-size:9px; flex-shrink:0;">◆</span>
+            <span class="font-headline font-bold text-xl text-[#5bd4ff]">מסתבר שאני ממש טוב בזה.</span>
+          </div>
+        </div>
+
+        <!-- paragraph 2 — right-aligned, with bolds -->
+        <p class="scroll-fade text-sm md:text-base font-semibold font-headline text-[#8aa4af] leading-relaxed text-right max-w-sm md:max-w-xl mx-auto" style="margin:18px auto;">
+          <strong class="text-[#c8d8e0]">אז עשיתי שינוי כיוון.</strong> עשיתי כל קורס רשמי אפשרי על תזונה ואימונים (בארץ ובעולם), הקמתי את חטובים לנצח, <strong class="text-[#c8d8e0]">עזרתי למאות מתאמנים</strong> להפוך לגרסה הכי טובה של עצמם, תוך כדי שאני סטודנט ל<strong class="text-[#c8d8e0]">מדעי התזונה באוניברסיטה העברית</strong> בעצמי.
+        </p>
+
+        <!-- closing paragraph — right-aligned, with bolds -->
+        <p class="scroll-fade text-sm md:text-base font-semibold font-headline text-[#8aa4af] leading-relaxed text-right max-w-sm md:max-w-xl mx-auto" style="margin:18px auto 12px;">
+          עם השנים למדתי: <strong class="text-[#c8d8e0]">כל מי שמוכן להשקיע בעצמו <span class="text-[#5bd4ff]">מצליח</span>,</strong> בטח כשעובדים בשיטה מדעית, פשוטה ומותאמת. <strong class="text-[#c8d8e0]">להיות חטובים לנצח זאת גישה</strong> שכבר לימדתי בהצלחה מאות מתאמנים. ואם תתאימו, תוכלו להצטרף אליהם 👇
+        </p>
+      </div>
+    </div>
+
+    <!-- separator at end of story section -->
+    <div style="height:36px; background:#121415;"></div>
+
+  </section>
+
+  <!-- Transformations Video Carousel -->
+  <section id="transformations" class="pt-0 pb-12 px-6 md:px-20 bg-[#121415] overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-8">
+      </div>
+
+
+      <!-- Carousel Container -->
+      <div class="relative">
+        <!-- Navigation Arrows (desktop only) -->
+        <button onclick="slideCarousel(1)"
+          class="hidden md:flex absolute top-1/2 -translate-y-1/2 -right-5 z-20 w-12 h-12 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/40 items-center justify-center hover:bg-[#087fa3]/40 transition-all duration-300 backdrop-blur-sm">
+          <span class="material-symbols-outlined text-[#5bd4ff]">chevron_right</span>
+        </button>
+        <button onclick="slideCarousel(-1)"
+          class="hidden md:flex absolute top-1/2 -translate-y-1/2 -left-5 z-20 w-12 h-12 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/40 items-center justify-center hover:bg-[#087fa3]/40 transition-all duration-300 backdrop-blur-sm">
+          <span class="material-symbols-outlined text-[#5bd4ff]">chevron_left</span>
+        </button>
+
+        <!-- Carousel Track -->
+        <div id="carousel-viewport" class="overflow-hidden mx-0 md:mx-10" dir="ltr">
+          <div id="carousel-track" class="flex gap-4 md:gap-6 transition-transform duration-500 ease-out"
+            style="cursor: grab; direction: ltr;">
+
+            <!-- Video Card 1 -->
+            <div class="flex-shrink-0 w-[220px] md:w-[260px]">
+              <div
+                class="relative bg-[#1a1c1d] rounded-2xl overflow-hidden aspect-[9/16] border border-[#3f484d]/30 group hover:border-[#087fa3]/40 transition-all duration-500">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#087fa3]/5 via-transparent to-[#0c0e0f]/80"></div>
+                <!-- Play button -->
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
+                  <div
+                    class="w-16 h-16 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/50 flex items-center justify-center group-hover:bg-[#087fa3]/30 group-hover:scale-110 transition-all duration-500">
+                    <span class="material-symbols-outlined text-3xl text-[#5bd4ff]">play_arrow</span>
+                  </div>
+                  <p class="font-label text-[10px] tracking-widest uppercase text-[#3f484d]">סרטון בקרוב</p>
+                </div>
+                <!-- Bottom info -->
+                <div class="absolute bottom-6 right-5 left-5 text-right z-10">
+                  <p class="text-[#087fa3] font-label text-[10px] tracking-widest uppercase mb-1">12 Weeks</p>
+                  <h3 class="text-lg font-headline italic text-[#e2e2e3]">השינוי של דניאל</h3>
+                </div>
+                <!-- Decorative lines -->
+                <div class="absolute top-5 left-5 flex gap-[3px] opacity-30">
+                  <div class="w-[2px] h-8 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-5 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-10 bg-[#087fa3] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Card 2 -->
+            <div class="flex-shrink-0 w-[220px] md:w-[260px]">
+              <div
+                class="relative bg-[#1a1c1d] rounded-2xl overflow-hidden aspect-[9/16] border border-[#3f484d]/30 group hover:border-[#087fa3]/40 transition-all duration-500">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#087fa3]/5 via-transparent to-[#0c0e0f]/80"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
+                  <div
+                    class="w-16 h-16 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/50 flex items-center justify-center group-hover:bg-[#087fa3]/30 group-hover:scale-110 transition-all duration-500">
+                    <span class="material-symbols-outlined text-3xl text-[#5bd4ff]">play_arrow</span>
+                  </div>
+                  <p class="font-label text-[10px] tracking-widest uppercase text-[#3f484d]">סרטון בקרוב</p>
+                </div>
+                <div class="absolute bottom-6 right-5 left-5 text-right z-10">
+                  <p class="text-[#087fa3] font-label text-[10px] tracking-widest uppercase mb-1">16 Weeks</p>
+                  <h3 class="text-lg font-headline italic text-[#e2e2e3]">המסע של מיכל</h3>
+                </div>
+                <div class="absolute top-5 left-5 flex gap-[3px] opacity-30">
+                  <div class="w-[2px] h-5 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-10 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-7 bg-[#087fa3] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Card 3 -->
+            <div class="flex-shrink-0 w-[220px] md:w-[260px]">
+              <div
+                class="relative bg-[#1a1c1d] rounded-2xl overflow-hidden aspect-[9/16] border border-[#3f484d]/30 group hover:border-[#087fa3]/40 transition-all duration-500">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#087fa3]/5 via-transparent to-[#0c0e0f]/80"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
+                  <div
+                    class="w-16 h-16 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/50 flex items-center justify-center group-hover:bg-[#087fa3]/30 group-hover:scale-110 transition-all duration-500">
+                    <span class="material-symbols-outlined text-3xl text-[#5bd4ff]">play_arrow</span>
+                  </div>
+                  <p class="font-label text-[10px] tracking-widest uppercase text-[#3f484d]">סרטון בקרוב</p>
+                </div>
+                <div class="absolute bottom-6 right-5 left-5 text-right z-10">
+                  <p class="text-[#087fa3] font-label text-[10px] tracking-widest uppercase mb-1">24 Weeks</p>
+                  <h3 class="text-lg font-headline italic text-[#e2e2e3]">החזון של יואב</h3>
+                </div>
+                <div class="absolute top-5 left-5 flex gap-[3px] opacity-30">
+                  <div class="w-[2px] h-10 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-6 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-8 bg-[#087fa3] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Card 4 -->
+            <div class="flex-shrink-0 w-[220px] md:w-[260px]">
+              <div
+                class="relative bg-[#1a1c1d] rounded-2xl overflow-hidden aspect-[9/16] border border-[#3f484d]/30 group hover:border-[#087fa3]/40 transition-all duration-500">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#087fa3]/5 via-transparent to-[#0c0e0f]/80"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
+                  <div
+                    class="w-16 h-16 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/50 flex items-center justify-center group-hover:bg-[#087fa3]/30 group-hover:scale-110 transition-all duration-500">
+                    <span class="material-symbols-outlined text-3xl text-[#5bd4ff]">play_arrow</span>
+                  </div>
+                  <p class="font-label text-[10px] tracking-widest uppercase text-[#3f484d]">סרטון בקרוב</p>
+                </div>
+                <div class="absolute bottom-6 right-5 left-5 text-right z-10">
+                  <p class="text-[#087fa3] font-label text-[10px] tracking-widest uppercase mb-1">20 Weeks</p>
+                  <h3 class="text-lg font-headline italic text-[#e2e2e3]">הדרך של ליאור</h3>
+                </div>
+                <div class="absolute top-5 left-5 flex gap-[3px] opacity-30">
+                  <div class="w-[2px] h-7 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-10 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-5 bg-[#087fa3] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Card 5 -->
+            <div class="flex-shrink-0 w-[220px] md:w-[260px]">
+              <div
+                class="relative bg-[#1a1c1d] rounded-2xl overflow-hidden aspect-[9/16] border border-[#3f484d]/30 group hover:border-[#087fa3]/40 transition-all duration-500">
+                <div class="absolute inset-0 bg-gradient-to-b from-[#087fa3]/5 via-transparent to-[#0c0e0f]/80"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
+                  <div
+                    class="w-16 h-16 rounded-full bg-[#087fa3]/20 border border-[#087fa3]/50 flex items-center justify-center group-hover:bg-[#087fa3]/30 group-hover:scale-110 transition-all duration-500">
+                    <span class="material-symbols-outlined text-3xl text-[#5bd4ff]">play_arrow</span>
+                  </div>
+                  <p class="font-label text-[10px] tracking-widest uppercase text-[#3f484d]">סרטון בקרוב</p>
+                </div>
+                <div class="absolute bottom-6 right-5 left-5 text-right z-10">
+                  <p class="text-[#087fa3] font-label text-[10px] tracking-widest uppercase mb-1">18 Weeks</p>
+                  <h3 class="text-lg font-headline italic text-[#e2e2e3]">ההתמדה של נועה</h3>
+                </div>
+                <div class="absolute top-5 left-5 flex gap-[3px] opacity-30">
+                  <div class="w-[2px] h-6 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-8 bg-[#087fa3] rounded-full"></div>
+                  <div class="w-[2px] h-10 bg-[#087fa3] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Dot Indicators -->
+        <div id="carousel-dots" class="flex justify-center gap-2 mt-10">
+          <button onclick="goToSlide(0)"
+            class="carousel-dot w-2 h-2 rounded-full bg-[#087fa3] transition-all duration-300"></button>
+          <button onclick="goToSlide(1)"
+            class="carousel-dot w-2 h-2 rounded-full bg-[#3f484d] hover:bg-[#087fa3]/60 transition-all duration-300"></button>
+          <button onclick="goToSlide(2)"
+            class="carousel-dot w-2 h-2 rounded-full bg-[#3f484d] hover:bg-[#087fa3]/60 transition-all duration-300"></button>
+          <button onclick="goToSlide(3)"
+            class="carousel-dot w-2 h-2 rounded-full bg-[#3f484d] hover:bg-[#087fa3]/60 transition-all duration-300"></button>
+          <button onclick="goToSlide(4)"
+            class="carousel-dot w-2 h-2 rounded-full bg-[#3f484d] hover:bg-[#087fa3]/60 transition-all duration-300"></button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA Button -->
+  <div class="relative z-10 bg-[#0c0e0f] -mx-6 md:-mx-20">
+    <div class="flex flex-col items-center pb-4">
+      <a href="#contact"
+        class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
+        <span class="font-headline font-bold text-xl leading-none">רוצים לשמוע עוד? בואו נדבר</span>
+      </a>
+    </div>
+  </div>
+
+
+
+  
+  <!-- Why You're Not Seeing Results Section -->
+  <section id="not-your-fault" class="py-16 px-6 md:px-20 bg-[#0c0e0f]" dir="rtl">
+    <div class="max-w-5xl mx-auto" style="display:flex; flex-direction:column; gap:48px;">
+
+      <!-- כותרת ראשית + משנית ממורכזות -->
+      <div class="text-center">
+        <h2 class="font-headline font-bold text-[#e2edf2] leading-tight" style="font-size:clamp(1.6rem,3.5vw,2.3rem); margin-bottom:14px;">
+          זה לא אשמתכם אם אתם משקיעים<br><span style="color:#e05555;">ולא רואים תוצאות!</span>
+        </h2>
+        <div style="width:60px; height:3px; background:#087fa3; margin:0 auto 16px;"></div>
+        <p class="font-headline text-[#8aa4af] leading-relaxed" style="font-size:1rem; max-width:540px; margin:0 auto;">
+          ראיתי את זה המון לצערי. הבעיה היא שחסרה לכם<br><strong class="text-[#c8d8e0]">שיטת עבודה וכלים</strong> — לא להתאמץ יותר.
+        </p>
+      </div>
+
+      <!-- בלוק 1: טקסט (3/4) + תמונת חליפה (1/4) — align:stretch כדי שהתמונה תתאים לגובה הטקסט -->
+      <div class="scroll-fade" style="display:flex; flex-direction:row; align-items:stretch; gap:24px;">
+        <!-- טקסט 3/4 -->
+        <div class="text-right" style="flex:3; min-width:0;">
+          <p class="font-headline text-[#9ba8ae] leading-relaxed" style="font-size:1.05rem; line-height:1.85;">
+            לכל אחד מאיתנו יש גנטיקה שונה, סדר יום אחר, העדפות ומטרות אחרות. לכן, כל אחד צריך תוכנית שהיא
+            <strong class="text-[#e2edf2]">"חליפה אישית"</strong> – תזונה, אימונים והרגלים שמדויקים בדיוק אליכם.
+            אחרת? זה פשוט לא יעבוד. והאמת? לתפור לכם חליפה כזו זה החלק הקל. עשיתי מאות כאלו.
+          </p>
+        </div>
+        <!-- תמונת חליפה 1/4 — גובה = גובה הטקסט -->
+        <div style="flex:1; min-width:0; border-radius:12px; overflow:hidden; border:1.5px solid rgba(8,127,163,0.35);">
+          <img src="images/system.png" alt="חליפה אישית" loading="lazy"
+               style="width:100%; height:100%; object-fit:cover; object-position:top center; display:block;">
+        </div>
+      </div>
+
+      <!-- פסקה אמצעית — ללא הפרדה מיוחדת -->
+      <p class="scroll-fade font-headline text-[#9ba8ae] leading-relaxed text-right" style="font-size:1.05rem; line-height:1.85;">
+        <strong style="color:#e05555; font-size:1.1rem;">אז איפה הבעיה?</strong>
+        החיים דינמיים. והחליפה תצטרך התאמות לאורך השנים, וזאת הסיבה שרוב האנשים נכשלים בהשגת הגוף שמגיע להם.
+        גם אם לקחתם חליפה מצוינת (ולצערי קשה למצוא כאלו..) — אם לא תדעו להתאים אותה בעצמכם כשהחיים משתנים, היא הופכת לחסרת תועלת…
+        ואז או שלא תראו תוצאות מההתחלה, או שהתוצאות יעלמו מהר, או הכי גרוע —
+        <strong class="text-[#e2edf2]">תהיו תלויים לנצח באנשי מקצוע.</strong>
+      </p>
+
+      <!-- בלוק 3: float layout — תמונה צפה מימין, טקסט עוטף. 2 שורות ראשונות ברוחב מלא -->
+      <div style="direction:rtl; overflow:hidden; text-align:right;">
+        <!-- תמונה צפה מימין — width:auto + height קבוע כדי שלא יחתוך לרוחב -->
+        <div style="float:right; margin-left:24px; margin-top:0; border-radius:12px; overflow:hidden; border:1.5px solid rgba(8,127,163,0.35); width:22%; min-width:130px;">
+          <img src="images/rodorfish.png" alt="חכה ודג" loading="lazy"
+               style="width:100%; height:auto; display:block; object-fit:contain;">
+        </div>
+        <p class="font-headline text-[#9ba8ae] leading-relaxed" style="font-size:1.05rem; line-height:1.85;">
+          ב"חטובים לנצח", אני מאמין בלתת לכם <strong class="text-[#e2edf2]">חכה, לא דג.</strong>
+          השיטה שלי פשוטה: אני לא רק תופר לכם את החליפה המושלמת שתביא אתכם אל המטרה שלכם במינימום מאמץ ומקסימום תוצאות —
+          <strong class="text-[#e2edf2]">אתם תדעו לתפור אותה לבד.</strong>
+          בליווי אסביר לכם איך, כמה ולמה — כדי שבסוף תהפכו להיות המאמנים של עצמכם, תפסיקו להסתפק בתוצאות זמניות או בינוניות, ותהיו באמת
+          <strong class="text-[#5bd4ff]">חטובים לנצח.</strong>
+          <strong class="text-[#5bd4ff]"> כמוהם 👇</strong>
+        </p>
+        <div style="clear:both;"></div>
+      </div>
+
+    </div>
+
+      <div class="w-full mt-7 overflow-hidden" dir="ltr">
+      <div id="ba-viewport-4" class="overflow-hidden w-full" style="cursor: grab; touch-action: pan-y;">
+        <div id="ba-track-4" class="flex gap-3" style="will-change: transform; user-select: none;">
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/17.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/18.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/21.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/22.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/23.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/24.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/25.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+          <div
+            class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <img src="images/26.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA before process -->
+  <div class="bg-[#0c0e0f] flex justify-center py-6 px-6">
+    <a href="#contact"
+      class="inline-flex items-center gap-3 bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
+      <span class="font-headline font-bold text-xl leading-none">קבעו שיחת התאמה</span>
+    </a>
+  </div>
+
+  <!-- How the Process Works -->
+  <section id="buttons" class="py-16 px-6 md:px-20 bg-[#0c0e0f]" dir="rtl">
+    <style>
+      /* ── Process unfold animation ── */
+      .process-step {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.55s ease, transform 0.55s ease;
+      }
+
+      .process-step.unfolded {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .process-icon {
+        transform: scale(0.4);
+        opacity: 0;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      }
+
+      .process-step.unfolded .process-icon {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      .process-content {
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.5s ease, opacity 0.45s ease 0.1s;
+      }
+
+      .process-step.unfolded .process-content {
+        max-height: 200px;
+        opacity: 1;
+      }
+
+      /* Vertical line grows downward */
+      .process-line {
+        transform-origin: top;
+        transform: scaleY(0);
+        transition: transform 0.6s ease;
+      }
+
+      .process-step.unfolded .process-line {
+        transform: scaleY(1);
+      }
+    </style>
+
+    <div class="max-w-2xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-headline font-bold drop-shadow-[0_0_12px_rgba(91,212,255,0.3)]">איך עובד התהליך?</h2>
+        <p class="font-label text-xs text-[#087fa3] tracking-widest uppercase mt-3">6 השלבים</p>
+      </div>
+
+      <div class="space-y-0">
+
+        <!-- Step 1 -->
+        <div class="process-step flex gap-6 items-start pb-0" data-delay="0">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3] bg-[#0c0e0f] flex items-center justify-center z-10" style="position:relative;">
+              <span class="material-symbols-outlined text-[#087fa3] text-2xl">visibility</span>
+              <span style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#087fa3;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Assistant,sans-serif;line-height:1;border:1.5px solid #0c0e0f;">1</span>
+            </div>
+            <div class="process-line w-px flex-1 min-h-[2rem] bg-gradient-to-b from-[#087fa3]/60 to-[#087fa3]/20 mt-1"></div>
+          </div>
+          <div class="process-content pb-8 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#e2e2e3] mb-1">מתרשמים</h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">מתרשמים מהתוכנית והמתאמנים המרוצים שלי — <span class="text-[#5bd4ff]">אתם נמצאים כאן עכשיו</span></p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="process-step flex gap-6 items-start pb-0" data-delay="100">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3]/60 bg-[#0c0e0f] flex items-center justify-center z-10" style="position:relative;">
+              <span class="material-symbols-outlined text-[#087fa3]/80 text-2xl">edit_note</span>
+              <span style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:rgba(8,127,163,0.7);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Assistant,sans-serif;line-height:1;border:1.5px solid #0c0e0f;">2</span>
+            </div>
+            <div class="process-line w-px flex-1 min-h-[2rem] bg-gradient-to-b from-[#087fa3]/40 to-[#087fa3]/15 mt-1"></div>
+          </div>
+          <div class="process-content pb-8 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#e2e2e3] mb-1">משאירים פרטים</h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">ממלאים את הטופס פה למטה או שולחים הודעה בוואצפ — זה לוקח דקה אחת</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="process-step flex gap-6 items-start pb-0" data-delay="100">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3]/60 bg-[#0c0e0f] flex items-center justify-center z-10" style="position:relative;">
+              <span class="material-symbols-outlined text-[#087fa3]/80 text-2xl">call</span>
+              <span style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:rgba(8,127,163,0.7);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Assistant,sans-serif;line-height:1;border:1.5px solid #0c0e0f;">3</span>
+            </div>
+            <div class="process-line w-px flex-1 min-h-[2rem] bg-gradient-to-b from-[#087fa3]/40 to-[#087fa3]/15 mt-1"></div>
+          </div>
+          <div class="process-content pb-8 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#e2e2e3] mb-1">לשיחת <strong>התאמה</strong></h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">אני אישית אתקשר להבין יחד איתך מה המטרות שלך, והאם התוכנית מתאימה לך. אם כן — אסביר איך הכל עובד ונצא לדרך. אם לא — אכוון אותך לאפשרות שהכי מתאימה לך.</p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="process-step flex gap-6 items-start pb-0" data-delay="100">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3]/60 bg-[#0c0e0f] flex items-center justify-center z-10" style="position:relative;">
+              <span class="material-symbols-outlined text-[#087fa3]/80 text-2xl">assignment</span>
+              <span style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:rgba(8,127,163,0.7);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Assistant,sans-serif;line-height:1;border:1.5px solid #0c0e0f;">4</span>
+            </div>
+            <div class="process-line w-px flex-1 min-h-[2rem] bg-gradient-to-b from-[#087fa3]/40 to-[#087fa3]/15 mt-1"></div>
+          </div>
+          <div class="process-content pb-8 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#e2e2e3] mb-1">פגישת התחלה</h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">נעשה את פגישת התחלת התהליך שלנו — נבנה לך תוכנית תזונה ואימון שתתאים לך בדיוק כדי להגיע אל המטרות שלך</p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="process-step flex gap-6 items-start pb-0" data-delay="100">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3]/60 bg-[#0c0e0f] flex items-center justify-center z-10" style="position:relative;">
+              <span class="material-symbols-outlined text-[#087fa3]/80 text-2xl">monitoring</span>
+              <span style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:rgba(8,127,163,0.7);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Assistant,sans-serif;line-height:1;border:1.5px solid #0c0e0f;">5</span>
+            </div>
+            <div class="process-line w-px flex-1 min-h-[2rem] bg-gradient-to-b from-[#087fa3]/40 to-[#087fa3]/15 mt-1"></div>
+          </div>
+          <div class="process-content pb-8 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#e2e2e3] mb-1">יוצאים לדרך</h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">אני אוודא דרך הוואצפ, האפליקציה והפגישות שאנחנו מתקדמים כמו שרצינו. אם לא — אעשה את השינויים הנדרשים. זה פשוט — אני רק צריך שתהיו מחויבים להנחיות שלי.</p>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="process-step flex gap-6 items-start pb-0" data-delay="100">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3]/60 bg-[#0c0e0f] flex items-center justify-center z-10" style="position:relative;">
+              <span class="material-symbols-outlined text-[#087fa3]/80 text-2xl">school</span>
+              <span style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:rgba(8,127,163,0.7);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:Assistant,sans-serif;line-height:1;border:1.5px solid #0c0e0f;">6</span>
+            </div>
+            <div class="process-line w-px flex-1 min-h-[2rem] bg-gradient-to-b from-[#087fa3]/40 to-[#087fa3]/15 mt-1"></div>
+          </div>
+          <div class="process-content pb-8 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#e2e2e3] mb-1">לומדים את השגרה</h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">תוך כדי התהליך אלמד אתכם איך לנהל את שגרת התזונה והאימונים לבד — כדי שתגיעו אל היעד הכי מהר שאפשר, ותהיו מוכנים לדרך העצמאית</p>
+          </div>
+        </div>
+
+        <!-- Step 7 — Final -->
+        <div class="process-step flex gap-6 items-start" data-delay="100">
+          <div class="flex flex-col items-center flex-shrink-0">
+            <div class="process-icon w-14 h-14 rounded-full border-2 border-[#087fa3] bg-gradient-to-br from-[#0a9bc4]/20 to-[#006781]/20 flex items-center justify-center z-10 shadow-[0_0_20px_rgba(10,155,196,0.3)]">
+              <span class="material-symbols-outlined text-[#5bd4ff] text-2xl">emoji_events</span>
+            </div>
+            <p class="text-xs font-label text-[#087fa3] tracking-widest uppercase mt-2">המטרה</p>
+          </div>
+          <div class="process-content pb-2 flex-1">
+            <h3 class="text-xl font-headline font-semibold text-[#5bd4ff] mb-1">הגוף שרצית</h3>
+            <p class="text-[#9abaca] font-label text-sm leading-relaxed">אתם מסתובבים עם הגוף הבריא והחטוב שלכם — כמו כל החברה שראיתם למעלה</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <!-- CTA Button -->
+  <div class="relative z-10 bg-[#0c0e0f]">
+    <div class="flex flex-col items-center px-0 md:px-6 pb-12">
+      <a href="#contact"
+        class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
+        <span class="font-headline font-bold text-xl leading-none">אני רוצה להתחיל</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- What You Get — Horizontal Carousel -->
+  <section id="how-it-works" class="pt-6 pb-4 md:pt-10 md:pb-10 bg-[#0c0e0f] overflow-hidden">
+    <div class="text-center mb-10 px-6">
+      <h2 class="text-3xl md:text-5xl font-bold font-headline drop-shadow-[0_0_15px_rgba(91,212,255,0.4)] mb-4">
+        מה תכלס תקבלו בתוכנית?</h2>
+    </div>
+
+    <!-- Card carousel -->
+    <div class="relative" id="how-outer" dir="ltr">
+      <div class="how-fade-right"></div>
+      <div class="how-fade-left"></div>
+      <div id="how-track" class="flex gap-4" style="padding-top:18px; padding-bottom:18px;">
+        <div class="how-card active" data-how="0" onclick="selectHowItem(0)">
+          <span class="material-symbols-outlined">handshake</span>
+          <span class="how-card-num">01</span>
+        </div>
+        <div class="how-card" data-how="1" onclick="selectHowItem(1)">
+          <span class="material-symbols-outlined">restaurant</span>
+          <span class="how-card-num">02</span>
+        </div>
+        <div class="how-card" data-how="2" onclick="selectHowItem(2)">
+          <span class="material-symbols-outlined">fitness_center</span>
+          <span class="how-card-num">03</span>
+        </div>
+        <div class="how-card" data-how="3" onclick="selectHowItem(3)">
+          <span class="material-symbols-outlined">sports_martial_arts</span>
+          <span class="how-card-num">04</span>
+        </div>
+        <div class="how-card" data-how="4" onclick="selectHowItem(4)">
+          <span class="material-symbols-outlined">chat</span>
+          <span class="how-card-num">05</span>
+        </div>
+        <div class="how-card" data-how="5" onclick="selectHowItem(5)">
+          <span class="material-symbols-outlined">videocam</span>
+          <span class="how-card-num">06</span>
+        </div>
+        <div class="how-card" data-how="6" onclick="selectHowItem(6)">
+          <span class="material-symbols-outlined">phone_iphone</span>
+          <span class="how-card-num">07</span>
+        </div>
+        <div class="how-card" data-how="7" onclick="selectHowItem(7)">
+          <span class="material-symbols-outlined">school</span>
+          <span class="how-card-num">08</span>
+        </div>
+        <div class="how-card" data-how="8" onclick="selectHowItem(8)">
+          <span class="material-symbols-outlined">card_giftcard</span>
+          <span class="how-card-num">09</span>
+        </div>
+        <div class="how-card" data-how="9" onclick="selectHowItem(9)">
+          <span class="material-symbols-outlined">auto_awesome</span>
+          <span class="how-card-num">?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active item display -->
+    <div class="max-w-2xl mx-auto px-6 mt-8">
+      <h3 id="how-title-text" class="text-center text-2xl md:text-3xl font-bold font-headline text-[#5bd4ff] mb-5">פגישת היכרות</h3>
+      <div class="how-explanation-box" id="how-explanation">
+        <p id="how-explanation-text">פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו.</p>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- FAQ Accordion -->
+  <section id="faq" class="pt-0 md:pt-4 pb-16 px-6 md:px-20 bg-[#121415]">
+    <div class="max-w-3xl mx-auto">
+      <h2
+        class="text-2xl md:text-5xl font-bold font-headline text-center drop-shadow-[0_0_15px_rgba(91,212,255,0.4)] mt-4 mb-6 md:mt-0 md:mb-10">
+        שאלות ותשובות</h2>
+      <div class="space-y-3" id="faq-list">
+        <div class="faq-item bg-[#1a1c1d] border border-[#3f484d]/30 rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 text-right">
+            <span class="text-lg font-headline font-bold text-[#e2e2e3]"> מה קורה אם אני לא רואה תוצאות? </span>
+            <span class="material-symbols-outlined text-[#087fa3] faq-icon transition-transform duration-300">add</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5">
+            <p class="text-[#9abaca] font-body leading-relaxed">
+              כושר ותזונה הם מדע מדויק – מי שמבצע את התוכנית, רואה תוצאות נדירות. לכן, אני מסנן מראש ובוחר רק את מי שאני יודע שאכן יצליח בתהליך. והנה ההתחייבות שלי: אם התקבלת לתוכנית, עשית כל מה שסיכמנו ועדיין לא ראית תוצאות – האחריות היא עליי. תקבל ממני ליווי נוסף במתנה עד שנצליח להגיע ליעד.  </p>
+          </div>
+        </div>
+        <div class="faq-item bg-[#1a1c1d] border border-[#3f484d]/30 rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 text-right">
+            <span class="text-lg font-headline font-bold text-[#e2e2e3]"> אני מאוד עסוק, כמה זמן הליווי דורש ממני?
+ </span>
+            <span class="material-symbols-outlined text-[#087fa3] faq-icon transition-transform duration-300">add</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5">
+            <p class="text-[#9abaca] font-body leading-relaxed">התוכנית מיועדת בדיוק לאנשים עסוקים ושאפתניים. אם יש לך זמן ללפחות שני אימונים בשבוע, זמן לקנות אוכל (גם בחוץ), ויכולת להתכתב איתי בוואצפ ולקיים פגישה קצרה פעם בשבועיים – אתה במקום הנכון. אנחנו מתאימים את התוכנית לחיים שלך, לא להפך.
+               </p>
+          </div>
+        </div>
+        <div class="faq-item bg-[#1a1c1d] border border-[#3f484d]/30 rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 text-right">
+            <span class="text-lg font-headline font-bold text-[#e2e2e3]">מה קורה אחרי שאשאיר פרטים?
+</span>
+            <span class="material-symbols-outlined text-[#087fa3] faq-icon transition-transform duration-300">add</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5">
+            <p class="text-[#9abaca] font-body leading-relaxed">נקיים שיחת אבחון קצרה (ללא עלות או התחייבות) כדי להבין אם יש התאמה לתוכנית. אם כן, אסביר לך בדיוק איך הכל עובד ומשם ההחלטה היא שלך, בקצב שלך. אני מחפש אנשים שרוצים את זה, לא כאלו שאני צריך לשכנע. אצור איתך קשר עד יום העסקים הבא :)
+
+            </p>
+          </div>
+        </div>
+        <div class="faq-item bg-[#1a1c1d] border border-[#3f484d]/30 rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 text-right">
+            <span class="text-lg font-headline font-bold text-[#e2e2e3]">מהן <strong class="text-[#5bd4ff]">העלויות</strong> של התהליך?</span>
+            <span class="material-symbols-outlined text-[#087fa3] faq-icon transition-transform duration-300">add</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5">
+            <p class="text-[#9abaca] font-body leading-relaxed" >המחיר משתנה בהתאם לסוג התוכנית שאתם צריכים, אבל בשורה התחתונה מדובר במאות שקלים בודדים בחודש. אני מאמין ששינוי אמיתי שיישאר איתכם לתמיד צריך להיות נגיש, ולכן המחיר מאפשר לכל מי שרוצה להשקיע בעצמו להתחיל בלי לחשוב פעמיים.</p>
+          </div>
+        </div>
+        <div class="faq-item bg-[#1a1c1d] border border-[#3f484d]/30 rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 text-right">
+            <span class="text-lg font-headline font-bold text-[#e2e2e3]">האם צריך לאכול משעמם?</span>
+            <span class="material-symbols-outlined text-[#087fa3] faq-icon transition-transform duration-300">add</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5">
+            <p class="text-[#9abaca] font-body leading-relaxed">לא! צריך לאכול חכם. אני אלמד אתכם להכין אוכל טעים ובריא בעצמכם, ואלמד אתכם לבחור נכון כדי שגם תצליחו וגם תהנו מהאוכל.</p>
+          </div>
+        </div>
+        <div class="faq-item bg-[#1a1c1d] border border-[#3f484d]/30 rounded-2xl overflow-hidden">
+          <button onclick="toggleFaq(this)" class="w-full flex justify-between items-center p-5 text-right">
+            <span class="text-lg font-headline font-bold text-[#e2e2e3]">האם הליווי הוא איתך?</span>
+            <span class="material-symbols-outlined text-[#087fa3] faq-icon transition-transform duration-300">add</span>
+          </button>
+          <div class="faq-answer hidden px-5 pb-5">
+            <p class="text-[#9abaca] font-body leading-relaxed">כן כמובן, אני אישית מלווה אתכם, לא מישהו מטעמי.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ 
+  <!-- Contact Form (Lead Gen) -->
+  <section id="contact" class="py-12 px-6 md:px-20 bg-[#121415]">
+    <div class="max-w-xl mx-auto">
+      <div class="bg-[#1a1c1d] border border-[#3f484d]/40 rounded-3xl p-10 md:p-14 space-y-8 text-right">
+
+        <!-- Top labels -->
+        <h2 class="text-3xl md:text-4xl font-headline text-[#5bd4ff] text-center leading-tight">
+          להפוך לחטובים, לנצח —<br>זה מה שאנחנו עושים.<br><span class="text-[#e2edf2]">פה מגלים איך.</span>
+        </h2>
+
+        <!-- Main headline -->
+        <div class="text-center space-y-1">
+          <p class="text-[#9abaca] text-sm">קבעו שיחת התאמה לתוכנית.</p>
+          <p class="text-[#9abaca] text-sm">20 דקות, ללא התחייבות, יחד איתי דר נאור.</p>
+        </div>
+
+        <!-- Form -->
+        <form id="lead-form" class="space-y-5">
+          <div class="space-y-2">
+            <label class="font-headline text-sm text-[#e2e2e3] block">שם מלא</label>
+            <input
+              class="w-full bg-[#252b2e] border border-[#3f484d] rounded-xl focus:border-[#087fa3] text-[#e2e2e3] py-4 px-4 transition-all duration-300 outline-none placeholder-[#3f484d]"
+              type="text" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
+          </div>
+          <div class="space-y-2">
+            <label class="font-headline text-sm text-[#e2e2e3] block">מספר טלפון</label>
+            <input
+              class="w-full bg-[#252b2e] border border-[#3f484d] rounded-xl focus:border-[#087fa3] text-[#e2e2e3] py-4 px-4 transition-all duration-300 outline-none placeholder-[#3f484d]"
+              type="tel" name="phone" placeholder="050-1234567" autocomplete="tel" required>
+          </div>
+          <!-- גיל + מגדר בשורה אחת -->
+          <div style="display:flex; gap:12px; align-items:flex-end;">
+            <div class="space-y-2" style="flex:1;">
+              <label class="font-headline text-sm text-[#e2e2e3] block">גיל</label>
+              <input
+                class="w-full bg-[#252b2e] border border-[#3f484d] rounded-xl focus:border-[#087fa3] text-[#e2e2e3] py-4 px-4 transition-all duration-300 outline-none placeholder-[#3f484d]"
+                type="number" name="age" placeholder="גיל" min="10" max="99" autocomplete="off">
+            </div>
+            <!-- לחצני מגדר -->
+            <div class="space-y-2" style="flex:2;">
+              <label class="font-headline text-sm text-[#e2e2e3] block">מגדר</label>
+              <input type="hidden" name="gender" id="gender-input" value="">
+              <div style="display:flex; gap:8px;">
+                <button type="button" id="btn-male"
+                  onclick="selectGender('male')"
+                  class="flex-1 py-4 rounded-xl border border-[#3f484d] bg-[#252b2e] text-[#9abaca] font-headline font-bold transition-all duration-200"
+                  style="font-size:0.95rem;">זכר</button>
+                <button type="button" id="btn-female"
+                  onclick="selectGender('female')"
+                  class="flex-1 py-4 rounded-xl border border-[#3f484d] bg-[#252b2e] text-[#9abaca] font-headline font-bold transition-all duration-200"
+                  style="font-size:0.95rem;">נקבה</button>
+              </div>
+            </div>
+          </div>
+          <button
+            id="lead-submit-btn"
+            class="w-full bg-[#087fa3] text-[#fefeff] py-5 text-base font-headline font-bold rounded-full hover:bg-[#0a9bc4] active:scale-95 transition-all duration-300 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            type="submit">
+            אשמח לקבל פרטים
+          </button>
+        </form>
+
+        <script>
+          function selectGender(val) {
+            document.getElementById('gender-input').value = val;
+            var active = 'border-[#5bd4ff] bg-[rgba(8,127,163,0.2)] text-[#5bd4ff]';
+            var inactive = 'border-[#3f484d] bg-[#252b2e] text-[#9abaca]';
+            var btnMale = document.getElementById('btn-male');
+            var btnFemale = document.getElementById('btn-female');
+            if (val === 'male') {
+              btnMale.style.borderColor = '#5bd4ff';
+              btnMale.style.background = 'rgba(8,127,163,0.2)';
+              btnMale.style.color = '#5bd4ff';
+              btnFemale.style.borderColor = '';
+              btnFemale.style.background = '';
+              btnFemale.style.color = '';
+            } else {
+              btnFemale.style.borderColor = '#5bd4ff';
+              btnFemale.style.background = 'rgba(8,127,163,0.2)';
+              btnFemale.style.color = '#5bd4ff';
+              btnMale.style.borderColor = '';
+              btnMale.style.background = '';
+              btnMale.style.color = '';
+            }
+          }
+
+          document.getElementById('lead-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var btn = document.getElementById('lead-submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'שולח...';
+
+            emailjs.sendForm('service_484l3rn', 'template_27g5m3l', this)
+              .then(function () {
+                openThankYouModal();
+                document.getElementById('lead-form').reset();
+              })
+              .catch(function (err) {
+                console.error('EmailJS error:', err);
+                alert('שגיאה בשליחה, נסה שוב.');
+              })
+              .finally(function () {
+                btn.disabled = false;
+                btn.textContent = 'יאללה, נבדוק התאמה';
+              });
+          });
+        </script>
+
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const steps = document.querySelectorAll('.process-step');
+      if (!steps.length) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const step = entry.target;
+          const delay = parseInt(step.dataset.delay || 0);
+          setTimeout(() => step.classList.add('unfolded'), delay);
+          observer.unobserve(step);
+        });
+      }, { threshold: 0.25 });
+
+      // Chain: each step only becomes observable after the previous one unfolds
+      function observeStep(index) {
+        if (index >= steps.length) return;
+        const step = steps[index];
+        // Watch for when this step gets the 'unfolded' class, then arm the next
+        const mo = new MutationObserver(() => {
+          if (step.classList.contains('unfolded')) {
+            mo.disconnect();
+            setTimeout(() => observeStep(index + 1), 180);
+          }
+        });
+        mo.observe(step, { attributes: true, attributeFilter: ['class'] });
+        observer.observe(step);
+      }
+
+      observeStep(0);
+    })();
+  </script>
+
+  <script>
+    // scroll-fade — IntersectionObserver להופעה הדרגתית בגלילה
+    (function () {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      document.querySelectorAll('.scroll-fade').forEach(function (el) {
+        observer.observe(el);
+      });
+    })();
+  </script>
+
+<!-- Client Audio Testimonials -->
+  <!-- Audio Player Styles -->
+  <style>
+    .audio-card { direction: ltr; }
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 2.5px;
+      height: 36px;
+      flex: 1;
+    }
+    .waveform-bar {
+      width: 3px;
+      border-radius: 2px;
+      background: #087fa3;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .waveform-bar.played {
+      background: #5bd4ff;
+    }
+    @keyframes wave-bounce {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(2); }
+    }
+    .audio-card.playing .waveform-bar {
+      animation: wave-bounce 0.6s ease-in-out infinite;
+    }
+    .audio-card.playing .waveform-bar:nth-child(2n)   { animation-delay: 0.1s; }
+    .audio-card.playing .waveform-bar:nth-child(3n)   { animation-delay: 0.2s; }
+    .audio-card.playing .waveform-bar:nth-child(4n)   { animation-delay: 0.15s; }
+    .audio-card.playing .waveform-bar:nth-child(5n)   { animation-delay: 0.05s; }
+    .play-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0a9bc4, #006781);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 18px rgba(10,155,196,0.45);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .play-btn:hover  { transform: scale(1.08); box-shadow: 0 0 26px rgba(10,155,196,0.6); }
+    .play-btn:active { transform: scale(0.95); }
+    .play-btn svg { width: 22px; height: 22px; fill: #fff; }
+    .audio-time {
+      font-size: 13px;
+      color: #8fa8b5;
+      font-variant-numeric: tabular-nums;
+      min-width: 32px;
+      text-align: left;
+    }
+  </style>
+
+  <!-- New before/after carousel — 31,32,33 + 4th from each existing carousel -->
+  <section class="block pt-8 pb-4 bg-[#0c0e0f] overflow-hidden">
+    <div class="text-center mb-5">
+      <h2 class="font-headline font-bold text-2xl md:text-3xl text-[#e2edf2] drop-shadow-[0_0_15px_rgba(91,212,255,0.3)]">עוד תוצאות אמיתיות</h2>
+      <div style="width:60px; height:3px; background:#087fa3; margin:0.5rem auto 0;"></div>
+    </div>
+    <div id="ba-viewport-5" class="overflow-hidden w-full" style="cursor: grab; touch-action: pan-y;">
+      <div id="ba-track-5" class="flex gap-3" style="will-change: transform; user-select: none;">
+        <div class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <img src="images/31.png" alt="לפני / אחרי" class="w-full h-full object-cover" loading="lazy" draggable="false">
+        </div>
+        <div class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <img src="images/32.png" alt="לפני / אחרי" class="w-full h-full object-cover" loading="lazy" draggable="false">
+        </div>
+        <div class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <img src="images/33.png" alt="לפני / אחרי" class="w-full h-full object-cover" loading="lazy" draggable="false">
+        </div>
+        <div class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <img src="images/15.png" alt="לפני / אחרי" class="w-full h-full object-cover" loading="lazy" draggable="false">
+        </div>
+        <div class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <img src="images/30.png" alt="לפני / אחרי" class="w-full h-full object-cover" loading="lazy" draggable="false">
+        </div>
+        <div class="flex-shrink-0 w-[150px] md:w-[200px] aspect-square rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+          <img src="images/22.png" alt="לפני / אחרי" class="w-full h-full object-cover" loading="lazy" draggable="false">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video testimonials carousel -->
+  <section id="video-testimonials" class="block pt-10 pb-6 bg-[#0c0e0f] overflow-hidden">
+    <div class="text-center mb-5">
+      <h2 class="font-headline font-bold text-2xl md:text-3xl text-[#e2edf2] drop-shadow-[0_0_15px_rgba(91,212,255,0.3)]">מה המתאמנים אומרים</h2>
+      <div style="width:60px; height:3px; background:#087fa3; margin:0.5rem auto 0;"></div>
+    </div>
+    <div id="vid-viewport" class="overflow-hidden w-full" style="cursor: grab; touch-action: pan-y;">
+      <div id="vid-track" class="flex gap-3" style="will-change: transform; user-select: none;">
+        <!-- card: thumbnail + play overlay, data-vid = YouTube video ID -->
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="Otxg-I5SqcU">
+          <img src="https://img.youtube.com/vi/Otxg-I5SqcU/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="CkX8nAxSDEE">
+          <img src="https://img.youtube.com/vi/CkX8nAxSDEE/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="4XNrQHNKzhM">
+          <img src="https://img.youtube.com/vi/4XNrQHNKzhM/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="hzul-ZEkO-0">
+          <img src="https://img.youtube.com/vi/hzul-ZEkO-0/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="x8B0nSLXi24">
+          <img src="https://img.youtube.com/vi/x8B0nSLXi24/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="2bVGBNCkGPY">
+          <img src="https://img.youtube.com/vi/2bVGBNCkGPY/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="ZjRkhrUBKP4">
+          <img src="https://img.youtube.com/vi/ZjRkhrUBKP4/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="IOyuWBoZR_o">
+          <img src="https://img.youtube.com/vi/IOyuWBoZR_o/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="xDL9kF2kOMU">
+          <img src="https://img.youtube.com/vi/xDL9kF2kOMU/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="IiXl7vh-NI0">
+          <img src="https://img.youtube.com/vi/IiXl7vh-NI0/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="P6N0Nbhd6yw">
+          <img src="https://img.youtube.com/vi/P6N0Nbhd6yw/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="hDrjmv53bhk">
+          <img src="https://img.youtube.com/vi/hDrjmv53bhk/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="WujQ5rplZyg">
+          <img src="https://img.youtube.com/vi/WujQ5rplZyg/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="vid-card flex-shrink-0 w-[130px] md:w-[170px] rounded-2xl overflow-hidden border border-[#087fa3]/30 shadow-[0_4px_20px_rgba(0,0,0,0.5)] relative" style="aspect-ratio:9/16; cursor:pointer;" data-vid="JQAbu5pwutY">
+          <img src="https://img.youtube.com/vi/JQAbu5pwutY/hqdefault.jpg" alt="המלצת מתאמן" class="w-full h-full object-cover" loading="lazy" draggable="false">
+          <div class="absolute inset-0 flex items-center justify-center" style="background:rgba(0,0,0,0.35);">
+            <div style="width:48px;height:48px;border-radius:50%;background:rgba(10,155,196,0.85);display:flex;align-items:center;justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:white;margin-right:-2px;"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Video modal — opens on thumbnail click -->
+  <div id="vid-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); align-items:center; justify-content:center;">
+    <button onclick="closeVidModal()" style="position:absolute; top:16px; left:16px; background:rgba(255,255,255,0.15); border:none; color:#fff; font-size:28px; width:44px; height:44px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1;">&times;</button>
+    <!-- portrait iframe for Shorts -->
+    <div style="width:min(90vw,360px); aspect-ratio:9/16; border-radius:16px; overflow:hidden;">
+      <iframe id="vid-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Video carousel — infinite scroll + click-to-modal
+    (function () {
+      var viewport = document.getElementById('vid-viewport');
+      var track = document.getElementById('vid-track');
+      if (!viewport || !track) return;
+
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 12;
+      var groupWidth = 0;
+      var x = 0;
+      var vel = -0.5;
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var dragDist = 0;
+      var started = false; // prevents double-loop if measure() fires twice
+
+      function measure() {
+        // if cards have no width yet (images not loaded), retry
+        if (!originals[0].offsetWidth) { setTimeout(measure, 50); return; }
+        if (started) return;
+        started = true;
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        x = -groupWidth * 2;
+        apply();
+        requestAnimationFrame(loop);
+      }
+
+      function apply() {
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          if (Math.abs(vel) < 0.5) vel = vel < 0 ? -0.5 : 0.5;
+          vel *= 0.98;
+          x += vel;
+          apply();
+        }
+        requestAnimationFrame(loop);
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        vel = 0;
+        dragDist = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16;
+        lastPointer = clientX;
+        lastTime = now;
+        dragDist += Math.abs(clientX - startPointer);
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        if (Math.abs(vel) < 0.5) vel = -0.5;
+      }
+
+      viewport.addEventListener('touchstart', function (e) { pointerStart(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      // Click on card — only open modal if it wasn't a drag
+      track.addEventListener('click', function (e) {
+        if (dragDist > 6) return;
+        var card = e.target.closest('.vid-card');
+        if (!card) return;
+        var vid = card.getAttribute('data-vid');
+        if (vid) openVidModal(vid);
+      });
+
+      window.addEventListener('load', measure);
+      setTimeout(measure, 100);
+    })();
+
+    function openVidModal(videoId) {
+      var modal = document.getElementById('vid-modal');
+      var iframe = document.getElementById('vid-iframe');
+      iframe.src = 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
+      modal.style.display = 'flex';
+    }
+
+    function closeVidModal() {
+      var modal = document.getElementById('vid-modal');
+      var iframe = document.getElementById('vid-iframe');
+      iframe.src = '';
+      modal.style.display = 'none';
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('vid-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeVidModal();
+    });
+  </script>
+
+  <section id="audio-testimonials" class="pt-12 pb-0 px-6 md:px-20 bg-[#121415]" dir="rtl">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold font-headline text-center text-[#e2e2e3] drop-shadow-[0_0_15px_rgba(91,212,255,0.3)] mb-2">
+        מה המתאמנים אומרים
+      </h2>
+      <div class="space-y-4">
+
+        <!-- Recording 1 -->
+        <div class="audio-card bg-[#1a1e20] border border-[#3f484d]/40 rounded-2xl px-5 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center gap-4" data-src="audio/testimonial-1.mp3">
+          <span class="audio-time">0:00</span>
+          <div class="waveform" id="waveform-1"></div>
+          <button class="play-btn" onclick="toggleAudio(this)">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <audio src="audio/testimonial-1.mp3" preload="metadata"></audio>
+        </div>
+
+        <!-- Recording 2 -->
+        <div class="audio-card bg-[#1a1e20] border border-[#3f484d]/40 rounded-2xl px-5 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center gap-4" data-src="audio/testimonial-2.mp3">
+          <span class="audio-time">0:00</span>
+          <div class="waveform" id="waveform-2"></div>
+          <button class="play-btn" onclick="toggleAudio(this)">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <audio src="audio/testimonial-2.mp3" preload="metadata"></audio>
+        </div>
+
+        <!-- Recording 3 -->
+        <div class="audio-card bg-[#1a1e20] border border-[#3f484d]/40 rounded-2xl px-5 py-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)] flex items-center gap-4" data-src="audio/testimonial-3.mp3">
+          <span class="audio-time">0:00</span>
+          <div class="waveform" id="waveform-3"></div>
+          <button class="play-btn" onclick="toggleAudio(this)">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <audio src="audio/testimonial-3.mp3" preload="metadata"></audio>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Build waveform bars
+    document.querySelectorAll('.waveform').forEach(function(wf) {
+      var heights = [30,50,70,90,60,80,40,55,75,95,65,45,85,50,70,35,60,80,45,90,55,75,40,65,85,50,70,30,60,80,45,55,75,90,40,65];
+      heights.forEach(function(h) {
+        var bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        bar.style.height = h + '%';
+        wf.appendChild(bar);
+      });
+    });
+
+    function fmtTime(s) {
+      s = Math.floor(s || 0);
+      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
+
+    function toggleAudio(btn) {
+      var card  = btn.closest('.audio-card');
+      var audio = card.querySelector('audio');
+      var timeEl = card.querySelector('.audio-time');
+      var wf    = card.querySelector('.waveform');
+      var bars  = wf.querySelectorAll('.waveform-bar');
+      var isPlaying = card.classList.contains('playing');
+
+      // Pause all others
+      document.querySelectorAll('.audio-card').forEach(function(c) {
+        if (c !== card) {
+          var a = c.querySelector('audio');
+          a.pause();
+          c.classList.remove('playing');
+          c.querySelector('.play-btn svg path').setAttribute('d', 'M8 5v14l11-7z');
+          c.querySelectorAll('.waveform-bar').forEach(function(b){ b.classList.remove('played'); });
+        }
+      });
+
+      if (isPlaying) {
+        audio.pause();
+        card.classList.remove('playing');
+        btn.querySelector('svg path').setAttribute('d', 'M8 5v14l11-7z');
+      } else {
+        audio.play();
+        card.classList.add('playing');
+        btn.querySelector('svg path').setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z');
+      }
+
+      // Update time & waveform progress
+      audio.ontimeupdate = function() {
+        timeEl.textContent = fmtTime(audio.currentTime);
+        var pct = audio.duration ? audio.currentTime / audio.duration : 0;
+        var played = Math.floor(pct * bars.length);
+        bars.forEach(function(b, i) {
+          b.classList.toggle('played', i < played);
+        });
+      };
+
+      audio.onended = function() {
+        card.classList.remove('playing');
+        btn.querySelector('svg path').setAttribute('d', 'M8 5v14l11-7z');
+        timeEl.textContent = '0:00';
+        bars.forEach(function(b){ b.classList.remove('played'); });
+        audio.currentTime = 0;
+      };
+    }
+
+    // Show duration on load
+    document.querySelectorAll('.audio-card audio').forEach(function(audio) {
+      audio.addEventListener('loadedmetadata', function() {
+        audio.closest('.audio-card').querySelector('.audio-time').textContent = fmtTime(audio.duration);
+      });
+    });
+  </script>
+
+  <!-- Thank You Modal -->
+  <div id="thank-you-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden-modal"
+    onclick="closeThankYouModal(event)">
+    <div
+      class="modal-card relative bg-[#1a1c1d] border border-[#087fa3]/40 rounded-3xl p-10 md:p-14 mx-6 max-w-md w-full text-center space-y-4">
+      <!-- Close button -->
+      <button onclick="closeThankYouModal()"
+        class="absolute top-4 left-4 w-8 h-8 flex items-center justify-center text-[#9abaca] hover:text-white transition-colors rounded-full hover:bg-[#252b2e]">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <!-- Message -->
+      <h3 class="text-3xl font-headline text-[#5bd4ff]">תודה!</h3>
+      <div class="space-y-1">
+        <p class="text-[#e2e2e3] text-2xl font-headline leading-snug">
+          אצור איתך קשר בהקדם האפשרי.
+        </p>
+        <p class="text-[#9abaca] text-xl font-headline">
+          מוזמן להמשיך להתעדכן
+        </p>
+      </div>
+      <!-- Instagram button -->
+      <a href="https://www.instagram.com/dar__naor/" target="_blank" rel="noopener noreferrer"
+        class="inline-flex items-center gap-3 bg-[#087fa3] text-white px-8 py-3 rounded-full font-headline font-bold text-base hover:bg-[#0a9bc4] active:scale-95 transition-all duration-300 no-underline">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+        </svg>
+        Instagram
+      </a>
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="w-full flex flex-col items-center py-20 px-8 space-y-3 bg-[#0c0e0f]">
+
+    <div class="pt-8 border-t border-[#3f484d]/20 w-full max-w-4xl text-center">
+      <div class="font-headline text-lg font-bold text-[#e2e2e3]" style="">דר נאור</div>
+
+      <p class="font-label text-[10px] uppercase tracking-[0.2em] text-[#3f484d]" style="">נבנה באהבה- יאיר עפרון </p>
+
+    </div>
+  </footer>
+
+  <script>
+    function openVideoModal() {
+      document.getElementById('video-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal(e) {
+      if (!e || e.target === document.getElementById('video-modal') || e.currentTarget.tagName === 'BUTTON') {
+        const modal = document.getElementById('video-modal');
+        const video = document.getElementById('hero-video');
+        modal.classList.add('hidden');
+        video.pause();
+        document.body.style.overflow = '';
+      }
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const icon = document.getElementById('menu-icon');
+      const isOpen = !menu.classList.contains('translate-x-full');
+      if (isOpen) {
+        menu.classList.add('translate-x-full');
+        icon.textContent = 'menu';
+        document.body.style.overflow = '';
+      } else {
+        menu.classList.remove('translate-x-full');
+        icon.textContent = 'close';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const icon = document.getElementById('menu-icon');
+      menu.classList.add('translate-x-full');
+      icon.textContent = 'menu';
+      document.body.style.overflow = '';
+    }
+
+    // ── Infinite Carousel ──
+    // Simple approach: no clones. We keep an unbounded index and use modulo for dots.
+    // The track is LTR (via dir attr), so standard negative translateX works.
+    let currentIndex = 0;
+    const totalCards = 5;
+    let isAnimating = false;
+
+    function cardWidth() {
+      const el = document.querySelector('#carousel-track > div');
+      if (!el) return 260;
+      const gap = window.innerWidth >= 768 ? 24 : 16;
+      return el.offsetWidth + gap;
+    }
+
+    function visibleCount() {
+      const vp = document.getElementById('carousel-viewport');
+      return vp ? Math.floor(vp.offsetWidth / cardWidth()) || 1 : 1;
+    }
+
+    // We duplicate the cards 3x so we have: [set][set][set]
+    // Always keep the view centered on the middle set
+    function initTrack() {
+      const track = document.getElementById('carousel-track');
+      track.querySelectorAll('.carousel-clone').forEach(c => c.remove());
+      const originals = Array.from(track.querySelectorAll(':scope > div:not(.carousel-clone)'));
+      if (!originals.length) return;
+      // Add 2 copies: one before, one after
+      const before = originals.map(c => { const cl = c.cloneNode(true); cl.classList.add('carousel-clone'); return cl; });
+      const after = originals.map(c => { const cl = c.cloneNode(true); cl.classList.add('carousel-clone'); return cl; });
+      // Prepend before set
+      before.reverse().forEach(cl => track.insertBefore(cl, track.firstChild));
+      // Append after set
+      after.forEach(cl => track.appendChild(cl));
+    }
+
+    function setPos(animate) {
+      const track = document.getElementById('carousel-track');
+      if (!track) return;
+      const cw = cardWidth();
+      // Offset by totalCards (the prepended set)
+      const px = (currentIndex + totalCards) * cw;
+      if (animate) {
+        track.style.transition = 'transform 0.45s ease';
+        track.style.transform = `translateX(${-px}px)`;
+      } else {
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${-px}px)`;
+        // Force browser to apply immediately (2-frame trick)
+        track.offsetHeight;
+      }
+      // Update dots
+      const dotIdx = ((currentIndex % totalCards) + totalCards) % totalCards;
+      document.querySelectorAll('.carousel-dot').forEach((d, i) => {
+        d.style.width = i === dotIdx ? '24px' : '8px';
+        d.classList.toggle('bg-[#087fa3]', i === dotIdx);
+        d.classList.toggle('bg-[#3f484d]', i !== dotIdx);
+      });
+    }
+
+    function slideCarousel(dir) {
+      if (isAnimating) return;
+      isAnimating = true;
+      currentIndex += dir;
+      setPos(true);
+    }
+
+    function onSlideEnd() {
+      isAnimating = false;
+      // Wrap index back to 0..totalCards-1 range (instant jump)
+      if (currentIndex >= totalCards) {
+        currentIndex -= totalCards;
+        setPos(false);
+      } else if (currentIndex < 0) {
+        currentIndex += totalCards;
+        setPos(false);
+      }
+    }
+
+    function goToSlide(i) {
+      if (isAnimating) return;
+      currentIndex = i;
+      setPos(true);
+    }
+
+    // ── Swipe / Drag ──
+    (function () {
+      const track = document.getElementById('carousel-track');
+      if (!track) return;
+      let drag = false, sx = 0, sp = 0, dp = 0;
+      function px(e) { return e.touches ? e.touches[0].clientX : e.pageX; }
+      function start(e) {
+        if (isAnimating) return;
+        drag = true;
+        sx = px(e);
+        sp = -((currentIndex + totalCards) * cardWidth());
+        track.style.transition = 'none';
+        track.style.cursor = 'grabbing';
+      }
+      function move(e) {
+        if (!drag) return;
+        dp = sp + (px(e) - sx);
+        track.style.transform = `translateX(${dp}px)`;
+      }
+      function end() {
+        if (!drag) return;
+        drag = false;
+        track.style.cursor = 'grab';
+        const diff = dp - sp;
+        if (Math.abs(diff) > cardWidth() / 4) {
+          slideCarousel(diff < 0 ? 1 : -1);
+        } else {
+          setPos(true);
+        }
+      }
+      track.addEventListener('mousedown', start);
+      track.addEventListener('mousemove', move);
+      track.addEventListener('mouseup', end);
+      track.addEventListener('mouseleave', end);
+      track.addEventListener('touchstart', start, { passive: true });
+      track.addEventListener('touchmove', move, { passive: true });
+      track.addEventListener('touchend', end);
+      track.addEventListener('dragstart', e => e.preventDefault());
+      track.addEventListener('transitionend', onSlideEnd);
+    })();
+
+    // Init carousel
+    requestAnimationFrame(() => {
+      initTrack();
+      setPos(false);
+    });
+    window.addEventListener('resize', () => { initTrack(); setPos(false); });
+    // ── Thank You Modal ──
+    function openThankYouModal() {
+      const modal = document.getElementById('thank-you-modal');
+      modal.classList.remove('hidden-modal');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeThankYouModal(e) {
+      if (e && e.target !== document.getElementById('thank-you-modal')) return;
+      const modal = document.getElementById('thank-you-modal');
+      modal.classList.add('hidden-modal');
+      document.body.style.overflow = '';
+    }
+
+    // ── Program Dropdown & Selection ──
+    function toggleProgramDropdown() {
+      const menu = document.getElementById('program-dropdown-menu');
+      const chevron = document.getElementById('dropdown-chevron');
+      const isHidden = menu.classList.contains('hidden');
+
+      menu.classList.toggle('hidden');
+      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    function selectProgramOption(index, label, icon) {
+      // Update Button
+      document.getElementById('selected-label').textContent = label;
+      document.getElementById('selected-icon').textContent = icon;
+
+      // Update Active State in options
+      document.querySelectorAll('.program-option').forEach((opt, i) => {
+        if (i === index) {
+          opt.classList.add('text-[#5bd4ff]', 'bg-[#087fa3]/10');
+          opt.classList.remove('text-[#9abaca]');
+        } else {
+          opt.classList.remove('text-[#5bd4ff]', 'bg-[#087fa3]/10');
+          opt.classList.add('text-[#9abaca]');
+        }
+      });
+
+      // Update Panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.toggle('hidden', panel.dataset.tab !== String(index));
+      });
+
+      // Close Dropdown
+      toggleProgramDropdown();
+    }
+
+    // Close dropdown on click outside
+    window.addEventListener('click', (e) => {
+      const selector = document.getElementById('program-selector');
+      const menu = document.getElementById('program-dropdown-menu');
+      if (selector && !selector.contains(e.target) && !menu.classList.contains('hidden')) {
+        toggleProgramDropdown();
+      }
+    });
+
+    // ── FAQ Accordion ──
+    function toggleFaq(btn) {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const icon = item.querySelector('.faq-icon');
+      const isOpen = !answer.classList.contains('hidden');
+      // Close all others
+      document.querySelectorAll('.faq-item').forEach(fi => {
+        fi.querySelector('.faq-answer').classList.add('hidden');
+        fi.querySelector('.faq-icon').textContent = 'add';
+        fi.querySelector('.faq-icon').style.transform = '';
+      });
+      if (!isOpen) {
+        answer.classList.remove('hidden');
+        icon.textContent = 'remove';
+        icon.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    // ── What You Get Carousel ──
+    const howTitles = [
+      'פגישת היכרות',
+      'תוכנית תזונה מלאה',
+      'שגרת אימונים ייחודית',
+      'אימון טכניקה מלא',
+      'זמינות מהירה בוואצפ',
+      'פגישת עדכון בווידאו',
+      'האפליקציה שלי',
+      'חטובים לנצח — הקורס',
+      'מעטפת בונוסים מלאה',
+      'ועוד...',
+    ];
+    const howDescriptions = [
+      'פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו.',
+      'אני לוקח את מה שאתם אוהבים ורגילים, ועושה כמה שפחות שינויים, אבל בדיוק מספיק כדי שתראו תוצאות נדירות.',
+      'תגידו לי מה אתם רוצים לראות במראה, וכמה זמן יש לכם. אני אגרום לזה לקרות במכון.',
+      'ניפגש במכון ונוודא שהטכניקה שלך מושלמת, כדי שהתוצאות יהיו מושלמות. לא פחות.',
+      'אני פה בשבילכם לכל שאלה :)',
+      'אחת לשבועיים נוודא שאתם אכן בפועל מתקדמים, ואם משהו הכי קטן פחות עובד, נסדר אותו כדי שנגיע אל היעד שלנו ביעילות.',
+      'כדי שהכל יהיה מונגש בצורה הכי פשוטה שיש, תוכלו לעקוב אחרי האוכל והאימונים שלכם בצורה הכי קלה שיש, אפילו יש לכם AI שלי לכל שאלה ובעיה.',
+      'הדרך שלי לוודא שאני המאמן האחרון שאי פעם תצטרכו. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית.',
+      'קורס טכניקה, מאגר תוכנית האימון שלי, ספר המתכונים שלי לעצלנים, המדריך למזווה מנצח ועוד המון כלים שיעזרו לכם להצליח.',
+      'יש דברים שאני שומר רק למי שמצטרף. כניסה לתוכנית פותחת עוד שכבה שלמה שאני לא מדבר עליה בפומבי.',
+    ];
+
+    // Infinite snap carousel — clone-based transform loop
+    (function () {
+      var TOTAL = 10; // number of original cards
+      var GAP = 16;   // matches gap-4 (1rem = 16px)
+
+      var outer = document.getElementById('how-outer');
+      var track = document.getElementById('how-track');
+      if (!outer || !track) return;
+
+      // Collect originals before any cloning
+      var originals = Array.from(track.querySelectorAll('.how-card'));
+
+      // Prepend clones (before group) — same order as originals
+      for (var pi = originals.length - 1; pi >= 0; pi--) {
+        track.insertBefore(originals[pi].cloneNode(true), track.firstChild);
+      }
+      // Append clones (after group)
+      for (var ai = 0; ai < originals.length; ai++) {
+        track.appendChild(originals[ai].cloneNode(true));
+      }
+
+      var allCards = Array.from(track.querySelectorAll('.how-card'));
+      // Layout: [0..9]=before-clones, [10..19]=originals, [20..29]=after-clones
+
+      var cardWidth = 0, step = 0, viewW = 0, x = 0;
+      var dragging = false, startPointer = 0, startX = 0, vel = 0, lastPointer = 0, lastTime = 0;
+
+      function measure() {
+        viewW = outer.offsetWidth;
+        cardWidth = allCards[TOTAL] ? allCards[TOTAL].offsetWidth : 0;
+        if (!cardWidth) return;
+        step = cardWidth + GAP;
+        // Center first real card (DOM index TOTAL)
+        x = viewW / 2 - cardWidth / 2 - TOTAL * step;
+        applyTransform(false);
+        markActive(TOTAL);
+      }
+
+      function applyTransform(animate) {
+        track.style.transition = animate ? 'transform 0.35s ease' : 'none';
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function centerDom(domIdx, animate) {
+        x = viewW / 2 - cardWidth / 2 - domIdx * step;
+        applyTransform(animate);
+      }
+
+      function markActive(domIdx) {
+        var realIdx = ((domIdx % TOTAL) + TOTAL) % TOTAL;
+        allCards.forEach(function (card, i) {
+          card.classList.toggle('active', i % TOTAL === realIdx);
+        });
+        var titleEl = document.getElementById('how-title-text');
+        titleEl.textContent = howTitles[realIdx];
+        titleEl.style.animation = 'none'; titleEl.offsetHeight; titleEl.style.animation = '';
+        var textEl = document.getElementById('how-explanation-text');
+        textEl.textContent = howDescriptions[realIdx];
+        textEl.style.animation = 'none'; textEl.offsetHeight; textEl.style.animation = '';
+      }
+
+      function nearestDomIdx() {
+        var centerOffset = viewW / 2 - cardWidth / 2;
+        var idx = Math.round((centerOffset - x) / step);
+        return Math.max(0, Math.min(allCards.length - 1, idx));
+      }
+
+      // After snap, teleport from clone zone to real zone (no visual jump)
+      function normalizePosition(idx) {
+        var realIdx = ((idx % TOTAL) + TOTAL) % TOTAL;
+        var targetDom = TOTAL + realIdx;
+        if (idx !== targetDom) {
+          x = viewW / 2 - cardWidth / 2 - targetDom * step;
+          applyTransform(false);
+        }
+      }
+
+      function snapAndLoop(animate) {
+        var idx = nearestDomIdx();
+        centerDom(idx, animate);
+        markActive(idx);
+        if (animate) {
+          setTimeout(function () { normalizePosition(idx); }, 380);
+        } else {
+          normalizePosition(idx);
+        }
+      }
+
+      function onStart(clientX) {
+        dragging = true; vel = 0;
+        startPointer = clientX; startX = x;
+        lastPointer = clientX; lastTime = Date.now();
+        track.style.transition = 'none';
+        outer.style.cursor = 'grabbing';
+      }
+
+      function onMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        vel = (clientX - lastPointer) / Math.max(now - lastTime, 1) * 16;
+        lastPointer = clientX; lastTime = now;
+        x = startX + (clientX - startPointer);
+        track.style.transform = 'translateX(' + x + 'px)';
+        markActive(nearestDomIdx());
+      }
+
+      function onEnd() {
+        if (!dragging) return;
+        dragging = false;
+        outer.style.cursor = 'grab';
+        x += vel * 2.5; // light momentum before snap
+        snapAndLoop(true);
+      }
+
+      outer.addEventListener('touchstart', function (e) { onStart(e.touches[0].clientX); }, { passive: true });
+      outer.addEventListener('touchmove', function (e) {
+        if (dragging) { e.preventDefault(); onMove(e.touches[0].clientX); }
+      }, { passive: false });
+      outer.addEventListener('touchend', onEnd);
+      outer.addEventListener('mousedown', function (e) { e.preventDefault(); onStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { if (dragging) onMove(e.clientX); });
+      window.addEventListener('mouseup', function () { if (dragging) onEnd(); });
+
+      // Called by onclick attributes on every card (original + clone)
+      window.selectHowItem = function (realIdx) {
+        var domIdx = TOTAL + realIdx;
+        centerDom(domIdx, true);
+        markActive(domIdx);
+      };
+
+      window.addEventListener('load', measure);
+      window.addEventListener('resize', measure);
+      setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- WhatsApp Floating Button -->
+  <a href="https://wa.me/972544960280?text=%D7%94%D7%99%D7%99%20%D7%93%D7%A8%2C%20%D7%90%D7%A0%D7%99%20%D7%A8%D7%95%D7%A6%D7%94%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A4%D7%A8%D7%98%D7%99%D7%9D%20%D7%A2%D7%9C%20%D7%94%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%AA%21"
+    target="_blank" class="whatsapp-float">
+    <span class="font-headline font-bold text-base">אני רוצה להתחיל</span>
+    <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.438h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  </a>
+
+  <script>
+    (function () {
+      var viewport = document.getElementById('ba-viewport');
+      var track = document.getElementById('ba-track');
+      if (!viewport || !track) return;
+
+      // Clone cards 4 more times so we have 5 identical groups
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 16;
+      var groupWidth = 0; // measured after layout
+      var x = 0; // current translateX (negative = moved left)
+      var vel = 0;
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var raf;
+
+      function measure() {
+        // width of one group = 8 cards + 7 gaps
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        // start at the middle group (copy #3)
+        x = -groupWidth * 2;
+        apply();
+      }
+
+      function apply() {
+        // wrap seamlessly
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          vel *= 0.93;          // friction
+          x += vel;
+          apply();
+          if (Math.abs(vel) > 0.2) raf = requestAnimationFrame(loop);
+        }
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        cancelAnimationFrame(raf);
+        vel = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16; // ~px per frame at 60fps
+        lastPointer = clientX;
+        lastTime = now;
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        raf = requestAnimationFrame(loop);
+      }
+
+      // Touch
+      viewport.addEventListener('touchstart', function (e) {
+        pointerStart(e.touches[0].clientX);
+      }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) {
+        pointerMove(e.touches[0].clientX);
+      }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+
+      // Mouse
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      // Init after fonts/images settle
+      window.addEventListener('load', measure);
+      // Fallback
+      setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- Story Before/After Strip scroll logic -->
+  <script>
+    (function () {
+      var viewport = document.getElementById('ba-viewport-2');
+      var track = document.getElementById('ba-track-2');
+      if (!viewport || !track) return;
+
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 16;
+      var groupWidth = 0;
+      var x = 0;
+      var vel = 0;
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var raf;
+
+      function measure() {
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        x = -groupWidth * 2;
+        apply();
+      }
+
+      function apply() {
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          vel *= 0.93;
+          x += vel;
+          apply();
+          if (Math.abs(vel) > 0.2) raf = requestAnimationFrame(loop);
+        }
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        cancelAnimationFrame(raf);
+        vel = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16;
+        lastPointer = clientX;
+        lastTime = now;
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        raf = requestAnimationFrame(loop);
+      }
+
+      viewport.addEventListener('touchstart', function (e) { pointerStart(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      window.addEventListener('load', measure);
+      setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- Why Section Before/After Strip scroll logic -->
+  <script>
+    (function () {
+      var viewport = document.getElementById('ba-viewport-3');
+      var track = document.getElementById('ba-track-3');
+      if (!viewport || !track) return;
+
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 16;
+      var groupWidth = 0;
+      var x = 0;
+      var vel = -0.6;
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var raf;
+
+      function measure() {
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        x = -groupWidth * 2;
+        apply();
+        raf = requestAnimationFrame(loop);
+      }
+
+      function apply() {
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          if (Math.abs(vel) < 0.6) vel = vel < 0 ? -0.6 : 0.6;
+          vel *= 0.98;
+          x += vel;
+          apply();
+        }
+        raf = requestAnimationFrame(loop);
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        vel = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16;
+        lastPointer = clientX;
+        lastTime = now;
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        if (Math.abs(vel) < 0.6) vel = -0.6;
+      }
+
+      viewport.addEventListener('touchstart', function (e) { pointerStart(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      window.addEventListener('load', measure);
+      setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- Why Section (second) Before/After Strip scroll logic -->
+  <script>
+    (function () {
+      var viewport = document.getElementById('ba-viewport-4');
+      var track = document.getElementById('ba-track-4');
+      if (!viewport || !track) return;
+
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 16;
+      var groupWidth = 0;
+      var x = 0;
+      var vel = -0.6;
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var raf;
+
+      function measure() {
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        x = -groupWidth * 2;
+        apply();
+        raf = requestAnimationFrame(loop);
+      }
+
+      function apply() {
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          if (Math.abs(vel) < 0.6) vel = vel < 0 ? -0.6 : 0.6;
+          vel *= 0.98;
+          x += vel;
+          apply();
+        }
+        raf = requestAnimationFrame(loop);
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        vel = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16;
+        lastPointer = clientX;
+        lastTime = now;
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        if (Math.abs(vel) < 0.6) vel = -0.6;
+      }
+
+      viewport.addEventListener('touchstart', function (e) { pointerStart(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      window.addEventListener('load', measure);
+      setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- ba-viewport-5 carousel logic -->
+  <script>
+    (function () {
+      var viewport = document.getElementById('ba-viewport-5');
+      var track = document.getElementById('ba-track-5');
+      if (!viewport || !track) return;
+
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 16;
+      var groupWidth = 0;
+      var x = 0;
+      var vel = -0.6;
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var raf;
+
+      function measure() {
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        x = -groupWidth * 2;
+        apply();
+        raf = requestAnimationFrame(loop);
+      }
+
+      function apply() {
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          if (Math.abs(vel) < 0.6) vel = vel < 0 ? -0.6 : 0.6;
+          vel *= 0.98;
+          x += vel;
+          apply();
+        }
+        raf = requestAnimationFrame(loop);
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        vel = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16;
+        lastPointer = clientX;
+        lastTime = now;
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        if (Math.abs(vel) < 0.6) vel = -0.6;
+      }
+
+      viewport.addEventListener('touchstart', function (e) { pointerStart(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      window.addEventListener('load', measure);
+      setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- Hero Before/After Gallery scroll logic -->
+  <script>
+    (function () {
+      var viewport = document.getElementById('hero-ba-viewport');
+      var track = document.getElementById('hero-ba-track');
+      if (!viewport || !track) return;
+
+      // Clone cards so the strip loops
+      var originals = Array.from(track.children);
+      for (var i = 0; i < 4; i++) {
+        originals.forEach(function (c) { track.appendChild(c.cloneNode(true)); });
+      }
+
+      var GAP = 12;
+      var groupWidth = 0;
+      var x = 0;
+      var vel = -0.6; // auto-scroll speed (negative = left/forward)
+      var dragging = false;
+      var startPointer = 0;
+      var startX = 0;
+      var lastPointer = 0;
+      var lastTime = 0;
+      var raf;
+
+      function measure() {
+        groupWidth = originals.length * (originals[0].offsetWidth + GAP);
+        x = -groupWidth * 2;
+        apply();
+        raf = requestAnimationFrame(loop);
+      }
+
+      function apply() {
+        if (x < -groupWidth * 3) x += groupWidth;
+        if (x > -groupWidth) x -= groupWidth;
+        track.style.transform = 'translateX(' + x + 'px)';
+      }
+
+      function loop() {
+        if (!dragging) {
+          if (Math.abs(vel) < 0.6) vel = vel < 0 ? -0.6 : 0.6; // maintain auto-scroll
+          vel *= 0.98; // light friction after drag
+          x += vel;
+          apply();
+        }
+        raf = requestAnimationFrame(loop);
+      }
+
+      function pointerStart(clientX) {
+        dragging = true;
+        vel = 0;
+        startPointer = clientX;
+        startX = x;
+        lastPointer = clientX;
+        lastTime = Date.now();
+        viewport.style.cursor = 'grabbing';
+      }
+
+      function pointerMove(clientX) {
+        if (!dragging) return;
+        var now = Date.now();
+        var dt = now - lastTime || 1;
+        vel = (clientX - lastPointer) / dt * 16;
+        lastPointer = clientX;
+        lastTime = now;
+        x = startX + (clientX - startPointer);
+        apply();
+      }
+
+      function pointerEnd() {
+        if (!dragging) return;
+        dragging = false;
+        viewport.style.cursor = 'grab';
+        // after release, clamp velocity so auto-scroll resumes
+        if (Math.abs(vel) < 0.6) vel = -0.6;
+      }
+
+      viewport.addEventListener('touchstart', function (e) { pointerStart(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchmove', function (e) { pointerMove(e.touches[0].clientX); }, { passive: true });
+      viewport.addEventListener('touchend', pointerEnd);
+      viewport.addEventListener('mousedown', function (e) { pointerStart(e.clientX); });
+      window.addEventListener('mousemove', function (e) { pointerMove(e.clientX); });
+      window.addEventListener('mouseup', pointerEnd);
+
+      window.addEventListener('load', measure);
+      setTimeout(measure, 100);
+    })();
+  </script>
+</body>
+
+</html>
