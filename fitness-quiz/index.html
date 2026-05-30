@@ -2757,7 +2757,10 @@
 
   // ── SUBMIT ──
   function submitQuiz() {
-    if (!d.pace) return showErr('err-8');
+    if (!d.pace) {
+      showErr('err-8');
+      return;
+    }
     try { sessionStorage.removeItem('qd'); sessionStorage.removeItem('qs'); } catch(e) {}
     hideAll(); showScreen('gen');
 
@@ -3619,19 +3622,24 @@ ${planHtml}
 </html>`;
 
     // קריאה ישירה ל-Resend API מהדפדפן — לא צריך שרת
-    await fetch('https://api.resend.com/emails', {
-      method:  'POST',
-      headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${CFG.resendKey}`
-      },
-      body: JSON.stringify({
-        from:    CFG.resendFrom,
-        to:      userData.email,
-        subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
-        html:    emailBody
-      })
-    });
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${CFG.resendKey}`
+        },
+        body: JSON.stringify({
+          from:    CFG.resendFrom,
+          to:      userData.email,
+          subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
+          html:    emailBody
+        })
+      });
+    } catch(e) {
+      // זה בעיה בשרת או CORS — לא דורך את הקוד, רק log
+      console.warn('Email sending failed:', e.message);
+    }
   }
 
   window.submitQuiz=submitQuiz;
