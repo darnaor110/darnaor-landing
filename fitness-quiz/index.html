@@ -931,8 +931,8 @@
     mailerLiteKey:     'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0IiwianRpIjoiMmEwZDk1MTEwYTJhYTk2NWJhMjg4ZTg5MjBkM2RlZWQxZDJlOGYxMTcwNmJiNGU5MDRjYjdmZWI4MzQ2YzQ3YzhlMWQ0MTZiZTE4Y2I4ZGYiLCJpYXQiOjE3NzkyOTcyMTIuMjAyNzk2LCJuYmYiOjE3NzkyOTcyMTIuMjAyOCwiZXhwIjo0OTM0OTcwODEyLjE5NjI2NSwic3ViIjoiMTQ3NTE4NyIsInNjb3BlcyI6W119.qP1tI0FJpP5RyK6GsObTuCp4pCCEHMf7tm4fPszAbDFAdLdqYpmsd6P-b88zahBYYu-Bq0OFFBRLvczFDjzhKOyfDNjwK1BZUGYqRIFteTsSoU75lwpGuJRY4E5nZSQ5VXNJi615hMam5I0ApIcyBClufXkgge-T31e2eclfp_any82KeoT0oQbgu9ORb0mWewGWI95HQmT-2HflygeLlD_u5Uidp7IBnzgU6Tv51TtcBGim0ul9J5kQ3-T57JSP3THOa6nc7idjXeMHWjRBz25w4H8f4Wyn9DsJfdGBxi4ArNkMY0tjNH2qyKdzmhZt65zNdn0M58nXy0fY3byTE4faoZV579f-ZcqJhi2dptGw1zSvI1dmUI6nSYdb4nWwOvj7eC-SGI1fzXF_ZjJO1ozruQh6rdyg5SJFuOUdIO9dUwckklyESNTOo4v2Qz8R4Pg3vYCFVC5voF8Hg8z7qONEZBvLTcziy7z5gBw_vGXCoA9GMa2zqjfky57jpGxfHMv_F9SMhZyTdkzVp_boILpvm7NKmYM_Tu18kFiDwu7ZAPDjtzw-3G8iyW8k2DDeTxY-p2UMaLl1hy5oWdBvD3fUUpFV-t4GzR3c3v-Zp_AxN0x8CAmAKBznIIzKr7Raht5wIig1W4tCWWffLtEAaFUADkSRB_TwstOJ4vudoH4',
     mailerLiteGroupId: '152578390496380004',
     bookingLink:       'https://calendar.app.google/Sk4xN8TG9xLNCXcp9',
-    // ← תחליף בURL שלך מ-n8n אחרי ההגדרה ב-Railway
-    n8nWebhookUrl:     ''
+    resendKey:         're_ZnZPao29_72jKa2hw74LiaRpYW8z8YVNr',
+    resendFrom:        'Dad Naor <onboarding@resend.dev>'
   };
 
   const d = {
@@ -3618,12 +3618,17 @@ ${planHtml}
 </body>
 </html>`;
 
-    await fetch('/api/send-email', {
+    // קריאה ישירה ל-Resend API מהדפדפן — לא צריך שרת
+    await fetch('https://api.resend.com/emails', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${CFG.resendKey}`
+      },
+      body: JSON.stringify({
+        from:    CFG.resendFrom,
         to:      userData.email,
-        subject: `${name}${isFemale ? ',' : ','} התוכנית האישית שלך מוכנה 💪`,
+        subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
         html:    emailBody
       })
     });
