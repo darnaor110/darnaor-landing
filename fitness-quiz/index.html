@@ -3235,6 +3235,26 @@
         + '</div>'
         + '<div class="plan-divider"></div>';
 
+      // ── הנחיות לבניית התוכנית — מה המתאמן סימן ──
+      const LEVEL_LABELS = ['','חדש','מתחיל','חצי שנה – שנה','שנה +','שנתיים +'];
+      const SPLIT_LABELS = { fullbody:'פול בודי', ab_fb:'A/B/FB', ab4:'A/B (4 ימים)', ab5:'A/B (5 ימים)', ab6:'A/B (6 ימים)', ppl5:'PPL', upper_lower4:'עליון/תחתון ×2', upper_lower5:'עליון/תחתון ×2.5', upper_lower6:'עליון/תחתון ×3' };
+      const tl = userData.trainingLevel || 0;
+      const specificDaysStr = userData.trainingDaysSpecific && userData.trainingDaysSpecific.length > 0
+        ? userData.trainingDaysSpecific.map(d => 'יום ' + d + '׳').join(', ')
+        : (workout.suggestedDays || (userData.trainingDays + ' ימים'));
+      workoutHtml += '<div class="plan-workout-notes" style="margin-bottom:10px">'
+        + '<strong>⚙️ הנחיות שבנו את התוכנית:</strong><br>'
+        + '<span style="display:inline-block;margin-top:6px;line-height:2">'
+        + '📅 ימי אימון: <strong>' + specificDaysStr + '</strong> &nbsp;|&nbsp; '
+        + '⏱ זמן לאימון: <strong>' + (workout.sessionDuration || 60) + ' דקות</strong> &nbsp;|&nbsp; '
+        + '🔗 סופרסטים: <strong>' + (workout.supersets ? 'כן' : 'לא') + '</strong><br>'
+        + '💪 ניסיון שדווח: <strong>' + (LEVEL_LABELS[tl] || 'לא צוין') + '</strong> &nbsp;|&nbsp; '
+        + '📊 רמה שחושבה: <strong>' + (workout.levelName || '') + '</strong> &nbsp;|&nbsp; '
+        + '🏋️ ספליט: <strong>' + (SPLIT_LABELS[workout.split] || workout.split || '') + '</strong>'
+        + '</span>'
+        + '</div>'
+        + '<div class="plan-divider"></div>';
+
       // ── מדריך כללים — מופיע תמיד לפני האימונים ──
       workoutHtml += '<div class="plan-beginner-guide">'
         + '<div class="plan-beginner-guide-title">📋 כללים לאימון — קראו לפני שמתחילים</div>'
@@ -3317,16 +3337,21 @@
       });
 
       // Volume summary table — only for trainingLevel ≥ 4
-      if (userTrainingLevel >= 4) {
+      // נפח שבועי — מוצג תמיד
+      {
         workoutHtml += '<div class="plan-divider"></div>'
           + '<div class="plan-block-title">📊 נפח שבועי לפי שריר</div>'
           + '<table class="plan-vol-table">'
-          + '<thead><tr><th>שריר</th><th>עדיפות</th><th>סטים בשבוע</th></tr></thead>'
+          + '<thead><tr><th>שריר</th><th>עדיפות</th><th>יעד שבועי</th><th>בפועל</th></tr></thead>'
           + '<tbody>';
 
         const volEntries = Object.entries(workout.actualVol || {})
           .filter(function(kv) { return (workout.prio[kv[0]] || 0) > 0; })
           .sort(function(a, b) { return (workout.prio[b[0]] || 0) - (workout.prio[a[0]] || 0); });
+
+        // volume range lookup (copied from engine)
+        const VOL_TABLE = { 5:[[10,12],[14,18],[18,22]], 4:[[8,10],[12,14],[16,18]], 3:[[6,8],[8,12],[12,15]], 2:[[4,6],[6,9],[8,12]], 1:[[2,3],[3,4],[4,6]], 0:[[0,0],[0,0],[0,0]] };
+        const wLevel = workout.level || 0;
 
         volEntries.forEach(function(kv) {
           const mId = kv[0];
@@ -3335,10 +3360,13 @@
           const prioClass = PRIO_CLASS[p] || 'prio-3';
           const prioLbl   = PRIO_LABEL[p] || '';
           const muscleName = MUSCLE_HE[mId] || mId;
+          const [vMin, vMax] = (VOL_TABLE[p] || VOL_TABLE[2])[wLevel] || [0,0];
+          const volColor = vol < vMin ? 'color:#ef4444' : vol > vMax ? 'color:#f59e0b' : 'color:#4ade80';
           workoutHtml += '<tr>'
             + '<td>' + escHtml(muscleName) + '</td>'
             + '<td><span class="plan-prio-dot ' + prioClass + '"></span> ' + prioLbl + '</td>'
-            + '<td>' + vol + '</td>'
+            + '<td style="color:#8aa4af">' + vMin + '–' + vMax + '</td>'
+            + '<td style="font-weight:700;' + volColor + '">' + vol + '</td>'
             + '</tr>';
         });
 
@@ -3776,19 +3804,21 @@ ${planHtml}
     'כבד עוף':           { cal100: 165, prot100: 27, unitDesc: 'יח\'',    unitG: 20  },
   };
 
-  // Hot-meal carb sources — keyed by UI option id, measured in tablespoons
+  // Hot-meal carb sources
+  // tbspG: גרם לכף (כפות מתאימות לדגנים ואורז)
+  // unitG/unitDesc: יחידה (לבטטה/תפו"א שלא נמדדים בכפות)
   const HOT_CARBS = {
-    'sweet_p':   { name:'בטטה מבושלת',        cal100: 90,  prot100: 2, tbspG: 30 },
-    'rice_w':    { name:'אורז לבן מבושל',      cal100: 130, prot100: 3, tbspG: 25 },
-    'potato':    { name:'תפוח אדמה מבושל',     cal100: 80,  prot100: 2, tbspG: 35 },
-    'rice_b':    { name:'אורז מלא מבושל',      cal100: 110, prot100: 3, tbspG: 25 },
-    'pasta_w':   { name:'פסטה מלאה מבושלת',    cal100: 130, prot100: 5, tbspG: 30 },
-    'pasta':     { name:'פסטה לבנה מבושלת',    cal100: 160, prot100: 5, tbspG: 30 },
-    'cous':      { name:'קוסקוס מבושל',        cal100: 112, prot100: 4, tbspG: 25 },
-    'quinoa':    { name:'קינואה מבושלת',       cal100: 120, prot100: 4, tbspG: 25 },
-    'buckwheat': { name:'כוסמת מבושלת',        cal100: 92,  prot100: 3, tbspG: 25 },
-    'lentils':   { name:'עדשים מבושלות',       cal100: 116, prot100: 9, tbspG: 30 },
-    'beans':     { name:'שעועית לבנה מבושלת',  cal100: 127, prot100: 9, tbspG: 30 },
+    'sweet_p':   { name:'בטטה מבושלת',        cal100: 90,  prot100: 2, unitG: 100, unitDesc: 'בטטה בינונית' },
+    'rice_w':    { name:'אורז לבן מבושל',      cal100: 130, prot100: 3, tbspG: 25  },
+    'potato':    { name:'תפוח אדמה מבושל',     cal100: 80,  prot100: 2, unitG: 100, unitDesc: 'תפו"א בינוני' },
+    'rice_b':    { name:'אורז מלא מבושל',      cal100: 110, prot100: 3, tbspG: 25  },
+    'pasta_w':   { name:'פסטה מלאה מבושלת',    cal100: 130, prot100: 5, tbspG: 30  },
+    'pasta':     { name:'פסטה לבנה מבושלת',    cal100: 160, prot100: 5, tbspG: 30  },
+    'cous':      { name:'קוסקוס מבושל',        cal100: 112, prot100: 4, tbspG: 25  },
+    'quinoa':    { name:'קינואה מבושלת',       cal100: 120, prot100: 4, tbspG: 25  },
+    'buckwheat': { name:'כוסמת מבושלת',        cal100: 92,  prot100: 3, unitG: 100, unitDesc: 'כוס' },
+    'lentils':   { name:'עדשים מבושלות',       cal100: 116, prot100: 9, unitG: 100, unitDesc: 'כוס' },
+    'beans':     { name:'שעועית לבנה מבושלת',  cal100: 127, prot100: 9, unitG: 100, unitDesc: 'כוס' },
   };
 
   // prot/100g for sandwich and salad proteins
@@ -3991,9 +4021,18 @@ ${planHtml}
       ? Object.entries(HOT_CARBS).filter(([id]) => selectedCarbIds.includes(id))
       : Object.entries(HOT_CARBS).slice(0, 3);
     const carbParts = carbEntries.map(([id, v]) => {
-      const g    = calToGrams(carbCal, v.cal100);
-      const tbsp = Math.max(0.5, roundHalf(g / v.tbspG));
-      return v.name + '||' + tbsp + ' כפות||' + g + 'ג';
+      const g = calToGrams(carbCal, v.cal100);
+      let qtyStr;
+      if (v.tbspG) {
+        const tbsp = Math.max(0.5, roundHalf(g / v.tbspG));
+        qtyStr = tbsp + ' כפות';
+      } else if (v.unitG && v.unitDesc) {
+        const cnt = Math.max(0.5, roundHalf(g / v.unitG));
+        qtyStr = cnt + ' ' + v.unitDesc;
+      } else {
+        qtyStr = g + 'ג';
+      }
+      return v.name + '||' + qtyStr + '||' + g + 'ג';
     });
     lines.push('פחמימה (' + carbCal + ' קל): ' + carbParts.join(' / '));
 
@@ -4082,7 +4121,24 @@ ${planHtml}
     yogurtLines.forEach(l => lines.push(l));
     if (cerealCal) {
       lines.push('GROUP:תוספת|' + cerealCal);
-      lines.push('דגני בוקר||2 כפות||—');
+      // הצג את הדגנים שנבחרו, עם גרמים
+      const YOGURT_CEREAL_ID_MAP = {
+        'prot_cer':'קורנפלקס חלבון', 'gran_pro':'גרנולה חלבון',
+        'fitness':'קורנפלקס פיטנס', 'classic':'גרנולה קלאסית', 'alufim':'קורנפלקס אלופים'
+      };
+      const YOGURT_CEREAL_CAL100 = {
+        'קורנפלקס חלבון':370, 'גרנולה חלבון':400,
+        'קורנפלקס פיטנס':370, 'גרנולה קלאסית':420, 'קורנפלקס אלופים':380
+      };
+      const selCereals = cerealIds.length > 0
+        ? cerealIds.map(id => YOGURT_CEREAL_ID_MAP[id]).filter(Boolean)
+        : ['קורנפלקס חלבון', 'קורנפלקס פיטנס', 'קורנפלקס אלופים'];
+      const cerealOpts = selCereals.map(n => {
+        const cal100 = YOGURT_CEREAL_CAL100[n] || 380;
+        const g = Math.round(cerealCal / cal100 * 100 / 5) * 5;
+        return n + '||' + g + 'ג||' + g + 'ג';
+      }).join(' / ');
+      lines.push('דגנים: ' + cerealOpts);
     }
     if (frCal > 0) {
       lines.push('GROUP:פרי|' + frCal);
@@ -4090,10 +4146,12 @@ ${planHtml}
       const fruitIds = getComp(meal, 'yogurt', 'fruit') || [];
       const fruitNames = fruitIds.length > 0
         ? fruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['תפוח', 'בננה', 'פירות יער'];
+        : ['תפוח', 'בננה', 'תותים / פירות יער'];
       fruitNames.forEach(fname => {
-        const portion = FRUIT_PORTION[fname] || '1 יחידה';
-        lines.push(fname + '||' + portion + '||—');
+        const frCalPer = FRUIT_CAL[fname] || 80;
+        const frG = Math.round(frCal / frCalPer * 100 / 5) * 5;
+        const portion = FRUIT_PORTION[fname] || (frG + 'ג');
+        lines.push(fname + '||' + portion + '||' + frG + 'ג');
       });
     }
 
@@ -4111,32 +4169,47 @@ ${planHtml}
   // map COMP milk option ids → Hebrew name used in MILK_CAL/MILK_PROT
   const MILK_ID_MAP = { 'm1':'חלב 1%', 'm2':'חלב 2%', 'm3':'חלב 3%', 'soy':'חלב סויה', 'oat':'חלב שיבולת שועל' };
 
+  // מל לקלוריה לכל סוג חלב (מ"ל / קל)
+  const MILK_ML_PER_CAL = {
+    'חלב 1%': 140/49, 'חלב 2%': 140/63, 'חלב 3%': 140/77,
+    'חלב סויה': 140/45, 'חלב שיבולת שועל': 140/56
+  };
+
   function buildCereals(meal, cal) {
     const milkIds   = getComp(meal, 'cereals', 'milk') || [];
     const milkName  = MILK_ID_MAP[milkIds[0]] || DEFAULT_MILK;
-    const milkCal   = MILK_CAL[milkName] || 70;
+    const milkCalPer140 = MILK_CAL[milkName] || 70;
     const milkProt  = MILK_PROT[milkName] || 6;
-    const hasPowder = getComp(meal, 'cereals', 'powder');
+    const hasPowder = (getComp(meal, 'cereals', 'powder') || []).length > 0;
     const powderScoops = hasPowder ? (cal < 400 ? 1 : 2) : 0;
-    const powderCal    = powderScoops * 110; // 110 קל לסקופ
-    const powderProt   = powderScoops * 20;  // 20ג חלבון לסקופ
-    const cerealCal = R50(cal - milkCal - powderCal);
-    const cerealG   = calToGrams(cerealCal, 380); // ~380 קל/100ג גרנולה/קורנפלקס
-    // חלבון מהדגנים: ממוצע בין קורנפלקס חלבון (10ג/100ג) לגרנולה רגילה (5ג/100ג) ≈ 7ג/100ג
-    const cerealProt = Math.round(cerealG * 7 / 100);
-    // בחר דגני בוקר לפי בחירת המשתמש
+    const powderCal    = powderScoops * 110;
+    const powderProt   = powderScoops * 20;
+
+    // חלב — חלק 25% מהתקציב (לפחות 140מ"ל, לכל היותר 500מ"ל)
+    const milkBudget = Math.max(milkCalPer140, Math.min(R50(cal * 0.25), R50(milkCalPer140 * 3.5)));
+    const milkMl = Math.round(milkBudget / milkCalPer140 * 140 / 10) * 10;
+    const milkCalActual = Math.round(milkMl / 140 * milkCalPer140);
+
+    const cerealCal = R50(cal - milkCalActual - powderCal);
+    const CEREAL_CAL100 = {
+      'קורנפלקס חלבון':370, 'פיטנס חלבון':370, 'קורנפלקס אלופים':380, 'שיבולת שועל':360
+    };
     const CEREAL_ID_MAP = {
       'prot':'קורנפלקס חלבון', 'fitness':'פיטנס חלבון', 'alufim':'קורנפלקס אלופים', 'oats':'שיבולת שועל'
     };
     const cerealTypeIds = getComp(meal, 'cereals', 'cereal') || [];
     const cerealNames = cerealTypeIds.length > 0
       ? cerealTypeIds.map(id => CEREAL_ID_MAP[id]).filter(Boolean)
-      : Object.values(CEREAL_ID_MAP).slice(0, 3);
-    const cerealOpts = cerealNames.map(n => n + '||' + cerealG + 'ג||' + cerealG + 'ג').join(' / ');
+      : ['קורנפלקס חלבון', 'קורנפלקס אלופים', 'שיבולת שועל'];
+    const cerealOpts = cerealNames.map(n => {
+      const g = calToGrams(cerealCal, CEREAL_CAL100[n] || 380);
+      return n + '||' + g + 'ג||' + g + 'ג';
+    }).join(' / ');
+    const cerealG = calToGrams(cerealCal, 380);
+    const cerealProt = Math.round(cerealG * 7 / 100);
 
     const lines = [];
-    // כל רכיב בפורמט header נפרד → sub-card נפרד
-    lines.push('חלב (' + milkCal + ' קל): ' + milkName + '||140 מ"ל||—');
+    lines.push('חלב (' + milkCalActual + ' קל): ' + milkName + '||' + milkMl + ' מ"ל||—');
     if (powderCal) lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + powderScoops + ' סקופ||—');
     lines.push('דגנים (' + cerealCal + ' קל): ' + cerealOpts);
     return { lines, prot: milkProt + powderProt + cerealProt };
@@ -4460,20 +4533,23 @@ ${planHtml}
   }
 
   const FRUIT_ID_MAP = {
-    'berries':'פירות יער', 'apple':'תפוח', 'orange':'תפוז',
+    'berries':'תותים / פירות יער', 'apple':'תפוח', 'orange':'תפוז',
     'banana':'בננה', 'grapes':'ענבים', 'melon':'מלון',
     'mango':'מנגו', 'date':'תמר'
   };
 
   function buildFruit(meal, cal) {
     const fruitIds = getComp(meal, 'fruit', 'fruit') || [];
-    // ברירת מחדל: תפוח
     const activeNames = fruitIds.length > 0
       ? fruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-      : Object.values(FRUIT_ID_MAP).slice(0, 3);
+      : ['תפוח', 'בננה', 'תותים / פירות יער'];
     const lines = activeNames.map(name => {
-      const portionDesc = FRUIT_PORTION[name] || '—';
-      return name + '||' + portionDesc + '||—';
+      const calPer = FRUIT_CAL[name] || 80;
+      // כמה גרמים שווה ל cal קלוריות
+      const grams = Math.round(cal / calPer * 100 / 5) * 5;
+      // כמה יחידות (לפירות עם גדלי יחידה ידועים)
+      const portionDesc = FRUIT_PORTION[name] || (grams + 'ג');
+      return name + '||' + portionDesc + '||' + grams + 'ג';
     });
     return { lines, prot: 1 };
   }
@@ -5143,37 +5219,38 @@ ${planHtml}
         .sort((a,b) => a - b);
       const hasSpecific = specificDays.length === days;
 
-      // פונקציה שמחזירה שם יום עם מספר
-      const nm = (i, d) => `יום ${i+1} — ${d.name}`;
+      // שמות ימי השבוע בעברית
+      const HEB_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+      // פונקציה שמחזירה שם יום — לפי יום שבוע אמיתי אם נבחר, אחרת מספר
+      const nm = (i, d, dayIdx) => {
+        if (dayIdx !== undefined && dayIdx >= 0) return `יום ${HEB_DAYS[dayIdx]} — ${d.name}`;
+        return `יום ${i+1} — ${d.name}`;
+      };
 
       if (split === 'fullbody') {
         const t = isMale ? DAYS.fb_male : DAYS.fb_female;
-        return Array(days).fill(null).map((_,i) => ({ ...t, name: nm(i,t) }));
+        return Array(days).fill(null).map((_,i) => ({ ...t, name: nm(i,t, hasSpecific ? specificDays[i] : undefined) }));
       }
 
       if (split === 'ab_fb') {
-        // 3 ימים: A, B, FB — סדר לפי ימי השבוע שנבחרו
         const seq = [DAYS.push_legs, DAYS.pull_hinge, isMale ? DAYS.fb_male : DAYS.fb_female];
         if (hasSpecific) {
-          // מיין לפי יום בשבוע: המוקדם ביותר בשבוע קודם
           const pairs = specificDays.map((d,i) => [d, seq[i % seq.length]]);
           pairs.sort((a,b)=>a[0]-b[0]);
-          return pairs.map(([,t],i) => ({ ...t, name: nm(i,t) }));
+          return pairs.map(([dayI,t],i) => ({ ...t, name: nm(i,t,dayI) }));
         }
         return seq.map((t,i) => ({ ...t, name: nm(i,t) }));
       }
 
       if (split === 'ab4' || split === 'ab5' || split === 'ab6') {
-        // A/B לסירוגין
         const count = { ab4:4, ab5:5, ab6:6 }[split];
         const seq = Array(count).fill(null).map((_,i) => i%2===0 ? DAYS.push_legs : DAYS.pull_hinge);
         if (hasSpecific) {
           const pairs = specificDays.map((d,i) => [d, seq[i]]);
           pairs.sort((a,b)=>a[0]-b[0]);
-          // reassign A/B by sorted order
-          return pairs.map(([,_],i) => {
+          return pairs.map(([dayI,_],i) => {
             const t = i%2===0 ? DAYS.push_legs : DAYS.pull_hinge;
-            return { ...t, name: nm(i,t) };
+            return { ...t, name: nm(i,t,dayI) };
           });
         }
         return seq.map((t,i) => ({ ...t, name: nm(i,t) }));
@@ -5181,22 +5258,22 @@ ${planHtml}
 
       if (split === 'ppl5') {
         const seq = [DAYS.ppl_push, DAYS.ppl_pull, DAYS.ppl_legs, DAYS.ppl_push, DAYS.ppl_pull];
-        return seq.map((t,i) => ({ ...t, name: nm(i,t) }));
+        return seq.map((t,i) => ({ ...t, name: nm(i,t, hasSpecific ? specificDays[i] : undefined) }));
       }
 
       if (split === 'upper_lower4') {
         const seq = [DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f];
-        return seq.map((t,i) => ({ ...t, name: nm(i,t) }));
+        return seq.map((t,i) => ({ ...t, name: nm(i,t, hasSpecific ? specificDays[i] : undefined) }));
       }
 
       if (split === 'upper_lower5') {
         const seq = [DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f, DAYS.upper_f];
-        return seq.map((t,i) => ({ ...t, name: nm(i,t) }));
+        return seq.map((t,i) => ({ ...t, name: nm(i,t, hasSpecific ? specificDays[i] : undefined) }));
       }
 
       if (split === 'upper_lower6') {
         const seq = [DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f];
-        return seq.map((t,i) => ({ ...t, name: nm(i,t) }));
+        return seq.map((t,i) => ({ ...t, name: nm(i,t, hasSpecific ? specificDays[i] : undefined) }));
       }
 
       // fallback
