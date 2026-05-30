@@ -5927,8 +5927,14 @@ ${planHtml}
   }
 
   // init
-  updateProgress();
-  restoreState();
+  console.log('Quiz initializing...');
+  try {
+    updateProgress();
+    restoreState();
+    console.log('Quiz initialized successfully');
+  } catch(e) {
+    console.error('Quiz init error:', e);
+  }
   // Auto-save every second so mid-screen changes survive a Live Server reload
   setInterval(() => {
     try { sessionStorage.setItem('qd', JSON.stringify(d)); } catch(e) {}
