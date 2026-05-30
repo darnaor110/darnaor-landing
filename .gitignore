@@ -1,0 +1,35 @@
+# Backups and temporary files
+.backups/
+*.bak
+*.tmp
+
+# Config and IDE
+.vscode/
+.claude.json
+.claudeignore
+.playwright-mcp/
+
+# Old/deprecated projects (not active)
+landingpage/
+crm/
+recipe-cards/
+tools/
+api/
+
+# Old files at root
+index\ \(2\).html
+*.png
+
+# Documentation (keep the important ones)
+!CLAUDE.md
+!MEMORY.md
+!README.md
+!AVA_*.md
+!SKILL.md
+
+# Root-level package.json (belongs in individual projects, not root)
+package.json
+
+# Node modules
+node_modules/
+
