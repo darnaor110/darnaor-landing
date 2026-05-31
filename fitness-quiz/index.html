@@ -3345,8 +3345,9 @@
           + '<thead><tr><th>שריר</th><th>עדיפות</th><th>יעד שבועי</th><th>בפועל</th></tr></thead>'
           + '<tbody>';
 
-        const volEntries = Object.entries(workout.actualVol || {})
-          .filter(function(kv) { return (workout.prio[kv[0]] || 0) > 0; })
+        // כל השרירים — כולל כאלו שלא קיבלו נפח בפועל
+        const ALL_MUSCLES_ORDER = ['chest','back','shoulders','tricep','bicep','quad','hamstring','glute','calves','abs'];
+        const volEntries = ALL_MUSCLES_ORDER.map(mId => [mId, workout.actualVol?.[mId] || 0])
           .sort(function(a, b) { return (workout.prio[b[0]] || 0) - (workout.prio[a[0]] || 0); });
 
         // volume range lookup (copied from engine)
@@ -3960,12 +3961,15 @@ ${planHtml}
     const name = (id && BREAD_ID_MAP[id]) || DEFAULT_BREAD;
     return { name, cal: BREAD_CAL[name] || BREAD_CAL[DEFAULT_BREAD], unit: BREAD_UNIT[name] || 'פרוסות' };
   }
+  // ברירות מחדל: 3 הלחמים הטובים ביותר
+  const DEFAULT_BREADS = ['לחם קל', 'פיתה 99', 'לחם מלא'];
   function pickAllBreads(meal, type) {
-    // מחזיר כל הלחמים שנבחרו כמערך, או ברירת מחדל
     const ids = getComp(meal, type, 'bread') || [];
-    return ids.length > 0
-      ? ids.map(id => { const n = BREAD_ID_MAP[id] || DEFAULT_BREAD; return { name:n, cal:BREAD_CAL[n]||65, unit:BREAD_UNIT[n]||'פרוסות' }; })
-      : [pickBread(meal, type)];
+    if (ids.length > 0) {
+      return ids.map(id => { const n = BREAD_ID_MAP[id] || DEFAULT_BREAD; return { name:n, cal:BREAD_CAL[n]||65, unit:BREAD_UNIT[n]||'פרוסות' }; });
+    }
+    // ברירת מחדל: 3 לחמים
+    return DEFAULT_BREADS.map(n => ({ name:n, cal:BREAD_CAL[n]||65, unit:BREAD_UNIT[n]||'פרוסות' }));
   }
 
   // Convert calories + cal/100g to grams (rounded to 5g)
@@ -4138,7 +4142,8 @@ ${planHtml}
         const g = Math.round(cerealCal / cal100 * 100 / 5) * 5;
         return n + '||' + g + 'ג||' + g + 'ג';
       }).join(' / ');
-      lines.push('דגנים: ' + cerealOpts);
+      // חייב להשתמש בפורמט header עם (קל) כדי שכל אופציה תופיע בשורה נפרדת
+      lines.push('תוספת (' + cerealCal + ' קל): ' + cerealOpts);
     }
     if (frCal > 0) {
       lines.push('GROUP:פרי|' + frCal);
@@ -4222,17 +4227,18 @@ ${planHtml}
 
   function buildToast(meal, cal) {
     const toastSauceIds = getComp(meal, 'toast', 'sauce') || [];
-    const wantSauce  = toastSauceIds.length > 0;
+    // רוטב תמיד מופיע — עם הבחירות שנבחרו או ברירות מחדל
+    const activeSauceIds = toastSauceIds.length > 0 ? toastSauceIds : ['tomato', 'chili', 'mustard'];
     const toastExtras = getComp(meal, 'toast', 'extras') || [];
     const vegExtrasId = Array.isArray(toastExtras) ? toastExtras[0] : null;
     const vegSize   = vegExtrasId === 'large' ? '6 ירקות' : toastExtras.length > 0 ? '3 ירקות' : null;
     const vegCal    = vegSize ? 50 : 0;
-    const sauceCap   = wantSauce ? 50 : 0;
+    const sauceCap   = 50; // תמיד 50 קל לרוטב
 
     // בחר גבינה לפי בחירת המשתמש — ראשונה שנבחרה, או ברירת מחדל ch9
     const cheeseIds  = getComp(meal, 'toast', 'cheese') || [];
-    // הצג כל הגבינות שנבחרו כחלופות, או ברירת מחדל
-    const activeCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9'];
+    // הצג כל הגבינות שנבחרו כחלופות, או 3 ברירות מחדל
+    const activeCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9', 'tsfarit', 'hemed'];
 
     const avgCheeseCal = Math.round(
       activeCheeseIds.reduce((s, id) => s + (TOAST_CHEESE[id]?.cal || 45), 0) / activeCheeseIds.length
@@ -4269,10 +4275,8 @@ ${planHtml}
 
     if (vegSize)       lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + '||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
     if (sauceCal > 0) {
-      const toastSauceNames = toastSauceIds.map(id => TOAST_SAUCE_ID_MAP[id]).filter(Boolean);
-      const toastSauceOpts = toastSauceNames.length > 0
-        ? toastSauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ')
-        : 'רוטב||' + sauceSpoons(sauceCal) + '||—';
+      const toastSauceNames = activeSauceIds.map(id => TOAST_SAUCE_ID_MAP[id]).filter(Boolean);
+      const toastSauceOpts = toastSauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ');
       lines.push('רוטב (' + sauceCal + ' קל): ' + toastSauceOpts);
     }
 
@@ -4375,7 +4379,8 @@ ${planHtml}
 
   function buildSandwich(meal, cal) {
     const sauceIds  = getComp(meal, 'sandwich', 'sauce') || [];
-    const sauceCal  = sauceIds.length > 0 ? 50 : 0;
+    const activeSandwichSauceIds = sauceIds.length > 0 ? sauceIds : ['tomato', 'chili', 'mustard'];
+    const sauceCal  = 50; // תמיד 50 קל לרוטב
     const vegExtras = getComp(meal, 'sandwich', 'extras') || getComp(meal, 'sandwich', 'veg') || [];
     const vegExtraId = Array.isArray(vegExtras) ? vegExtras[0] : null;
     const vegSize   = vegExtraId === 'large' ? '6 ירקות' : vegExtras.length > 0 ? '3 ירקות' : null;
@@ -4428,10 +4433,8 @@ ${planHtml}
     lines.push('חלבון (' + protCal + ' קל): ' + protSandLines.join(' / '));
     if (vegSize)   lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + '||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
     if (sauceCal) {
-      const sauceNames = sauceIds.map(id => SANDWICH_SAUCE_ID_MAP[id]).filter(Boolean);
-      const sauceOpts = sauceNames.length > 0
-        ? sauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ')
-        : 'רוטב||' + sauceSpoons(sauceCal) + '||—';
+      const sauceNames = activeSandwichSauceIds.map(id => SANDWICH_SAUCE_ID_MAP[id]).filter(Boolean);
+      const sauceOpts = sauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ');
       lines.push('רוטב (' + sauceCal + ' קל): ' + sauceOpts);
     }
 
