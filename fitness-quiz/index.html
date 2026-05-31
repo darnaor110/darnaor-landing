@@ -4344,22 +4344,32 @@ ${planHtml}
   function buildShake(meal, cal) {
     const milkIds  = getComp(meal, 'shake', 'milk') || [];
     const milkName = MILK_ID_MAP[milkIds[0]] || DEFAULT_MILK;
-    const milkCal  = MILK_CAL[milkName] || 70;
+    const milkCalPer140 = MILK_CAL[milkName] || 70;
     const milkProt = MILK_PROT[milkName] || 5;
     const scoops    = cal >= 450 ? 2 : 1;
-    const powderCal  = scoops * 110; // 110 קל לסקופ
+    const powderCal  = scoops * 110;
     const powderProt = scoops * 20;
-    const extraCal  = R50(cal - milkCal - powderCal);
+
+    // חלב — 20% מהתקציב (לפחות 140מ"ל, לכל היותר 300מ"ל)
+    const milkBudget = Math.max(milkCalPer140, Math.min(R50(cal * 0.20), R50(milkCalPer140 * 2)));
+    const milkMl = Math.round(milkBudget / milkCalPer140 * 140 / 10) * 10;
+    const milkCalActual = Math.round(milkMl / 140 * milkCalPer140);
+
+    const extraCal = Math.max(0, R50(cal - milkCalActual - powderCal));
     const lines = [];
-    // כל רכיב בפורמט header נפרד → sub-card נפרד
-    lines.push('חלב (' + milkCal + ' קל): ' + milkName + '||140 מ"ל||—');
+    lines.push('חלב (' + milkCalActual + ' קל): ' + milkName + '||' + milkMl + ' מ"ל||—');
     lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + scoops + ' סקופ||—');
     if (extraCal > 0) {
       const shakeFruitIds = getComp(meal, 'shake', 'fruit') || [];
       const shakeFruitNames = shakeFruitIds.length > 0
         ? shakeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['בננה', 'פירות יער'];
-      const fruitOpts = shakeFruitNames.map(fn => fn + '||—||—').join(' / ');
+        : ['בננה', 'תותים / פירות יער']; // מפתח נכון
+      const fruitOpts = shakeFruitNames.map(fn => {
+        const calPer = FRUIT_CAL[fn] || 80;
+        const g = Math.round(extraCal / calPer * 100 / 5) * 5;
+        const portion = FRUIT_PORTION[fn] || (g + 'ג');
+        return fn + '||' + portion + '||' + g + 'ג';
+      }).join(' / ');
       lines.push('פרי (' + extraCal + ' קל): ' + fruitOpts);
     }
     return { lines, prot: powderProt + milkProt };
@@ -4406,10 +4416,13 @@ ${planHtml}
       return b.name + '||' + bU + ' ' + b.unit + '||—';
     });
     lines.push('לחם (' + breadCalBudget + ' קל): ' + breadSandLines.join(' / '));
-    // unit gram sizes for count calculation
+    // unit gram sizes + max units per protein
     const SANDWICH_UNIT_G = {
       'חזה עוף פרוס':55, 'פסטרמה':20, 'טונה במים':100, 'טונה בשמן':100,
       'גבינה צהובה 9%':25, 'קוטג׳ 5%':125, 'ביצה':60
+    };
+    const SANDWICH_MAX_UNITS = {
+      'פסטרמה':6, 'טונה במים':2, 'טונה בשמן':1, 'גבינה צהובה 9%':4
     };
     const SANDWICH_UNIT_NAME = {
       'חזה עוף פרוס':'חתיכה', 'פסטרמה':'פרוסה', 'טונה במים':'קופסה',
@@ -4422,7 +4435,9 @@ ${planHtml}
       const unitNm     = SANDWICH_UNIT_NAME[name];
       var qtyStr;
       if (unitG && unitNm) {
-        const cnt = Math.max(1, Math.round(protG / unitG));
+        const rawCnt = Math.max(1, Math.round(protG / unitG));
+        const maxU = SANDWICH_MAX_UNITS[name] || 99;
+        const cnt = Math.min(rawCnt, maxU);
         qtyStr = cnt + ' ' + unitNm + ' (~' + protG + 'ג)';
       } else {
         const unitDesc = SANDWICH_PROTEIN_UNIT[name] || '';
@@ -4480,7 +4495,8 @@ ${planHtml}
     const dressingCal = dressingIds.length > 0 ? 50 : 0;
     const cheeseIds   = getComp(meal, 'salad', 'cheese') || [];
     const cheeseCal   = cheeseIds.length > 0 ? 50 : 0;
-    const protCal     = R50(cal - vegCal - dressingCal - cheeseCal);
+    // הגבל חלבון ל-65% מהארוחה — שאר הקלוריות לירקות, רוטב, גבינה
+    const protCal = Math.min(R50(cal - vegCal - dressingCal - cheeseCal), R50(cal * 0.65));
 
     const protIds = getComp(meal, 'salad', 'protein') || [];
     const activeProtNames = protIds.length > 0
