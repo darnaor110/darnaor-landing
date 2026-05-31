@@ -3756,6 +3756,7 @@ ${planHtml}
     'בננה':90,               // יחידה ~100ג (90 קל/100ג)
     'תפוז':80,               // יחידה ~100ג (80 קל/100ג)
     'תותים / פירות יער':40, // קערית ~100ג / כ-10 תותים (40 קל/100ג, תות אחד ~10ג)
+    'פירות יער':40,          // alias ללא slash — לשייק ויוגורט
     'ענבים':70,              // כ-15 ענבים ~100ג (70 קל/100ג)
     'אבטיח':30,              // פרוסה גדולה ~200ג (15 קל/100ג)
     'מלון':35,               // שמינית מלון ~150ג (23 קל/100ג)
@@ -3768,6 +3769,7 @@ ${planHtml}
     'בננה':'בננה בינונית (~100ג) — או חצי בננה גדולה',
     'תפוז':'תפוז אחד (~100ג)',
     'תותים / פירות יער':'~10 תותים (~100ג, תות בודד ~10ג)',
+    'פירות יער':'~10 תותים (~100ג, תות בודד ~10ג)',
     'ענבים':'~15 ענבים (~100ג)',
     'אבטיח':'פרוסה גדולה (~200ג)',
     'מלון':'שמינית מלון (~150ג)',
@@ -4151,7 +4153,7 @@ ${planHtml}
       const fruitIds = getComp(meal, 'yogurt', 'fruit') || [];
       const fruitNames = fruitIds.length > 0
         ? fruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['תפוח', 'בננה', 'תותים / פירות יער'];
+        : ['תפוח', 'בננה', 'פירות יער'];
       fruitNames.forEach(fname => {
         const frCalPer = FRUIT_CAL[fname] || 80;
         const frG = Math.round(frCal / frCalPer * 100 / 5) * 5;
@@ -4363,7 +4365,7 @@ ${planHtml}
       const shakeFruitIds = getComp(meal, 'shake', 'fruit') || [];
       const shakeFruitNames = shakeFruitIds.length > 0
         ? shakeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['בננה', 'תותים / פירות יער']; // מפתח נכון
+        : ['בננה', 'פירות יער']; // ברירת מחדל לשייק
       const fruitOpts = shakeFruitNames.map(fn => {
         const calPer = FRUIT_CAL[fn] || 80;
         const g = Math.round(extraCal / calPer * 100 / 5) * 5;
@@ -4561,7 +4563,7 @@ ${planHtml}
     const fruitIds = getComp(meal, 'fruit', 'fruit') || [];
     const activeNames = fruitIds.length > 0
       ? fruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-      : ['תפוח', 'בננה', 'תותים / פירות יער'];
+      : ['תפוח', 'בננה', 'פירות יער'];
     const lines = activeNames.map(name => {
       const calPer = FRUIT_CAL[name] || 80;
       // כמה גרמים שווה ל cal קלוריות
