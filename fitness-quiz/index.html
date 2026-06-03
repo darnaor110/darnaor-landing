@@ -1830,7 +1830,7 @@
     // ── Show both photos immediately with default values ──
     setPhoto('photo-cur',  g, d.currentBF, bfLevels, d.currentMuscleLevel);
     if (isBulk) {
-      document.getElementById('photo-goal').src = bodyImg(g, d.targetBF, sliderToMuscleLevel(+slGoalMBulk.value, bulkGoalLabels));
+      document.getElementById('photo-goal').src = bodyImg(g, d.targetBF, 0); // new images only have level 0
     } else {
       setPhoto('photo-goal', g, d.targetBF, bfLevels, d.targetMuscleLevel);
     }
@@ -1861,14 +1861,15 @@
       d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulk.value, bulkGoalLabels);
       document.getElementById('badge-goal-muscle-bulk').textContent = bulkGoalLabels[+slGoalMBulk.value];
       // photo uses fixed low BF + selected muscle level
-      document.getElementById('photo-goal').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
+      document.getElementById('photo-goal').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, 0); // new images only have level 0
     };
   }
 
   // Helper: set a photo's src based on fat% and muscle level
+  // Note: new images only have muscle level 0 (no variations), so always use 0
   function setPhoto(imgId, g, fat, bfLevels, muscleLevel) {
-    if (fat === null || muscleLevel === null) return;
-    document.getElementById(imgId).src = bodyImg(g, clampFat(fat, bfLevels), muscleLevel);
+    if (fat === null) return;
+    document.getElementById(imgId).src = bodyImg(g, clampFat(fat, bfLevels), 0);
   }
 
   // ── RENDER MEAL LIST ──
