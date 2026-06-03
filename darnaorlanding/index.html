@@ -1425,11 +1425,18 @@
           <span class="material-symbols-outlined">auto_awesome</span>
           <span class="how-card-num">10</span>
         </div>
+        <div class="how-card" data-how="10" onclick="selectHowItem(10)">
+          <span class="material-symbols-outlined" style="color: #d4af37;">percent</span>
+          <span class="how-card-num">11</span>
+        </div>
       </div>
     </div>
 
     <!-- Active item display -->
     <div class="max-w-2xl mx-auto px-6 mt-8">
+      <div id="how-price-box" class="text-center mb-3" style="display:none;">
+        <p class="text-sm font-bold text-[#d4af37]" id="how-price-text"></p>
+      </div>
       <h3 id="how-title-text" class="text-center text-2xl md:text-3xl font-bold font-headline text-[#5bd4ff] mb-5">פגישת היכרות</h3>
       <div class="how-explanation-box" id="how-explanation">
         <p id="how-explanation-text">פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו.</p>
@@ -2361,33 +2368,49 @@
 
     // ── What You Get Carousel ──
     const howTitles = [
-      'פגישת היכרות',
+      'פגישת אבחון',
       'תוכנית תזונה מלאה',
       'שגרת אימונים ייחודית',
       'אימון טכניקה מלא',
-      'זמינות מהירה בוואצפ',
+      'ליווי חודשי יומיומי',
       'פגישת עדכון בווידאו',
       'האפליקציה שלי',
       'חטובים לנצח — הקורס',
       'מעטפת בונוסים מלאה',
       'ועוד...',
+      'הערך הכולל',
     ];
     const howDescriptions = [
-      'פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו.',
+      'לאחר שעה וחצי של שיחה כבר יהיה לכם תוכנית אימונים ותפריט מדויקים עבורכם.',
       'אני לוקח את מה שאתם אוהבים ורגילים, ועושה כמה שפחות שינויים, אבל בדיוק מספיק כדי שתראו תוצאות נדירות.',
       'תגידו לי מה אתם רוצים לראות במראה, וכמה זמן יש לכם. אני אגרום לזה לקרות במכון.',
-      'ניפגש במכון ונוודא שהטכניקה שלך מושלמת, כדי שהתוצאות יהיו מושלמות. לא פחות.',
-      'אני פה בשבילכם לכל שאלה :)',
+      'אימון טכניקה מלא כדי שהטכניקה שלך תהיה מושלמת, וגם התוצאות יהיו מושלמות.',
+      'אני פה בשבילכם לכל שאלה, ואני מנטר את ההתקדמות שלכם ודוחף אתכם לעשות כל מה שצריך כדי להצליח. אצלי זה אישי.',
       'אחת לשבועיים נוודא שאתם אכן בפועל מתקדמים, ואם משהו הכי קטן פחות עובד, נסדר אותו כדי שנגיע אל היעד שלנו ביעילות.',
-      'כדי שהכל יהיה מונגש בצורה הכי פשוטה שיש, תוכלו לעקוב אחרי האוכל והאימונים שלכם בצורה הכי קלה שיש, אפילו יש לכם AI שלי לכל שאלה ובעיה.',
-      'הדרך שלי לוודא שאני המאמן האחרון שאי פעם תצטרכו. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית.',
+      'טובה יותר מכל אפליקציה פרימיום שתמצאו בשוק. עקוב אחרי האוכל והאימונים שלך בצורה הכי קלה שיש.',
+      'מקיף, מעמיק פרקטי ומהיר יותר מקורס מאמנים שעולה 10,000 שח. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית.',
       'קורס טכניקה, מאגר תוכנית האימון שלי, ספר המתכונים שלי לעצלנים, המדריך למזווה מנצח ועוד המון כלים שיעזרו לכם להצליח.',
+      'כמובן שזה לא הכל, יש דברים נוספים שאני שומר כהפתעה למתאמנים שלי. מחכה לכם בשיחת ההתאמה.',
       'כמובן שזה השווי של חלק מהתוכנית בנפרד, אך ביחד השווי שלה הוא המשתלם ביותר שתמצאו, ואם דאגתם — אני מבטיח שהוא נגיש לכל מי שהגוף שלו חשוב עבורו',
+    ];
+
+    const howPrices = [
+      '1,200 ₪',
+      '',
+      '',
+      '350 ₪',
+      '',
+      '',
+      '59 ₪/חודש',
+      '1,950 ₪',
+      '',
+      '',
+      '',
     ];
 
     // Infinite snap carousel — clone-based transform loop
     (function () {
-      var TOTAL = 10; // number of original cards
+      var TOTAL = 11; // number of original cards
       var GAP = 16;   // matches gap-4 (1rem = 16px)
 
       var outer = document.getElementById('how-outer');
@@ -2444,6 +2467,14 @@
         var textEl = document.getElementById('how-explanation-text');
         textEl.textContent = howDescriptions[realIdx];
         textEl.style.animation = 'none'; textEl.offsetHeight; textEl.style.animation = '';
+        var priceBox = document.getElementById('how-price-box');
+        var priceEl = document.getElementById('how-price-text');
+        if (howPrices[realIdx] && howPrices[realIdx].trim()) {
+          priceEl.textContent = 'בשווי: ' + howPrices[realIdx];
+          priceBox.style.display = 'block';
+        } else {
+          priceBox.style.display = 'none';
+        }
       }
 
       function nearestDomIdx() {
