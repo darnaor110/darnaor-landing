@@ -3118,6 +3118,21 @@
     })();
   </script>
 
+  <!-- Video Click Handler -->
+  <script>
+    (function() {
+      document.querySelectorAll('.vid-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var vidId = this.getAttribute('data-vid');
+          if (vidId) {
+            window.open('https://www.youtube.com/watch?v=' + vidId, '_blank');
+          }
+        });
+      });
+    })();
+  </script>
+
   <!-- Negishut Accessibility Widget -->
   <script src="https://negishot.co.il/cdn/widget.php?code=NGS_EE81CDACE214"></script>
 </body>
