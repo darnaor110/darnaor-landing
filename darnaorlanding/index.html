@@ -4,6 +4,37 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <!-- Open Graph / Meta Tags -->
+  <meta property="og:title" content="דר נאור - חטובים לנצח">
+  <meta property="og:description" content="איך עזרתי ל-280+ מתאמנים להיפטר מהבטן התחתונה, לבנות גוף חטוב, וללמוד להצליח לבד">
+  <meta property="og:image" content="images/logo FitForever.svg">
+  <meta property="og:url" content="https://darnaor.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="images/LOGOtransparent.svg?v=2">
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', ''); // Add your Pixel ID here
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=PIXEL_ID&ev=PageView&noscript=1" /></noscript>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W0DP7RG7V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5W0DP7RG7V');
+  </script>
   <link
     href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&amp;family=Inter:wght@400;500;700&amp;display=swap"
     rel="stylesheet">
@@ -419,7 +450,7 @@
     .how-grid-label {
       font-family: 'Assistant', sans-serif;
       font-weight: 700;
-      font-size: 4rem;
+      font-size: clamp(0.9rem, 2.5vw, 1.5rem);
       color: #8aa4af;
       text-align: center;
       line-height: 1.2;
@@ -596,25 +627,25 @@
         class="text-[1.55rem] font-black leading-none tracking-tighter text-[#e2e2e3] uppercase font-headline drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]">
         דר נאור -<span class="text-[#087fa3] ms-1.5"> חטובים לנצח</span></div>
     </div>
-    <div class="hidden lg:flex items-center gap-2 xl:gap-4">
+    <div id="nav-links" class="hidden lg:flex items-center gap-2 xl:gap-4">
       <a href="#hero"
-        class="text-[#79d1f9] border-b-2 border-[#087fa3] pb-1 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold">ראשי</a>
+        class="nav-link active text-[#79d1f9] border-b-2 border-[#087fa3] pb-1 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold transition-all duration-300">ראשי</a>
       <a href="#story-intro"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">נעים להכיר</a>
-      <a href="#transformations"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">המלצות</a>
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">נעים להכיר</a>
+      <a href="#video-testimonials"
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">המלצות</a>
       <a href="#not-your-fault"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">
         השיטה</a>
       <a href="#how-it-works"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">איך עובד התהליך</a>
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">איך עובד התהליך</a>
       <a href="#buttons"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">מה מקבלים</a>
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">מה מקבלים</a>
       <a href="#faq"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">שאלות ותשובות  </a>
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">שאלות ותשובות  </a>
     <a href="#contact"
-        class="text-[#e2e2e3] hover:text-[#79d1f9] transition-colors font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">צור קשר   </a>
-  
+        class="nav-link text-[#e2e2e3] hover:text-[#79d1f9] transition-all duration-300 font-headline text-[15px] tracking-widest cursor-pointer no-underline font-bold whitespace-nowrap">צור קשר   </a>
+
     </div>
     <div class="flex items-center">
       <a href="#contact"
@@ -721,23 +752,26 @@
       </div>
     </div>
 
-    <!-- Video Player -->
-    <div
-      class="video-showcase-container w-full max-w-[480px] md:max-w-[480px] aspect-[16/9] relative cursor-pointer group"
-      onclick="document.getElementById('video-modal').classList.remove('hidden')">
-      <div
-        class="absolute inset-0 rounded-3xl bg-[#161a1c] border border-[#2a3438] flex items-center justify-center shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden">
-        <div class="flex flex-col items-center gap-3 z-10 relative">
-          <!-- Pulse ring -->
-          <div class="absolute w-24 h-24 rounded-full border-2 border-[#0a9bc4]/40 animate-ping"></div>
-          <!-- Button -->
-          <div
-            class="w-20 h-20 rounded-full bg-[#087fa3] flex items-center justify-center shadow-[0_0_32px_rgba(10,155,196,0.5)] group-hover:scale-110 group-hover:shadow-[0_0_48px_rgba(10,155,196,0.8)] transition-all duration-300">
-            <span class="material-symbols-outlined text-5xl text-white translate-x-0.5">play_arrow</span>
-          </div>
-        </div>
-      </div>
+    <!-- Video Player - YouTube iframe with delayed autoplay -->
+    <div class="video-showcase-container w-full max-w-[480px] md:max-w-[480px] aspect-[16/9] relative rounded-3xl overflow-hidden border border-[#2a3438] shadow-[0_8px_40px_rgba(0,0,0,0.5)]">
+      <iframe id="vsl-player"
+        class="w-full h-full"
+        src="https://www.youtube.com/embed/xDd7vRmEKyc?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
     </div>
+
+    <!-- Auto-start VSL after 7 seconds -->
+    <script>
+      (function() {
+        const player = document.getElementById('vsl-player');
+        setTimeout(() => {
+          player.src = 'https://www.youtube.com/embed/xDd7vRmEKyc?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3&autoplay=1&mute=1';
+        }, 7000);
+      })();
+    </script>
 
     <!-- Before/After Gallery Strip -->
     <div class="w-full mt-7 overflow-hidden" dir="ltr">
@@ -772,35 +806,7 @@
   <!-- Showcase Video Section (id kept for scroll anchoring) -->
   <section id="showcase-video" class="hidden"></section>
 
-  <!-- Desktop Vertical Video & CTA Section (Hidden on Mobile) -->
-  <section id="hero-extra-content"
-    class="hidden md:flex py-4 px-6 bg-[#0c0e0f] flex-col items-center gap-12 border-t border-[#1a1c1d]">
-    <!-- Contact Button (Desktop) -->
-    <a href="#contact"
-      class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
-      <span class="font-headline font-bold text-xl leading-none">רוצה לדעת אם זה מתאים לך?</span>
-    </a>
-  </section>
 
-  <!-- Video Modal -->
-  <div id="video-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 hidden"
-    onclick="closeVideoModal(event)">
-    <div class="relative w-full max-w-3xl mx-6">
-      <button onclick="closeVideoModal()"
-        class="absolute -top-10 left-0 text-[#e2e2e3] hover:text-white font-label text-xs tracking-widest uppercase flex items-center gap-2">
-        <span class="material-symbols-outlined">close</span> סגור
-      </button>
-      <div class="relative aspect-video bg-[#1a1c1d] flex items-center justify-center">
-        <video id="hero-video" class="w-full h-full object-cover" controls>
-          <source src="" type="video/mp4">
-        </video>
-        <div id="video-placeholder" class="absolute inset-0 flex flex-col items-center justify-center gap-4">
-          <span class="material-symbols-outlined text-6xl text-[#087fa3]">play_circle</span>
-          <p class="font-label text-xs tracking-widest uppercase text-[#3f484d]">הוידאו יתווסף בקרוב</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
   <!-- CTA Button -->
@@ -1551,6 +1557,30 @@
               </div>
             </div>
           </div>
+          <!-- Consent checkboxes -->
+          <div class="space-y-3 border-t border-[#3f484d] pt-4">
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="consent_email"
+                class="mt-1 w-4 h-4 rounded accent-[#087fa3]"
+                required>
+              <span class="text-[#9abaca] text-xs">
+                אני מסכים לקבל עדכונים דרך וואטסאפ או דוא"ל לגבי הקורסים שלי
+              </span>
+            </label>
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                name="consent_terms"
+                class="mt-1 w-4 h-4 rounded accent-[#087fa3]"
+                required>
+              <span class="text-[#9abaca] text-xs">
+                קראתי את <button type="button" class="text-[#5bd4ff] hover:underline bg-none border-none p-0 cursor-pointer font-semibold" onclick="openModal('privacy')">מדיניות הפרטיות</button> ו<button type="button" class="text-[#5bd4ff] hover:underline bg-none border-none p-0 cursor-pointer font-semibold" onclick="openModal('terms')">תנאי השימוש</button> והסכמתי להם
+              </span>
+            </label>
+          </div>
+
           <button
             id="lead-submit-btn"
             class="w-full bg-[#087fa3] text-[#fefeff] py-5 text-base font-headline font-bold rounded-full hover:bg-[#0a9bc4] active:scale-95 transition-all duration-300 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
@@ -1603,13 +1633,36 @@
             // Honeypot check — if filled, it's a bot
             if (document.getElementById('website_url').value !== '') return;
 
+            // Form validation
+            var name = (this.querySelector('[name="from_name"]') || {}).value || '';
+            var phone = (this.querySelector('[name="phone"]') || {}).value || '';
+            var consent_email = this.querySelector('[name="consent_email"]').checked;
+            var consent_terms = this.querySelector('[name="consent_terms"]').checked;
+
+            // Validate required fields
+            if (!name || !name.trim()) {
+              alert('אנא הזן את שמך המלא');
+              return;
+            }
+            if (!phone || !phone.trim()) {
+              alert('אנא הזן את מספר הטלפון שלך');
+              return;
+            }
+            // Basic phone validation (Israeli format)
+            if (!/^(\+972|0)[0-9]{9,10}$/.test(phone.replace(/[-\s]/g, ''))) {
+              alert('אנא הזן מספר טלפון תקין');
+              return;
+            }
+            if (!consent_email || !consent_terms) {
+              alert('אנא אשר את ההסכמות הנדרשות');
+              return;
+            }
+
             var btn = document.getElementById('lead-submit-btn');
             btn.disabled = true;
             btn.textContent = 'שולח...';
 
             // שלח ל-CRM במקביל לפני EmailJS
-            var name   = (this.querySelector('[name="from_name"]') || {}).value || '';
-            var phone  = (this.querySelector('[name="phone"]') || {}).value || '';
             var age    = (this.querySelector('[name="age"]') || {}).value || '';
             var gender = document.getElementById('gender-input').value || '';
             sendLeadToCrm(name, phone, age, gender);
@@ -2122,17 +2175,58 @@
   <!-- Footer removed -->
 
   <script>
+    // VSL autoplay timer
+    let vslAutoplayTimer = null;
+
     function openVideoModal() {
-      document.getElementById('video-modal').classList.remove('hidden');
+      const modal = document.getElementById('video-modal');
+      const placeholder = document.getElementById('video-placeholder');
+      const vslPlayer = document.getElementById('vsl-player');
+
+      modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+
+      // Start 5-second countdown before autoplay
+      let countdown = 5;
+      placeholder.querySelector('p').textContent = `סרטון יתחיל תוך ${countdown} שניות...`;
+
+      // Clear any existing timer
+      if (vslAutoplayTimer) clearInterval(vslAutoplayTimer);
+
+      vslAutoplayTimer = setInterval(() => {
+        countdown--;
+        if (countdown > 0) {
+          placeholder.querySelector('p').textContent = `סרטון יתחיל תוך ${countdown} שניות...`;
+        } else {
+          clearInterval(vslAutoplayTimer);
+          vslAutoplayTimer = null;
+          // Show video and hide placeholder
+          placeholder.style.display = 'none';
+          vslPlayer.style.display = 'block';
+          // Update src to include autoplay parameter
+          vslPlayer.src = 'https://www.youtube.com/embed/xDd7vRmEKyc?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&autoplay=1';
+        }
+      }, 1000);
     }
 
     function closeVideoModal(e) {
       if (!e || e.target === document.getElementById('video-modal') || e.currentTarget.tagName === 'BUTTON') {
         const modal = document.getElementById('video-modal');
-        const video = document.getElementById('hero-video');
+        const placeholder = document.getElementById('video-placeholder');
+        const vslPlayer = document.getElementById('vsl-player');
+
+        // Clear timer if still running
+        if (vslAutoplayTimer) {
+          clearInterval(vslAutoplayTimer);
+          vslAutoplayTimer = null;
+        }
+
         modal.classList.add('hidden');
-        video.pause();
+        // Reset video and show placeholder again
+        vslPlayer.src = 'https://www.youtube.com/embed/xDd7vRmEKyc?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1';
+        vslPlayer.style.display = 'none';
+        placeholder.style.display = 'flex';
+        placeholder.querySelector('p').textContent = 'סרטון יתחיל תוך 5 שניות...';
         document.body.style.overflow = '';
       }
     }
@@ -2837,6 +2931,190 @@
 
       window.addEventListener('load', measure);
       setTimeout(measure, 100);
+    })();
+  </script>
+
+  <!-- Privacy & Terms Modals -->
+  <div id="privacy-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="closeModal('privacy')">
+    <div class="bg-[#0c0e0f] border border-[#087fa3]/30 rounded-3xl max-h-[90vh] w-full max-w-2xl overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="sticky top-0 z-10 bg-[#0c0e0f] border-b border-[#087fa3]/20 px-6 py-4 flex justify-between items-center">
+        <h2 class="text-2xl font-bold font-headline text-[#e2edf2]">מדיניות הפרטיות</h2>
+        <button type="button" onclick="closeModal('privacy')" class="text-[#8aa4af] hover:text-[#5bd4ff] text-2xl p-0 bg-none border-none cursor-pointer leading-none">×</button>
+      </div>
+      <!-- Modal Content -->
+      <div class="px-6 py-6 text-[#c8d8e0] leading-relaxed space-y-6 text-sm md:text-base font-body">
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">על מי אנחנו</h3>
+          <p>דר נאור (להלן: "האתר") היא עסק המספק שירותי ייעוץ בתזונה וכושר אישיים. בעל העסק: דר נאור.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">איזה מידע אנו אוספים ולמה</h3>
+          <p class="mb-2">כשאתה משלח את הטופס בדף הבית, אנו אוספים:</p>
+          <ul class="list-disc list-inside space-y-1 text-[#9abaca]">
+            <li><strong class="text-[#c8d8e0]">שם מלא</strong> — לצורך התקשרות ואישיות בשיחה הראשונה בלבד</li>
+            <li><strong class="text-[#c8d8e0]">מספר טלפון</strong> — כדי לקרוא אליך פעם אחת בשביל שיחת התאמה</li>
+            <li><strong class="text-[#c8d8e0]">גיל ומגדר</strong> (אופציונלי) — כדי להבין את הצרכים שלך בשיחה</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">איך אנו משתמשים בנתונים שלך</h3>
+          <p class="mb-2">אנו משתמשים בנתונים שלך כדי:</p>
+          <ul class="list-disc list-inside space-y-1 text-[#9abaca]">
+            <li>לקרוא אליך פעם אחת בשביל שיחת התאמה בתזונה וכושר</li>
+            <li>זהו השימוש היחיד. אנחנו לא שולחים עדכונים, מבצעים או כל תקשורת נוספת</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">כמה זמן אנו שומרים את הנתונים שלך</h3>
+          <p>אנו שומרים את הנתונים שלך רק לצורך השיחה הראשונה. לאחר השיחה, הנתונים מוסרים מהמערכת שלנו. אם אתה מעוניין להמשיך, אתה יכול לבחור בכתיבה משלך לשמור קשר.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">האם אנו משתפים נתונים עם אחרים</h3>
+          <p>אנו לא משתפים את הנתונים שלך עם צד שלישי כלל, למעט אם אנחנו חייבים על פי חוק (אם תביעה או חקירה משטרתית).</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">זכויותיך</h3>
+          <p class="mb-2">יש לך זכות:</p>
+          <ul class="list-disc list-inside space-y-1 text-[#9abaca]">
+            <li>לראות את הנתונים שלך</li>
+            <li>לתקן אותם אם הם שגויים</li>
+            <li>למחוק אותם בכל עת</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="terms-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="closeModal('terms')">
+    <div class="bg-[#0c0e0f] border border-[#087fa3]/30 rounded-3xl max-h-[90vh] w-full max-w-2xl overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div class="sticky top-0 z-10 bg-[#0c0e0f] border-b border-[#087fa3]/20 px-6 py-4 flex justify-between items-center">
+        <h2 class="text-2xl font-bold font-headline text-[#e2edf2]">תנאי השימוש</h2>
+        <button type="button" onclick="closeModal('terms')" class="text-[#8aa4af] hover:text-[#5bd4ff] text-2xl p-0 bg-none border-none cursor-pointer leading-none">×</button>
+      </div>
+      <!-- Modal Content -->
+      <div class="px-6 py-6 text-[#c8d8e0] leading-relaxed space-y-6 text-sm md:text-base font-body">
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">1. קבלת התנאים</h3>
+          <p>על ידי שימוש באתר darnaor.com וטופס יצירת הקשר, אתה מסכים לתנאים אלו. אם אינך מסכים, אנא אל תשתמש באתר או בשירותינו.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">2. השירותים שלנו</h3>
+          <p>דר נאור מציע שירותי ייעוץ בתזונה וכושר אישיים. כל שיחה או תכנית היא בהסכמה משותפת וזהו ייעוץ בלבד — לא החלפה של טיפול רפואי.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">3. שימוש חוקי בלבד</h3>
+          <p class="mb-2">אתה מסכים להשתמש בשירותינו למטרות חוקיות בלבד. אתה לא תשתמש בשירותינו כדי:</p>
+          <ul class="list-disc list-inside space-y-1 text-[#9abaca]">
+            <li>להציק, להטריד או להעליב אנשים</li>
+            <li>לפרסם תוכן שקר, מטעה או זדוני</li>
+            <li>להפר חוק או זכויות אחרים</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">4. אחריות</h3>
+          <p><strong class="text-[#e2edf2]">השירותים שלנו מסופקים "כפי שהם".</strong> אנחנו לא מתחייבים לתוצאות ספציפיות או מיידיות. כל הצעה או תוכנית היא הערכה בלבד וניתנת לשינוי.</p>
+          <p class="mt-2">אנו לא אחראיים לנזקים או הפסדים (כלכליים, גופניים או נפשיים) הנובעים מהשימוש בשירותינו.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">5. בדיקה רפואית</h3>
+          <p>לפני תחילת כל תוכנית כושר או תזונה, עליך להתייעץ עם רופא. אנו לא מחליפים ייעוץ רפואי.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">6. סודיות</h3>
+          <p>כל המידע שתשתף איתנו יהיה סודי ולא יפורסם ללא הסכמתך המפורשת. חריג: מידע שאנחנו חייבים לשתף על פי חוק.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">7. קישורים חיצוניים</h3>
+          <p>האתר עלול להכיל קישורים לאתרים אחרים. אנו לא אחראיים לתוכן, דיוקנות או פעולות של אתרים אלו.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">8. שינויים בתנאים</h3>
+          <p>אנו שומרים לעצמנו את הזכות לעדכן תנאים אלו בכל עת. השימוש המתמשך בשירותינו לאחר שינויים מהווה הסכמה.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">9. סיום קשר</h3>
+          <p>אנו רשאים להפסיק קשר אם אתה משתמש בשירותינו בצורה לא חוקית או פוגענית.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-bold font-headline text-[#5bd4ff] mb-3">10. חוק החל</h3>
+          <p>תנאים אלו כפופים לחוקי מדינת ישראל. כל מחלוקת תיפתר בבתי המשפט בישראל.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Functions -->
+  <script>
+    // פתח מודל
+    function openModal(type) {
+      var modal = document.getElementById(type + '-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden'; // חסום scroll של הגוף
+      }
+    }
+
+    // סגור מודל
+    function closeModal(type) {
+      var modal = document.getElementById(type + '-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = 'auto'; // שחזר scroll
+      }
+    }
+
+    // סגור מודל כאשר לוחצים ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal('privacy');
+        closeModal('terms');
+      }
+    });
+  </script>
+
+  <!-- Navigation Active State -->
+  <script>
+    (function() {
+      // Update nav active state on scroll
+      var updateNavActive = function() {
+        var navLinks = document.querySelectorAll('.nav-link');
+        var currentSection = '';
+
+        // Check which section is in view
+        navLinks.forEach(function(link) {
+          var sectionId = link.getAttribute('href').substring(1);
+          var section = document.getElementById(sectionId);
+
+          if (section) {
+            var rect = section.getBoundingClientRect();
+            if (rect.top <= 100) {
+              currentSection = sectionId;
+            }
+          }
+        });
+
+        // Update active state
+        navLinks.forEach(function(link) {
+          var sectionId = link.getAttribute('href').substring(1);
+
+          if (sectionId === currentSection) {
+            link.classList.add('active', 'text-[#79d1f9]', 'border-b-2', 'border-[#087fa3]', 'pb-1');
+            link.classList.remove('text-[#e2e2e3]');
+          } else {
+            link.classList.remove('active', 'text-[#79d1f9]', 'border-b-2', 'border-[#087fa3]', 'pb-1');
+            link.classList.add('text-[#e2e2e3]');
+          }
+        });
+      };
+
+      // Update on scroll
+      window.addEventListener('scroll', updateNavActive);
+      // Initial check
+      updateNavActive();
     })();
   </script>
 </body>
