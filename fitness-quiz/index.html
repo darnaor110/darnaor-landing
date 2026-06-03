@@ -995,10 +995,10 @@
   };
 
   // ── BF & MUSCLE LEVELS — match the sliced photo tables ──
-  // Male:   9 fat% cols (8–40)  × 6 muscle rows
-  // Female: 8 fat% cols (16–44) × 4 muscle rows
-  const BF_LEVELS_MALE   = [8, 12, 16, 20, 24, 28, 32, 36, 40];
-  const BF_LEVELS_FEMALE = [16, 20, 24, 28, 32, 36, 40, 44];
+  // Male:   14 fat% cols (6–45) × 1 muscle level (no muscle variation in lean mode)
+  // Female: 13 fat% cols (12–48) × 1 muscle level (no muscle variation in lean mode)
+  const BF_LEVELS_MALE   = [6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45];
+  const BF_LEVELS_FEMALE = [12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48];
 
   // Labels ordered index-0 = MOST muscular; uniform lengths prevent badge width jump
   const MUSCLE_LABELS_MALE   = ['מתקדם', 'מאוד מאומן', 'מאומן', 'מתחיל', 'עובד עליו', 'לא מאומן'];
@@ -1008,8 +1008,8 @@
   const BULK_GOAL_LABELS_MALE   = ['פיזיק תחרותי', 'מוגדר מאוד', 'ספורטיבי ומוגדר', 'ספורטיבי', 'מכון כושר טוב'];
   const BULK_GOAL_LABELS_FEMALE = ['ספורטיבית מאוד', 'מוגדרת וחטובה', 'חטובה וספורטיבית', 'נראה שהיא מתאמנת'];
   // BF% used as proxy for goal photo in bulk mode (fixed, low body-fat = muscular look)
-  const BULK_GOAL_BF_MALE   = 12;  // always show m_12_X photos for bulk goal
-  const BULK_GOAL_BF_FEMALE = 20;  // always show f_20_X photos for bulk goal
+  const BULK_GOAL_BF_MALE   = 6;   // always show m_6_0 photos for bulk goal (leanest male option)
+  const BULK_GOAL_BF_FEMALE = 12;  // always show f_12_0 photos for bulk goal (leanest female option)
 
   // Returns path to the sliced cell image
   function bodyImg(g, fatPct, muscleLevel) {
@@ -1118,12 +1118,12 @@
         {id:'madaan', lbl:'מעדן חלבון',       kcal:150, prot:15, tier:'g'}
       ]},
       { key:'fruit', lbl:'פרי', multi:true, opts:[
-        {id:'berries', lbl:'תותים / פירות יער', kcal:40,  prot:1, tier:'g'},
-        {id:'apple',   lbl:'תפוח',              kcal:75,  prot:0, tier:'g'},
-        {id:'banana',  lbl:'בננה',              kcal:90,  prot:1, tier:'g'},
-        {id:'grapes',  lbl:'ענבים',             kcal:100, prot:1, tier:'g'},
-        {id:'mango',   lbl:'מנגו',              kcal:100, prot:1, tier:'y'},
-        {id:'date',    lbl:'תמר (2-3)',          kcal:80,  prot:0, tier:'y'}
+        {id:'berries', lbl:'10 יחידות / פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'apple',   lbl:'1 יחידה / תפוח',        kcal:75,  prot:0, tier:'g'},
+        {id:'banana',  lbl:'1 יחידה / בננה',        kcal:90,  prot:1, tier:'g'},
+        {id:'grapes',  lbl:'1 יחידה / ענבים',       kcal:100, prot:1, tier:'g'},
+        {id:'mango',   lbl:'0.5 / 2 מנגו',          kcal:100, prot:1, tier:'y'},
+        {id:'date',    lbl:'2-3 יחידות / תמר',      kcal:80,  prot:0, tier:'y'}
       ]},
       { key:'cereal', lbl:'דגנים / גרנולה', multi:true, opts:[
         {id:'prot_cer', lbl:'קורנפלקס חלבון',  kcal:155, prot:10, tier:'y'},
@@ -1155,26 +1155,26 @@
       { key:'bread', lbl:'סוג לחם', multi:true, opts:[
         {id:'light',  lbl:'לחם קל (פרוסה)',  kcal:45,  prot:4, tier:'g'},
         {id:'pita99', lbl:'פיתה 99',          kcal:99,  prot:4, tier:'g'},
-        {id:'whole',  lbl:'לחם מלא (פרוסה)', kcal:70,  prot:3, tier:'y'},
+        {id:'whole',  lbl:'לחם מלא (פרוסה)', kcal:73,  prot:3, tier:'y'},
         {id:'white',  lbl:'לחם לבן (פרוסה)', kcal:70,  prot:2, tier:'r'},
-        {id:'pita_w', lbl:'פיתה לבנה',        kcal:130, prot:5, tier:'r'},
+        {id:'pita_w', lbl:'פיתה לבנה',        kcal:250, prot:8, tier:'r'},
         {id:'roll',   lbl:'לחמניה',            kcal:140, prot:5, tier:'r'}
       ]},
       { key:'cheese', lbl:'גבינה', multi:true, opts:[
         {id:'ch9',     lbl:'גבינה צהובה 9%',  kcal:45, prot:6,  tier:'g'},
-        {id:'tsfarit', lbl:'צפתית',            kcal:90, prot:12, tier:'g'},
+        {id:'tsfarit', lbl:'צפתית',            kcal:110, prot:16, tier:'g'},
         {id:'hemed',   lbl:'חמד / טל',         kcal:55, prot:7,  tier:'g'},
         {id:'ch15',    lbl:'גבינה צהובה 15%', kcal:65, prot:7,  tier:'y'},
         {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'r'}
       ]},
       { key:'sauce', lbl:'רוטב', multi:true, opts:[
-        {id:'tomato',   lbl:'רוטב עגבניות',    kcal:15, prot:0, tier:'g'},
-        {id:'chili',    lbl:'רוטב צילי דל',   kcal:20, prot:0, tier:'g'},
-        {id:'mustard',  lbl:'חרדל ודבש לייט', kcal:25, prot:0, tier:'y'},
-        {id:'teriyaki', lbl:'טריאקי',          kcal:30, prot:0, tier:'y'},
-        {id:'ketchup',  lbl:'קטשופ',           kcal:30, prot:0, tier:'y'},
-        {id:'pesto',    lbl:'פסטו',            kcal:80, prot:1, tier:'r'},
-        {id:'mayo',     lbl:'מיוקל / מיונז',  kcal:80, prot:0, tier:'r'}
+        {id:'tomato',   lbl:'רוטב עגבניות (כף=15ג)',    kcal:15, prot:0, tier:'g'},
+        {id:'chili',    lbl:'רוטב צילי דל (כף=15ג)',   kcal:20, prot:0, tier:'g'},
+        {id:'mustard',  lbl:'חרדל ודבש לייט (כף=15ג)', kcal:25, prot:0, tier:'y'},
+        {id:'teriyaki', lbl:'טריאקי (כף=15ג)',          kcal:30, prot:0, tier:'y'},
+        {id:'ketchup',  lbl:'קטשופ (כף=15ג)',           kcal:30, prot:0, tier:'y'},
+        {id:'pesto',    lbl:'פסטו (כף=15ג)',            kcal:80, prot:1, tier:'r'},
+        {id:'mayo',     lbl:'מיוקל / מיונז (כף=15ג)',  kcal:80, prot:0, tier:'r'}
       ]},
       { key:'extras', lbl:'ירקות (רשות)', multi:false, opts:[
         {id:'small', lbl:'סלט קטן (כ3 ירקות)', tier:'g'},
@@ -1185,14 +1185,14 @@
       { key:'bread', lbl:'לחם', multi:true, opts:[
         {id:'light',  lbl:'לחם קל',   kcal:45,  prot:4, tier:'g'},
         {id:'pita99', lbl:'פיתה 99',  kcal:99,  prot:4, tier:'g'},
-        {id:'whole',  lbl:'לחם מלא', kcal:70,  prot:3, tier:'y'},
+        {id:'whole',  lbl:'לחם מלא', kcal:73,  prot:3, tier:'y'},
         {id:'white',  lbl:'לחם לבן', kcal:70,  prot:2, tier:'o'},
-        {id:'pita_w', lbl:'פיתה לבנה',kcal:130, prot:5, tier:'o'},
+        {id:'pita_w', lbl:'פיתה לבנה',kcal:250, prot:8, tier:'o'},
         {id:'roll',   lbl:'לחמניה',   kcal:140, prot:5, tier:'o'}
       ]},
       { key:'cheese', lbl:'גבינות (רשות)', multi:true, opts:[
         {id:'ch9',     lbl:'גבינה צהובה 9%',  kcal:45, prot:6,  tier:'g'},
-        {id:'tsfarit', lbl:'צפתית',            kcal:90, prot:12, tier:'g'},
+        {id:'tsfarit', lbl:'צפתית',            kcal:110, prot:16, tier:'g'},
         {id:'hemed',   lbl:'חמד / טל',         kcal:55, prot:7,  tier:'g'},
         {id:'ch15',    lbl:'גבינה צהובה 15%', kcal:65, prot:7,  tier:'y'},
         {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'o'}
@@ -1246,20 +1246,20 @@
         {id:'egg',      lbl:'ביצה קשה',     kcal:75,  prot:6,  tier:'y'}
       ]},
       { key:'cheese', lbl:'גבינה (רשות)', multi:true, opts:[
-        {id:'tsfarit',  lbl:'צפתית',           kcal:90, prot:12, tier:'g'},
+        {id:'tsfarit',  lbl:'צפתית',           kcal:110, prot:16, tier:'g'},
         {id:'cheese9',  lbl:'גבינה צהובה 9%', kcal:45, prot:6,  tier:'g'},
         {id:'white',    lbl:'גבינה לבנה 5%',  kcal:60, prot:7,  tier:'y'},
         {id:'bulgarit', lbl:'בולגרת',          kcal:80, prot:8,  tier:'y'}
       ]},
       { key:'dressing', lbl:'רוטב', multi:true, opts:[
-        {id:'chili',   lbl:'רוטב צילי דל',   kcal:20, prot:0, tier:'g'},
-        {id:'garlic',  lbl:'רוטב שום לייט',   kcal:25, prot:0, tier:'g'},
-        {id:'soy',     lbl:'רוטב סויה',        kcal:10, prot:1, tier:'g'},
-        {id:'balsamic',lbl:'חומץ בלסמי',       kcal:15, prot:0, tier:'g'},
-        {id:'mustard', lbl:'חרדל לייט',        kcal:15, prot:0, tier:'g'},
-        {id:'olive',   lbl:'שמן זית (כפית)',   kcal:40, prot:0, tier:'r'},
-        {id:'tehina',  lbl:'טחינה (כף)',       kcal:90, prot:3, tier:'r'},
-        {id:'mayo',    lbl:'מיוקל',             kcal:45, prot:0, tier:'r'}
+        {id:'chili',   lbl:'רוטב צילי דל (כף=15ג)',   kcal:20, prot:0, tier:'g'},
+        {id:'garlic',  lbl:'רוטב שום לייט (כף=15ג)',   kcal:25, prot:0, tier:'g'},
+        {id:'soy',     lbl:'רוטב סויה (כף=15ג)',        kcal:10, prot:1, tier:'g'},
+        {id:'balsamic',lbl:'חומץ בלסמי (כף=15ג)',       kcal:15, prot:0, tier:'g'},
+        {id:'mustard', lbl:'חרדל לייט (כף=15ג)',        kcal:15, prot:0, tier:'g'},
+        {id:'olive',   lbl:'שמן זית (כף=10ג)',          kcal:40, prot:0, tier:'r'},
+        {id:'tehina',  lbl:'טחינה (כף=15ג)',            kcal:90, prot:3, tier:'r'},
+        {id:'mayo',    lbl:'מיוקל (כף=15ג)',            kcal:45, prot:0, tier:'r'}
       ]},
       { key:'base', lbl:'ירקות', multi:false, opts:[
         {id:'small', lbl:'סלט קטן (כ3 ירקות)', tier:'g'},
@@ -1270,8 +1270,8 @@
       { key:'bread', lbl:'לחם / פיתה', multi:true, opts:[
         {id:'light',  lbl:'לחם קל',   kcal:90,  prot:8, tier:'g'},
         {id:'pita99', lbl:'פיתה 99',  kcal:99,  prot:4, tier:'g'},
-        {id:'whole',  lbl:'לחם מלא', kcal:140, prot:6, tier:'y'},
-        {id:'pita_w', lbl:'פיתה לבנה',kcal:130, prot:5, tier:'o'},
+        {id:'whole',  lbl:'לחם מלא', kcal:146, prot:12, tier:'y'},
+        {id:'pita_w', lbl:'פיתה לבנה',kcal:250, prot:20, tier:'o'},
         {id:'roll',   lbl:'לחמניה',   kcal:140, prot:5, tier:'o'}
       ]},
       { key:'protein', lbl:'חלבון', multi:true, opts:[
@@ -1289,14 +1289,14 @@
         {id:'large', lbl:'סלט גדול (6 ירקות)',  tier:'g'}
       ]},
       { key:'sauce', lbl:'רוטב', multi:true, opts:[
-        {id:'chili',   lbl:'רוטב צילי דל',   kcal:20, prot:0, tier:'g'},
-        {id:'mustard', lbl:'חרדל לייט',       kcal:15, prot:0, tier:'g'},
-        {id:'garlic',  lbl:'רוטב שום לייט',   kcal:25, prot:0, tier:'g'},
-        {id:'soy',     lbl:'רוטב סויה',        kcal:10, prot:1, tier:'g'},
-        {id:'balsamic',lbl:'חומץ בלסמי',       kcal:15, prot:0, tier:'g'},
-        {id:'jam',     lbl:'ריבה לייט',         kcal:25, prot:0, tier:'y'},
-        {id:'tehina',  lbl:'טחינה (כף)',        kcal:90, prot:3, tier:'r'},
-        {id:'mayo',    lbl:'מיוקל',             kcal:45, prot:0, tier:'r'}
+        {id:'chili',   lbl:'רוטב צילי דל (כף=15ג)',   kcal:20, prot:0, tier:'g'},
+        {id:'mustard', lbl:'חרדל לייט (כף=15ג)',       kcal:15, prot:0, tier:'g'},
+        {id:'garlic',  lbl:'רוטב שום לייט (כף=15ג)',   kcal:25, prot:0, tier:'g'},
+        {id:'soy',     lbl:'רוטב סויה (כף=15ג)',        kcal:10, prot:1, tier:'g'},
+        {id:'balsamic',lbl:'חומץ בלסמי (כף=15ג)',       kcal:15, prot:0, tier:'g'},
+        {id:'jam',     lbl:'ריבה לייט (כף=15ג)',         kcal:25, prot:0, tier:'y'},
+        {id:'tehina',  lbl:'טחינה (כף=15ג)',            kcal:90, prot:3, tier:'r'},
+        {id:'mayo',    lbl:'מיוקל (כף=15ג)',            kcal:45, prot:0, tier:'r'}
       ]}
     ],
     shake: [
@@ -1309,10 +1309,10 @@
         {id:'whey', lbl:'אבקת חלבון (25 גרם)', kcal:100, prot:20, tier:'g'}
       ]},
       { key:'fruit', lbl:'פרי', multi:true, opts:[
-        {id:'berries', lbl:'תותים / פירות יער', kcal:40,  prot:1, tier:'g'},
-        {id:'banana',  lbl:'בננה',              kcal:90,  prot:1, tier:'g'},
-        {id:'frozen',  lbl:'פירות קפואים',      kcal:50,  prot:1, tier:'g'},
-        {id:'mango',   lbl:'מנגו',              kcal:100, prot:1, tier:'y'}
+        {id:'berries', lbl:'10 יחידות / פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'banana',  lbl:'1 יחידה / בננה',        kcal:90,  prot:1, tier:'g'},
+        {id:'frozen',  lbl:'1 יחידה / פירות קפואים',kcal:50,  prot:1, tier:'g'},
+        {id:'mango',   lbl:'0.5 / 2 מנגו',          kcal:100, prot:1, tier:'y'}
       ]},
       { key:'extras', lbl:'תוספות (רשות)', multi:true, opts:[
         {id:'oats',     lbl:'שיבולת שועל (2 כפות)', kcal:70, prot:3, tier:'y'},
@@ -1321,13 +1321,13 @@
     ],
     fruit: [
       { key:'fruit', lbl:'בחר פרי', multi:true, opts:[
-        {id:'berries', lbl:'תותים / פירות יער', kcal:40,  prot:1, tier:'g'},
-        {id:'apple',   lbl:'תפוח',              kcal:75,  prot:0, tier:'g'},
-        {id:'orange',  lbl:'תפוז',              kcal:62,  prot:1, tier:'g'},
-        {id:'banana',  lbl:'בננה',              kcal:90,  prot:1, tier:'g'},
-        {id:'grapes',  lbl:'ענבים',             kcal:100, prot:1, tier:'g'},
-        {id:'melon',   lbl:'מלון',              kcal:70,  prot:1, tier:'g'},
-        {id:'mango',   lbl:'מנגו',              kcal:100, prot:1, tier:'y'}
+        {id:'berries', lbl:'10 יחידות / פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'apple',   lbl:'1 יחידה / תפוח',        kcal:75,  prot:0, tier:'g'},
+        {id:'orange',  lbl:'1 יחידה / תפוז',        kcal:62,  prot:1, tier:'g'},
+        {id:'banana',  lbl:'1 יחידה / בננה',        kcal:90,  prot:1, tier:'g'},
+        {id:'grapes',  lbl:'1 יחידה / ענבים',       kcal:100, prot:1, tier:'g'},
+        {id:'melon',   lbl:'1 יחידה / מלון',        kcal:70,  prot:1, tier:'g'},
+        {id:'mango',   lbl:'0.5 / 2 מנגו',          kcal:100, prot:1, tier:'y'}
       ]}
     ],
     bar: [
@@ -1352,7 +1352,7 @@
     // ארוחת סלט קטנה לביניים (לא בוחרים ירקות — 3 ירקות לבחירתם)
     salad_snack: [
       { key:'protein', lbl:'תוספת חלבון (רשות)', multi:true, opts:[
-        {id:'tsfarit',  lbl:'צפתית',       kcal:90,  prot:12, tier:'g'},
+        {id:'tsfarit',  lbl:'צפתית',       kcal:110,  prot:16, tier:'g'},
         {id:'bulgarit', lbl:'בולגרת',      kcal:80,  prot:8,  tier:'g'},
         {id:'cottage',  lbl:"קוטג' 5%",    kcal:140, prot:18, tier:'g'},
         {id:'chicken',  lbl:'חזה עוף צלוי',kcal:100, prot:20, tier:'g'}
@@ -1809,19 +1809,19 @@
       bulkNote.style.display = 'none';
     }
 
-    // ── For females lean mode: hide muscle sliders, use fixed mid-level ──
+    // ── Muscle sliders: hide for lean mode (all users), show only for bulk mode ──
     const colCurM  = document.getElementById('col-cur-muscle');
     const colGoalM = document.getElementById('col-goal-muscle');
-    if (isFemale && !isBulk) {
+
+    // Hide muscle sliders for lean mode (both males and females)
+    if (!isBulk) {
       colCurM.style.display  = 'none';
       colGoalM.style.display = 'none';
+      // Use fixed middle-level muscle for all lean users
       d.currentMuscleLevel = Math.ceil(mLabels.length / 2);
       d.targetMuscleLevel  = Math.ceil(mLabels.length / 2);
-    } else if (!isBulk) {
-      colCurM.style.display  = '';
-      colGoalM.style.display = '';
     } else {
-      // bulk: hide both lean-muscle sliders (we use muscle-bulk instead)
+      // Bulk mode: hide both lean-muscle sliders (we use muscle-bulk instead)
       colCurM.style.display  = 'none';
       colGoalM.style.display = 'none';
       d.currentMuscleLevel = Math.ceil(mLabels.length / 2);
@@ -3697,8 +3697,8 @@ ${planHtml}
   const BREAD_CAL = {
     'לחם קל':45,        // פרוסה ~25ג (180 קל/100ג)
     'פיתה 99':99,       // יחידה ~100ג (99 קל/100ג)
-    'לחם מלא':65,       // פרוסה ~30ג (215 קל/100ג)
-    'לחם לבן':70,       // פרוסה ~30ג (235 קל/100ג)
+    'לחם מלא':73,       // פרוסה ~32ג (230 קל/100ג)
+    'לחם לבן':70,       // פרוסה ~28ג (250 קל/100ג)
     'פיתה לבנה':250,    // יחידה שלמה ~100ג (250 קל/100ג)
     'לחמניה':250        // יחידה ~100ג (250 קל/100ג)
   };
@@ -3715,7 +3715,7 @@ ${planHtml}
   // גבינה צהובה: פרוסה ≈ 20ג | צפתית/לבנה: 25ג | חמד: 20ג
   const TOAST_CHEESE = {
     'ch9':     { name:'גבינה צהובה 9%',  cal:45, prot:6,  unitG:20, unitDesc:'פרוסה' },
-    'tsfarit': { name:'צפתית',            cal:65, prot:8,  unitG:50, unitDesc:'פרוסה' },
+    'tsfarit': { name:'צפתית',            cal:55, prot:8,  unitG:50, unitDesc:'פרוסה' },
     'hemed':   { name:'חמד / טל',         cal:45, prot:6,  unitG:20, unitDesc:'פרוסה' },
     'ch15':    { name:'גבינה צהובה 15%', cal:65, prot:7,  unitG:20, unitDesc:'פרוסה' },
     'ch22':    { name:'גבינה צהובה 22%', cal:80, prot:6,  unitG:20, unitDesc:'פרוסה' }
