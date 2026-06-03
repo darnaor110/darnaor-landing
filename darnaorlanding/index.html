@@ -1434,10 +1434,14 @@
 
     <!-- Active item display -->
     <div class="max-w-2xl mx-auto px-6 mt-8">
-      <div id="how-price-box" class="text-center mb-3" style="display:none;">
-        <p class="text-sm font-bold text-[#d4af37]" id="how-price-text"></p>
+      <div style="display:flex; align-items:flex-start; gap:12px; justify-content:center; margin-bottom:20px;">
+        <h3 id="how-title-text" class="text-center text-2xl md:text-3xl font-bold font-headline text-[#e2edf2] mb-0" style="flex:1;">פגישת היכרות</h3>
+        <div id="how-price-box" class="text-center" style="display:none; min-width:100px;">
+          <div style="border:1px solid rgba(91,212,255,0.3); border-radius:8px; padding:8px 12px; background:rgba(91,212,255,0.05);">
+            <p class="text-xs font-bold text-[#d4af37] mb-0" id="how-price-text"></p>
+          </div>
+        </div>
       </div>
-      <h3 id="how-title-text" class="text-center text-2xl md:text-3xl font-bold font-headline text-[#5bd4ff] mb-5">פגישת היכרות</h3>
       <div class="how-explanation-box" id="how-explanation">
         <p id="how-explanation-text">פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו.</p>
       </div>
@@ -2381,14 +2385,14 @@
       'הערך הכולל',
     ];
     const howDescriptions = [
-      'לאחר שעה וחצי של שיחה כבר יהיה לכם תוכנית אימונים ותפריט מדויקים עבורכם.',
+      'פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו. לאחר שעה וחצי של שיחה כבר יהיה לכם תוכנית אימונים ותפריט מדויקים עבורכם.',
       'אני לוקח את מה שאתם אוהבים ורגילים, ועושה כמה שפחות שינויים, אבל בדיוק מספיק כדי שתראו תוצאות נדירות.',
       'תגידו לי מה אתם רוצים לראות במראה, וכמה זמן יש לכם. אני אגרום לזה לקרות במכון.',
-      'אימון טכניקה מלא כדי שהטכניקה שלך תהיה מושלמת, וגם התוצאות יהיו מושלמות.',
+      'ניפגש במכון ונוודא שהטכניקה שלך מושלמת, כדי שהתוצאות יהיו מושלמות. לא פחות.',
       'אני פה בשבילכם לכל שאלה, ואני מנטר את ההתקדמות שלכם ודוחף אתכם לעשות כל מה שצריך כדי להצליח. אצלי זה אישי.',
       'אחת לשבועיים נוודא שאתם אכן בפועל מתקדמים, ואם משהו הכי קטן פחות עובד, נסדר אותו כדי שנגיע אל היעד שלנו ביעילות.',
-      'טובה יותר מכל אפליקציה פרימיום שתמצאו בשוק. עקוב אחרי האוכל והאימונים שלך בצורה הכי קלה שיש.',
-      'מקיף, מעמיק פרקטי ומהיר יותר מקורס מאמנים שעולה 10,000 שח. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית.',
+      'כדי שהכל יהיה מונגש בצורה הכי פשוטה שיש, תוכלו לעקוב אחרי האוכל והאימונים שלכם בצורה הכי קלה שיש. טובה יותר מכל אפליקציה פרימיום שתמצאו בשוק.',
+      'הדרך שלי לוודא שאני המאמן האחרון שאי פעם תצטרכו. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית. מקיף, מעמיק פרקטי ומהיר יותר מקורס מאמנים שעולה 10,000 שח.',
       'קורס טכניקה, מאגר תוכנית האימון שלי, ספר המתכונים שלי לעצלנים, המדריך למזווה מנצח ועוד המון כלים שיעזרו לכם להצליח.',
       'כמובן שזה לא הכל, יש דברים נוספים שאני שומר כהפתעה למתאמנים שלי. מחכה לכם בשיחת ההתאמה.',
       'כמובן שזה השווי של חלק מהתוכנית בנפרד, אך ביחד השווי שלה הוא המשתלם ביותר שתמצאו, ואם דאגתם — אני מבטיח שהוא נגיש לכל מי שהגוף שלו חשוב עבורו',
@@ -2470,9 +2474,11 @@
         var priceBox = document.getElementById('how-price-box');
         var priceEl = document.getElementById('how-price-text');
         if (howPrices[realIdx] && howPrices[realIdx].trim()) {
-          priceEl.textContent = 'בשווי: ' + howPrices[realIdx];
+          priceEl.textContent = 'בשווי:\n' + howPrices[realIdx];
           priceBox.style.display = 'block';
+          priceBox.style.visibility = 'visible';
         } else {
+          priceBox.style.visibility = 'hidden';
           priceBox.style.display = 'none';
         }
       }
