@@ -713,7 +713,7 @@
     </div>
   </div>
 
-  <section id="hero" class="w-full flex flex-col items-center text-center px-5 md:px-10 pt-12 pb-0 md:pb-8 bg-[#0d272f]"
+  <section id="hero" class="w-full flex flex-col items-center text-center px-5 md:px-10 pt-12 pb-0 md:pb-8 bg-[#0d272f] relative"
     style="box-shadow: inset 0 0 120px rgba(0,0,0,0.7), inset 0 -60px 80px rgba(0,0,0,0.5);">
 
     <!-- Subtitle -->
@@ -799,26 +799,21 @@
             <img src="images/17.png" alt="לפני / אחרי" class="w-full h-full object-cover" draggable="false">
           </div>
         </div>
+      <!-- CTA Button inside Hero with Fade -->
+      <div class="flex justify-center py-8 px-6 relative z-10">
+        <a href="#contact"
+          class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
+          <span class="font-headline font-bold text-xl leading-none">גם אני רוצה להתחטב</span>
+        </a>
       </div>
+
+      <!-- Fade effect at bottom of hero section -->
+      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-[#121415] pointer-events-none"></div>
     </div>
   </section>
 
   <!-- Showcase Video Section (id kept for scroll anchoring) -->
   <section id="showcase-video" class="hidden"></section>
-
-
-
-
-  <!-- CTA Button -->
-  <div class="bg-[#0c0e0f] flex justify-center py-6 px-6">
-    <a href="#contact"
-      class="inline-flex items-center justify-center bg-gradient-to-r from-[#0a9bc4] to-[#006781] text-white px-10 py-4 rounded-full shadow-[0_0_15px_rgba(10,155,196,0.3)] hover:scale-[1.02] active:scale-95 transition-all duration-300 no-underline">
-      <span class="font-headline font-bold text-xl leading-none">גם אני רוצה להתחטב</span>
-    </a>
-  </div>
-
-  <!-- spacer strip between hero CTA and story section -->
-  <div style="height:40px; background:#0c0e0f;"></div>
 
   <!-- Story Intro — After Fold -->
   <section id="story-intro" class="relative overflow-hidden pt-12 md:pt-16 pb-2 md:pb-4 px-4 md:px-20 bg-[#121415] border-t border-b border-[#087fa3]/25">
