@@ -1434,16 +1434,15 @@
 
     <!-- Active item display -->
     <div class="max-w-2xl mx-auto px-6 mt-8">
-      <div style="display:flex; align-items:flex-start; gap:12px; justify-content:center; margin-bottom:20px; min-height:60px;">
-        <div style="flex:1; display:flex; justify-content:center;">
-          <h3 id="how-title-text" class="text-2xl md:text-3xl font-bold font-headline text-[#e2edf2] mb-0" style="text-align:center;">פגישת היכרות</h3>
-        </div>
-        <div id="how-price-box" style="width:110px; height:55px; display:flex; align-items:center; justify-content:center;">
-          <div style="border:1px solid rgba(91,212,255,0.3); border-radius:8px; padding:8px 12px; background:rgba(91,212,255,0.05); text-align:center; width:100%;">
-            <p class="text-xs font-bold text-[#d4af37] mb-0 whitespace-nowrap" id="how-price-text"></p>
-          </div>
+      <!-- Price box (always reserves space) -->
+      <div id="how-price-box" style="text-align:center; min-height:28px; margin-bottom:12px;">
+        <div style="border:1px solid rgba(91,212,255,0.3); border-radius:8px; padding:6px 12px; background:rgba(91,212,255,0.05); display:inline-block;">
+          <p class="text-xs font-bold text-[#d4af37] mb-0" id="how-price-text"></p>
         </div>
       </div>
+      <!-- Title (centered) -->
+      <h3 id="how-title-text" class="text-center text-2xl md:text-3xl font-bold font-headline text-[#e2edf2] mb-5">פגישת היכרות</h3>
+      <!-- Description -->
       <div class="how-explanation-box" id="how-explanation">
         <p id="how-explanation-text">פגישת היכרות פרונטלית מעמיקה. נבין יחד את כל המטרות שלך, החששות, המגבלות, כדי שהתוכנית תהיה הכי מותאמת ונכונה עבורך שאפשר. בנוסף נעשה מדידת אחוזי שומן והיקפים כדי להבין מהי נקודת הפתיחה האמיתית שלנו.</p>
       </div>
