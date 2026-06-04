@@ -1404,28 +1404,32 @@
           <span class="how-card-num">05</span>
         </div>
         <div class="how-card" data-how="5" onclick="selectHowItem(5)">
-          <span class="material-symbols-outlined">videocam</span>
+          <span class="material-symbols-outlined">sms</span>
           <span class="how-card-num">06</span>
         </div>
         <div class="how-card" data-how="6" onclick="selectHowItem(6)">
-          <span class="material-symbols-outlined">phone_iphone</span>
+          <span class="material-symbols-outlined">videocam</span>
           <span class="how-card-num">07</span>
         </div>
         <div class="how-card" data-how="7" onclick="selectHowItem(7)">
-          <span class="material-symbols-outlined">school</span>
+          <span class="material-symbols-outlined">phone_iphone</span>
           <span class="how-card-num">08</span>
         </div>
         <div class="how-card" data-how="8" onclick="selectHowItem(8)">
-          <span class="material-symbols-outlined">card_giftcard</span>
+          <span class="material-symbols-outlined">school</span>
           <span class="how-card-num">09</span>
         </div>
         <div class="how-card" data-how="9" onclick="selectHowItem(9)">
-          <span class="material-symbols-outlined">auto_awesome</span>
+          <span class="material-symbols-outlined">card_giftcard</span>
           <span class="how-card-num">10</span>
         </div>
         <div class="how-card" data-how="10" onclick="selectHowItem(10)">
-          <span class="material-symbols-outlined" style="color: #d4af37;">percent</span>
+          <span class="material-symbols-outlined">auto_awesome</span>
           <span class="how-card-num">11</span>
+        </div>
+        <div class="how-card" data-how="11" onclick="selectHowItem(11)">
+          <span class="material-symbols-outlined" style="color: #d4af37;">percent</span>
+          <span class="how-card-num">12</span>
         </div>
       </div>
     </div>
@@ -2376,6 +2380,7 @@
       'שגרת אימונים ייחודית',
       'אימון טכניקה מלא',
       'ליווי חודשי יומיומי',
+      'מענה יומיומי בוואצפ',
       'פגישת עדכון בווידאו',
       'האפליקציה שלי',
       'חטובים לנצח — הקורס',
@@ -2388,22 +2393,24 @@
       'אני לוקח את מה שאתם אוהבים ורגילים, ועושה כמה שפחות שינויים, אבל בדיוק מספיק כדי שתראו תוצאות נדירות.',
       'תגידו לי מה אתם רוצים לראות במראה, וכמה זמן יש לכם. אני אגרום לזה לקרות במכון.',
       'ניפגש במכון ונוודא שהטכניקה שלך מושלמת, כדי שהתוצאות יהיו מושלמות. לא פחות.',
-      'אני פה בשבילכם לכל שאלה, ואני מנטר את ההתקדמות שלכם ודוחף אתכם לעשות כל מה שצריך כדי להצליח. אצלי זה אישי.',
+      'אני מנטר את ההתקדמות והביצועים שלכם, דוחף אתכם להתקדם ולעשות כל מה שצריך כדי להצליח. אצלי זה אישי.',
+      'אני זמין עבורכם בוואצפ לכל שאלה או בעיה. אני פה בשבילכם.',
       'אחת לשבועיים נוודא שאתם אכן בפועל מתקדמים, ואם משהו הכי קטן פחות עובד, נסדר אותו כדי שנגיע אל היעד שלנו ביעילות.',
       'כדי שהכל יהיה מונגש בצורה הכי פשוטה שיש, תוכלו לעקוב אחרי האוכל והאימונים שלכם בצורה הכי קלה שיש, אפילו יש לכם AI שלי לכל שאלה ובעיה.',
       'הדרך שלי לוודא שאני המאמן האחרון שאי פעם תצטרכו. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית.',
       'קורס טכניקה, מאגר תוכנית האימון שלי, ספר המתכונים שלי לעצלנים, המדריך למזווה מנצח ועוד המון כלים שיעזרו לכם להצליח.',
       'יש דברים שאני שומר רק למי שמצטרף. כניסה לתוכנית פותחת עוד שכבה שלמה שאני לא מדבר עליה בפומבי.',
-      'כמובן שזה השווי של חלק מהתוכנית בנפרד, אך ביחד השווי שלה הוא המשתלם ביותר שתמצאו, ואם דאגתם — אני מבטיח שהוא נגיש לכל מי שהגוף שלו חשוב עבורו',
+      'כמובן שזה המחיר של כל חלק בתוכנית לרכישה בנפרד, אך ביחד השווי שלה הוא המשתלם ביותר שתמצאו, ואם דאגתם — אני מבטיח שהוא נגיש לכל מי שהגוף שלו חשוב עבורו',
     ];
 
     const howPrices = [
       '1,200 ₪',
-      '',
-      '',
+      '750 ₪',
+      '750 ₪',
       '350 ₪',
-      '',
-      '',
+      '400 ₪/חודש',
+      '250 ₪/חודש',
+      '250 ₪',
       '59 ₪/חודש',
       '1,950 ₪',
       '',
@@ -2413,7 +2420,7 @@
 
     // Infinite snap carousel — clone-based transform loop
     (function () {
-      var TOTAL = 11; // number of original cards
+      var TOTAL = 12; // number of original cards
       var GAP = 16;   // matches gap-4 (1rem = 16px)
 
       var outer = document.getElementById('how-outer');
