@@ -1876,7 +1876,8 @@
     // ── Show both photos immediately with default values ──
     setPhoto('photo-cur',  g, d.currentBF, bfLevels, d.currentMuscleLevel);
     if (isBulk) {
-      document.getElementById('photo-goal').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
+      // In bulk mode: show BF variation for goal (not muscle variation)
+      document.getElementById('photo-goal').src = bodyImg(g, d.targetBF, 0);
     } else {
       setPhoto('photo-goal', g, d.targetBF, bfLevels, d.targetMuscleLevel);
     }
@@ -1890,7 +1891,12 @@
     slGoalBF.oninput = () => {
       d.targetBF = bfLevels[+slGoalBF.value];
       document.getElementById('badge-goal-bf').textContent = d.targetBF + '%';
-      setPhoto('photo-goal', g, d.targetBF, bfLevels, d.targetMuscleLevel);
+      // In bulk mode: show BF variation (not muscle variation)
+      if (isBulk) {
+        document.getElementById('photo-goal').src = bodyImg(g, d.targetBF, 0);
+      } else {
+        setPhoto('photo-goal', g, d.targetBF, bfLevels, d.targetMuscleLevel);
+      }
     };
     slCurM.oninput = () => {
       d.currentMuscleLevel = sliderToMuscleLevel(+slCurM.value, mLabels);
