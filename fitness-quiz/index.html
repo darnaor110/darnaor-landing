@@ -1008,8 +1008,8 @@
   const BULK_GOAL_LABELS_MALE   = ['שיא טבעי', '3 שנים', '2-3 שנים', 'שנתיים', 'שנה וחצי', 'כשנה', 'כ-10 חודשים', '4-6 חודשים', '2-3 חודשים', 'לא מתאמן'];
   const BULK_GOAL_LABELS_FEMALE = ['תחרותית', 'ספורטיבית מאוד', 'מוגדרת', 'חטובה', 'פעילה', 'מתחילה', 'לא מתאמנת'];
   // BF% used as proxy for goal photo in bulk mode (fixed, low body-fat = muscular look)
-  const BULK_GOAL_BF_MALE   = 6;   // always show m_6_0 photos for bulk goal (leanest male option)
-  const BULK_GOAL_BF_FEMALE = 12;  // always show f_12_0 photos for bulk goal (leanest female option)
+  const BULK_GOAL_BF_MALE   = 12;  // always show m_12_1-10 photos for bulk goal (muscle variations)
+  const BULK_GOAL_BF_FEMALE = 21;  // always show f_21_1-7 photos for bulk goal (muscle variations)
 
   // Returns path to the sliced cell image
   function bodyImg(g, fatPct, muscleLevel) {
