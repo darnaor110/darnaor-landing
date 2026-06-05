@@ -1,0 +1,101 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "Bash(git *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(cd *)",
+      "Bash(echo *)",
+      "Bash(cat *)",
+      "Bash(python *)",
+      "Bash(pip *)",
+      "Bash(curl *)",
+      "Bash(powershell *)",
+      "Bash(Get-*)",
+      "Bash(Set-*)",
+      "Bash(New-*)",
+      "PowerShell"
+    ]
+  },
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true
+  },
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[datetime]::Now.Ticks | Out-File \"$env:TEMP\\cc_start.txt\"",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "& 'C:\\Users\\darna\\.claude\\hooks\\backup-edit.ps1'",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[console]::beep(784,100);Start-Sleep -Milliseconds 50;[console]::beep(523,150)",
+            "shell": "powershell",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Elicitation": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[console]::beep(784,100);Start-Sleep -Milliseconds 50;[console]::beep(523,150)",
+            "shell": "powershell",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$s=[long](Get-Content \"$env:TEMP\\cc_start.txt\" -EA SilentlyContinue); if($s -and (([datetime]::Now.Ticks-$s)/1e7 -gt 15)){[console]::beep(392,70);Start-Sleep -Milliseconds 30;[console]::beep(494,70);Start-Sleep -Milliseconds 30;[console]::beep(587,150)}",
+            "shell": "powershell"
+          },
+          {
+            "type": "command",
+            "command": "& 'C:\\Users\\darna\\.claude\\hooks\\session-log.ps1'",
+            "shell": "powershell"
+          }
+        ]
+      }
+    ]
+  },
+  "effortLevel": "medium",
+  "model": "haiku"
+}

@@ -1,0 +1,52 @@
+{
+  "post_date": "2026-06-03",
+  "hooks": [
+    {
+      "original": "If you told me # of years ago I'd be (insert dream result) I wouldn't have believed you.",
+      "link": "https://www.instagram.com/p/DGs6ZD6NMaE/",
+      "adapted": "אילו היית אומר לי לפני 5 שנים שאהיה בצורה הזו, לא הייתי מאמין."
+    },
+    {
+      "original": "It has taken me # years of (insert occupation/skill/hobby) to realize I have been (insert action) wrong this entire time.",
+      "link": "https://www.instagram.com/reel/DFBJYnGyr_a/?igsh=b2NrM2o5MGw4OHhl",
+      "adapted": "לקח לי שנים לחיטוב כדי להבין שכל הזמן עשיתי משהו לא נכון בגנטיקה שלי."
+    },
+    {
+      "original": "Being (insert result) is not just based on (insert noun). You may not believe this but I could have been (insert adjective) then this guy/girl if I had just changed a few things.",
+      "link": "https://www.instagram.com/reel/DH2VMvQNFXc/?igsh=MTNrejltdnZ3YW94eg%3D%3D",
+      "adapted": "להיות חטוב זה לא רק גנטיקה. אני יכול היה להיות עוד יותר חטוב מהם אם פשוט שינעתי כמה דברים."
+    },
+    {
+      "original": "I do not believe in (insert common belief), I believe in (insert your belief).",
+      "link": "https://www.instagram.com/reel/DFAu11XxvX-/",
+      "adapted": "אני לא מאמין שגנטיקה היא starting point. אני מאמין שגנטיקה היא איך הגוף שלך מגיב."
+    },
+    {
+      "original": "Nobody believes me if I say I went from this to this.",
+      "link": "https://www.instagram.com/p/DIL_hAYIF-z/",
+      "adapted": "אף אחד לא מאמין לי כשאני אומר שלקח לי שנים."
+    }
+  ],
+  "framework": {
+    "script_angle": "Myth-bust + Personal Authority (Dar's own case: bad genetics, years, still happened)",
+    "content_type": "Educational + Authority",
+    "funnel_type": "MOFU",
+    "video_format": "Talking Head + B-roll (timeline) + Text overlays",
+    "cta_type": "Follow",
+    "editing_notes": "Stark contrasts, quick cuts between myth and reality, timeline graphics showing years"
+  },
+  "script": [
+    "אתה חושב שגנטיקה זה איך אתה נראה כילד.",
+    "ראית עכשיו מישהו עם transformation משוגע. רזה עד ענק.",
+    "ותוך כדי אתה חושב — או, הוא בטח קיבל יותר מהגנטיקה. או — אני עושה משהו לא נכון.",
+    "שניהם לא נכונים.",
+    "גנטיקה זה לא איך אתה נראה ב-age 12. זה איך הגוף שלך מגיב לאימונים ולתזונה.",
+    "יש אנשים שהגוף שלהם מגיב מהר. שנה, והם בצורה.",
+    "ויש אנשים שהגוף שלהם מתנגד. לקח להם שמונה שנים.",
+    "אני מן הסוג השני. גנטיקה גרועה.",
+    "לקח לי שנים לראות תוצאות. חודשים של 'למה זה לא קורה?'",
+    "אבל? אני עדיין עשיתי את זה.",
+    "אם אתה רואה מישהו עם transformation ענק, זה לא בהכרח אומר שיש לו יתרון. זה אומר שהוא עבד קשה.",
+    "אתה? עדיין יכול להגיע שם. תמשיך לעבוד קשה."
+  ]
+}

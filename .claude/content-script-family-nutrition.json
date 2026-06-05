@@ -1,0 +1,70 @@
+{
+  "post_date": "2026-06-15",
+  "hooks": [
+    {
+      "original": "What if I told you that you could eat this entire jar of (insert food) for less calories than 2 servings of their (insert food)",
+      "link": "https://www.instagram.com/reel/DG4GxNOuDk2/",
+      "adapted": "מה אם הייתי אומר לך שאתה יכול לאכול צנצנת שלמה של החומוס בריא בקלוריות פחות מ-2 בורקס של אמא?"
+    },
+    {
+      "original": "Want to be the first (insert dream result) in your family",
+      "link": "https://www.instagram.com/reel/DEVCeefOF08/",
+      "adapted": "רוצה להיות הראשון במשפחה שלך שמתאמן ובעצם מבין את זה בתזונה?"
+    },
+    {
+      "original": "If your mom didn't teach you how to make (insert food) growing up, don't worry i'm your mommy now",
+      "link": "https://www.instagram.com/p/DBEeZ2MvZ16/",
+      "adapted": "אם אמא שלך לא חינכה אותך לקרוא תויות בתזונה, זה בסדר - אני כאן כדי להראות לך את האמת."
+    },
+    {
+      "original": "Growing up my parents used to get upset when I (insert action), they would get frustrated",
+      "link": "https://www.instagram.com/reel/DD25g3ayYbg/",
+      "adapted": "הוריי היו מתוסכלים כשראו אותי לא אוכל את מה שהם אוכלים, או תמיד שואל שאלות על קלוריות."
+    },
+    {
+      "original": "This (insert food) isn't bad for you. Yeah it has some (insert nutrient) but what does that even mean",
+      "link": "https://www.instagram.com/reel/DIShYdlpxE_/",
+      "adapted": "זה בריא, אין בזה סוכר ושומן בכלל - רק סילאן וזה שמן קוקוס אורגני. מה, זה לא טוב לך?"
+    }
+  ],
+  "framework": {
+    "script_angle": "Family nutrition reality — what you actually train for gets sabotaged at home",
+    "content_type": "Storytelling + Humor + Authority",
+    "funnel_type": "TOFU (entertainment, relatability, lifestyle contrast)",
+    "video_format": "Skit (family dinner dialogue, POV as the trained person)",
+    "cta_type": "Follow (no hard sell, pure relatability + education)",
+    "editing_notes": "Fast cuts on food items, slow punch voice on key moments, skeleton/anatomy commentary for humor, text overlays showing calorie comparisons, family frustration moments with dramatic pauses"
+  },
+  "script": [
+    "אני מתאמן חמש ימים בשבוע. אכל חלבון, קלוריות מדודות, הכל מתוכנן.",
+    "אמא אומרת - הנה קח, בורקס עם גבינה, יש בזה חלבון!",
+    "אוקיי חלבון כן, אבל גם שומן, פחמימות, וכמעט 400 קלוריות בבורקס אחד.",
+    "מה שלא עוזר שאתה מתאמן אם אתה חוזר הביתה וכל אחד מנסה להשמין אותך.",
+    "אבא: למה אתה לא אוכל את מה שאנחנו אוכלים? זה בריא, לא יודעים?",
+    "לא יודע אם זה בריא. יודע שזה 2000 קלוריות בסעיף ערב.",
+    "אמא: אויש כן זה בריא, אין בזה סוכר ושומן בכלל.",
+    "אני רואה שהיא מחזיקה צנצנת ממרח בוטנים - שומן אורגני, אוקיי, אבל שומן זה שומן.",
+    "אמא: שמתי רק סילאן, שמן קוקוס אורגני, שוקולד מריר.",
+    "אני מסתכל על התוויות - בעצם יש שם גם שוקר מסוכך ושומן רווי חוזר.",
+    "היא: לא, זה רזה מידי כבר, אתה מדבר שטויות.",
+    "אני: אוקיי, תגידו לי כמה קלוריות יש בצנצנת.",
+    "שקט. אף אחד לא יודע.",
+    "הנה הנקודה - אתם אוכלים בטוח לחשוב שזה בריא, אבל אתם לא בודקים את המתמטיקה."
+  ],
+  "script_notes": [
+    "FILMING: Wide shot of you at dinner table. Family eating in background. Look directly at camera, relatable frustrated expression.",
+    "FILMING: Show your meal-prep containers next to family dishes. Point to each. Shrug.",
+    "FILMING: Hold a burger close-up, count on fingers while speaking.",
+    "FILMING: Show yourself training cutaway, then cut back to family dinner scene. Shake head gently.",
+    "FILMING: Dad looks up from plate, confused expression. Act out this moment as both characters if needed.",
+    "FILMING: Pull out phone/notebook where you track calories. Point at the numbers written down.",
+    "FILMING: Mom defensively waves hand. Close-up on jar of nut butter in her hand.",
+    "FILMING: Read the label slowly, point to each ingredient on packaging. Confused face.",
+    "FILMING: Mom lists ingredients while holding bottle of honey/date syrup. Show the bottles.",
+    "FILMING: Side-by-side of label ingredients vs. what she claimed. Text overlay: 'זה לא מה שהיא אמרה'",
+    "FILMING: Look offended, but playful. Put hand over heart dramatically.",
+    "FILMING: Pull out calorie counter on phone, show the number. Let it land.",
+    "FILMING: Long pause. Skeleton voice whisper (slow, dramatic): 'כשאתה חושב אתה עושה בחירה בריאה, אבל המתמטיקה לא שוכחת'",
+    "FILMING: Talking head moment, direct to camera. Serious tone - explain why this matters behaviorally. The contradiction is the point."
+  ]
+}

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Slicer — Body Tables</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #111; color: #e0e0e0; padding: 1.5rem; }
+    h1 { font-size: 1.4rem; margin-bottom: 1.2rem; color: #5bd4ff; }
+    .panel { background: #1a2a30; border: 1px solid #1f4050; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.2rem; }
+    .panel h2 { font-size: 1rem; margin-bottom: 0.9rem; color: #87c8e0; }
+    .row { display: flex; gap: 1.2rem; flex-wrap: wrap; align-items: flex-start; }
+    .ctrl-group { display: flex; flex-direction: column; gap: 0.3rem; min-width: 160px; }
+    label { font-size: 0.82rem; color: #8aa4af; }
+    input[type="range"] { width: 100%; accent-color: #087fa3; cursor: pointer; }
+    .val { font-size: 0.92rem; font-weight: 700; color: #5bd4ff; display: inline-block; min-width: 38px; }
+    .btn { background: #087fa3; color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.4rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: #5bd4ff; color: #071419; }
+    .btn-gender { background: #1f4050; }
+    .btn-gender.active { background: #087fa3; }
+    .gender-btns { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+    /* Preview */
+    #preview-wrap { position: relative; display: inline-block; max-width: 100%; overflow: auto; }
+    #preview-canvas { display: block; max-width: 100%; border: 1px solid #1f4050; border-radius: 8px; }
+    .upload-area { border: 2px dashed #1f4050; border-radius: 10px; padding: 2rem; text-align: center; color: #8aa4af; cursor: pointer; transition: border-color 0.2s; }
+    .upload-area:hover { border-color: #087fa3; }
+    #status { font-size: 0.85rem; color: #8aa4af; margin-top: 0.5rem; }
+    .download-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.8rem; }
+    .dl-thumb { text-align: center; font-size: 0.7rem; color: #8aa4af; }
+    .dl-thumb canvas { border-radius: 4px; border: 1px solid #1f4050; display: block; }
+    .hint { font-size: 0.78rem; color: #5a7880; margin-top: 0.4rem; }
+  </style>
+</head>
+<body>
+  <h1>🔪 Image Slicer — טבלאות גוף</h1>
+
+  <!-- Step 1: Gender -->
+  <div class="panel">
+    <h2>שלב 1 — בחר מגדר</h2>
+    <div class="gender-btns">
+      <button class="btn btn-gender active" id="btn-m" onclick="setGender('m')">גבר (5 עמודות × 7 שורות)</button>
+      <button class="btn btn-gender" id="btn-f" onclick="setGender('f')">אישה (3 עמודות × 7 שורות)</button>
+    </div>
+    <p class="hint">גבר: fat% = 8,12,16,20,24,28,32 | אישה: fat% = 16,20,24,28,32,36,40</p>
+  </div>
+
+  <!-- Step 2: Upload -->
+  <div class="panel">
+    <h2>שלב 2 — העלה תמונת טבלה</h2>
+    <div class="upload-area" onclick="document.getElementById('file-in').click()">
+      לחץ כאן להעלאת תמונה (PNG / JPG / WEBP)
+      <input type="file" id="file-in" accept="image/*" style="display:none" onchange="loadImage(event)" />
+    </div>
+  </div>
+
+  <!-- Step 3: Adjust margins -->
+  <div class="panel" id="adj-panel" style="display:none">
+    <h2>שלב 3 — כוונן שוליים (גרור עד שהגריד יושב על התמונות)</h2>
+    <div class="row">
+      <div class="ctrl-group">
+        <label>שוליים למעלה (header row): <span class="val" id="v-top">0</span>px</label>
+        <input type="range" id="sl-top" min="0" max="400" value="0" oninput="updateMargin('top',this.value)" />
+      </div>
+      <div class="ctrl-group">
+        <label>שוליים למטה: <span class="val" id="v-bottom">0</span>px</label>
+        <input type="range" id="sl-bottom" min="0" max="400" value="0" oninput="updateMargin('bottom',this.value)" />
+      </div>
+      <div class="ctrl-group">
+        <label>שוליים משמאל: <span class="val" id="v-left">0</span>px</label>
+        <input type="range" id="sl-left" min="0" max="300" value="0" oninput="updateMargin('left',this.value)" />
+      </div>
+      <div class="ctrl-group">
+        <label>שוליים מימין (label column): <span class="val" id="v-right">0</span>px</label>
+        <input type="range" id="sl-right" min="0" max="300" value="0" oninput="updateMargin('right',this.value)" />
+      </div>
+    </div>
+    <p class="hint" style="margin-top:0.8rem">קווי הגריד (ירוק) צריכים להפריד בדיוק בין כל תמונה</p>
+    <div id="preview-wrap" style="margin-top:1rem">
+      <canvas id="preview-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Step 4: Download -->
+  <div class="panel" id="dl-panel" style="display:none">
+    <h2>שלב 4 — הורד תמונות</h2>
+    <p style="font-size:0.85rem;color:#8aa4af;margin-bottom:0.8rem">
+      הפריסה: <span id="dl-info"></span><br>
+      הקבצים יורדו בזה אחר זה. ייתכן שהדפדפן יבקש אישור להוריד כמה קבצים — אשר.
+    </p>
+    <button class="btn" onclick="downloadAll()">⬇ הורד הכל</button>
+    <div id="status"></div>
+    <div class="download-grid" id="thumb-grid"></div>
+  </div>
+
+  <script>
+    let gender = 'm';
+    let img = null;
+    let margins = { top: 0, bottom: 0, left: 0, right: 0 };
+
+    const CONFIGS = {
+      m: { cols: 5, fatVals: [8, 12, 16, 20, 24, 28, 32] },
+      f: { cols: 3, fatVals: [16, 20, 24, 28, 32, 36, 40] }
+    };
+
+    function setGender(g) {
+      gender = g;
+      document.getElementById('btn-m').classList.toggle('active', g === 'm');
+      document.getElementById('btn-f').classList.toggle('active', g === 'f');
+      if (img) drawPreview();
+    }
+
+    function loadImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        img = new Image();
+        img.onload = () => {
+          document.getElementById('adj-panel').style.display = '';
+          document.getElementById('dl-panel').style.display = '';
+          // Set slider maxes based on image size
+          document.getElementById('sl-top').max    = Math.floor(img.height / 2);
+          document.getElementById('sl-bottom').max = Math.floor(img.height / 2);
+          document.getElementById('sl-left').max   = Math.floor(img.width  / 2);
+          document.getElementById('sl-right').max  = Math.floor(img.width  / 2);
+          drawPreview();
+          updateDlInfo();
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateMargin(side, val) {
+      margins[side] = +val;
+      document.getElementById('v-' + side).textContent = val;
+      drawPreview();
+    }
+
+    function drawPreview() {
+      if (!img) return;
+      const cfg = CONFIGS[gender];
+      const canvas = document.getElementById('preview-canvas');
+      // Scale for preview (max 700px wide)
+      const scale = Math.min(1, 700 / img.width);
+      canvas.width  = Math.round(img.width  * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Grid lines
+      const t = margins.top    * scale;
+      const b = margins.bottom * scale;
+      const l = margins.left   * scale;
+      const r = margins.right  * scale;
+      const innerW = canvas.width  - l - r;
+      const innerH = canvas.height - t - b;
+      const cellW  = innerW / cfg.cols;
+      const cellH  = innerH / cfg.fatVals.length;
+
+      ctx.strokeStyle = 'rgba(0,255,100,0.85)';
+      ctx.lineWidth   = 1.5;
+
+      // Outer boundary
+      ctx.strokeRect(l, t, innerW, innerH);
+
+      // Vertical lines
+      for (let c = 1; c < cfg.cols; c++) {
+        const x = l + c * cellW;
+        ctx.beginPath(); ctx.moveTo(x, t); ctx.lineTo(x, t + innerH); ctx.stroke();
+      }
+      // Horizontal lines
+      for (let row = 1; row < cfg.fatVals.length; row++) {
+        const y = t + row * cellH;
+        ctx.beginPath(); ctx.moveTo(l, y); ctx.lineTo(l + innerW, y); ctx.stroke();
+      }
+
+      // Fat % labels on left of each row
+      ctx.fillStyle = 'rgba(0,255,100,0.95)';
+      ctx.font = `bold ${Math.max(10, Math.round(13 * scale))}px Arial`;
+      ctx.textAlign = 'left';
+      cfg.fatVals.forEach((fat, i) => {
+        const y = t + (i + 0.5) * cellH;
+        ctx.fillText(fat + '%', l + 4, y + 4);
+      });
+      // Column numbers on top
+      ctx.textAlign = 'center';
+      for (let c = 0; c < cfg.cols; c++) {
+        const x = l + (c + 0.5) * cellW;
+        ctx.fillText('עמ\'' + (c + 1), x, t + 14);
+      }
+    }
+
+    function updateDlInfo() {
+      const cfg = CONFIGS[gender];
+      const total = cfg.cols * cfg.fatVals.length;
+      const g = gender === 'm' ? 'm' : 'f';
+      const example = `${g}_${cfg.fatVals[0]}_1.png … ${g}_${cfg.fatVals[cfg.fatVals.length-1]}_${cfg.cols}.png`;
+      document.getElementById('dl-info').textContent =
+        `${cfg.cols} עמודות × ${cfg.fatVals.length} שורות = ${total} קבצים | שמות: ${example}`;
+    }
+
+    function downloadAll() {
+      if (!img) return;
+      const cfg  = CONFIGS[gender];
+      const g    = gender;
+      const t    = margins.top, b = margins.bottom, l = margins.left, r = margins.right;
+      const innerW = img.width  - l - r;
+      const innerH = img.height - t - b;
+      const cellW  = innerW / cfg.cols;
+      const cellH  = innerH / cfg.fatVals.length;
+
+      const files = [];
+      cfg.fatVals.forEach((fat, rowIdx) => {
+        for (let col = 1; col <= cfg.cols; col++) {
+          const x = l + (col - 1) * cellW;
+          const y = t + rowIdx * cellH;
+          const c = document.createElement('canvas');
+          c.width  = Math.round(cellW);
+          c.height = Math.round(cellH);
+          const ctx = c.getContext('2d');
+          ctx.drawImage(img, x, y, cellW, cellH, 0, 0, c.width, c.height);
+          files.push({ name: `${g}_${fat}_${col}.png`, url: c.toDataURL('image/png'), fat, col });
+        }
+      });
+
+      // Show thumbnails
+      const grid = document.getElementById('thumb-grid');
+      grid.innerHTML = '';
+      files.forEach(f => {
+        const d = document.createElement('div');
+        d.className = 'dl-thumb';
+        const c = document.createElement('canvas');
+        c.width = 50; c.height = 70;
+        const ctx = c.getContext('2d');
+        const imgEl = new Image();
+        imgEl.onload = () => ctx.drawImage(imgEl, 0, 0, 50, 70);
+        imgEl.src = f.url;
+        d.appendChild(c);
+        d.appendChild(document.createTextNode(f.name));
+        grid.appendChild(d);
+      });
+
+      // Download with delay to avoid browser blocking
+      const status = document.getElementById('status');
+      status.textContent = `מוריד 0/${files.length}...`;
+      files.forEach((f, i) => {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.download = f.name;
+          a.href = f.url;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          status.textContent = `הורד ${i + 1}/${files.length}: ${f.name}`;
+          if (i === files.length - 1) status.textContent = `✅ הסתיים! ${files.length} קבצים הורדו`;
+        }, i * 120); // 120ms delay between each download
+      });
+    }
+  </script>
+</body>
+</html>

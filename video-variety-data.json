@@ -1,0 +1,52 @@
+{
+  "post_date": "June 5, 2026",
+  "hooks": [
+    {
+      "original": "Stop (insert action) if you actually want to (insert dream result).",
+      "link": "https://www.instagram.com/p/DGaYM9PIO9b/",
+      "adapted": "תפסיקו לגוון את התפריט אם אתם רוצים להיות חטובים בפועל."
+    },
+    {
+      "original": "What's the most overrated (insert noun)?",
+      "link": "https://www.instagram.com/reel/DDPtPtwMZ9h/?igsh=ampodmR0ZHhvbGJr",
+      "adapted": "מה הדבר הכי מוערך יתר על המידה בתזונה? הגיוון."
+    },
+    {
+      "original": "I haven't done (insert common action) in over # years, and it's healed (insert noun).",
+      "link": "https://www.instagram.com/p/DGTiPPMygzM/",
+      "adapted": "אני לא משנה את התפריט שלי כמעט 3 חודשים, והעקביות שלי השתפרה בצורה משוגעת."
+    },
+    {
+      "original": "This is how much (insert dream result) you achieve if you (insert action), and this is how much (insert dream result) if you (insert action).",
+      "link": "https://www.instagram.com/p/DE8lZdOOLDa/",
+      "adapted": "עם 24 אפשרויות ארוחה אנשים מדוברים יותר ובוחרים פחות. עם 6 אפשרויות? קונים פי 10 יותר."
+    },
+    {
+      "original": "I do not believe in (insert common belief), I believe in (insert your belief).",
+      "link": "https://www.instagram.com/reel/DFAu11XxvX-/",
+      "adapted": "אני לא מאמין שצריך לגוון, אני מאמין שצריך להגביל כדי להצליח."
+    }
+  ],
+  "framework": {
+    "script_angle": "Mythbust + Research",
+    "content_type": "Educational",
+    "funnel_type": "MOFU",
+    "video_format": "ABR (Audio B-Roll) / Talking Head",
+    "cta_type": "Follow",
+    "editing_notes": "Show Jam Study numbers (6 vs 24), visualize the contrast with meal options graphics"
+  },
+  "script": [
+    "אתם חושבים שלגוון בתפריט זה טוב. טעות.",
+    "יש מחקר משנות ה-90 שנקרא 'Jam Study'. החוקרים בדקו — איזה דוכן ימכור יותר ריבה?",
+    "דוכן אחד הציג 24 טעמים שונים. דוכן שני הציג רק 6.",
+    "בדוכן של ה-24? יותר אנשים עצרו להתבונן. התעניינו. התלבטו.",
+    "בדוכן של ה-6? פחות אנשים התעצרו. אבל — קונים מכרו פי 10 יותר.",
+    "למה? כי כשיש מעט אפשרויות, ההחלטה קלה. כשיש 24? המוח שלך בוער.",
+    "אתה עם 10 אפשרויות ארוחה — בוחר את ה-11. זה paralyzing.",
+    "כשיש לך 2-3 אפשרויות? אתה בוחר, אתה מתחייב, אתה נשאר.",
+    "אז הנה הטריק הפסיכולוגי: לכל ארוחה — 2, 3 אפשרויות בלבד.",
+    "בוחרים 6, 7 פעמים בשבוע מתוך אלה. יום אחד בשבוע? לגוון כמו שרוצים.",
+    "עם מעט אפשרויות, הרצון לגוון קטן. וגם — סביר יותר שתבחרו בפועל.",
+    "זה בדיוק מה שאני מלמד בעמוד שלי. טריקים פסיכולוגיים, לא טיפים."
+  ]
+}

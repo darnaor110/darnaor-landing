@@ -1,0 +1,76 @@
+{
+  "post_date": "2026-06-15",
+  "hooks": [
+    {
+      "original_en": "Stop buying your (insert noun) like this, and start buying them like this.",
+      "instagram_link": "https://www.instagram.com/p/DE5ONXRsxs3/",
+      "adapted_he": "תפסיקו להזמין את זה בחוץ ותתחילו להזמין את זה."
+    },
+    {
+      "original_en": "Here's what to look for when buying (insert noun) in (insert location).",
+      "instagram_link": "https://www.instagram.com/p/DGgSRpFuIjD/",
+      "adapted_he": "הנה מה לחפש כשאוכלים בחוץ."
+    },
+    {
+      "original_en": "Are you still (insert action)? I've got (insert result) in (insert time frame) and I have never (insert action).",
+      "instagram_link": "https://www.instagram.com/reel/C4YY12SxuRo/",
+      "adapted_he": "עדיין אוכלים 2000 קלוריות בארוחה? אני הגעתי לתוצאות בלי אף פעם לעשות את זה."
+    },
+    {
+      "original_en": "Does it actually matter what type of (insert noun) you use.",
+      "instagram_link": "https://www.instagram.com/p/DHMtL1GSsy-/",
+      "adapted_he": "כן, זה משנה איזה המבורגר אתם בוחרים בחוץ."
+    },
+    {
+      "original_en": "If your (insert noun) looks like this, pay attention.",
+      "instagram_link": "https://www.instagram.com/p/DIaTxoIJvRL/",
+      "adapted_he": "אם הצלחת שלכם נראית כך, שימו לב — זה 500 קלוריות שלא צריכות להיות שם."
+    }
+  ],
+  "framework": {
+    "script_angle": "You can diet eating out — here's how to pick right instead of winging it",
+    "content_type": "Tactical how-to (option breakdown)",
+    "funnel_type": "TOFU (awareness)",
+    "video_format": "Carousel/quick comparison (4-5 restaurant options side-by-side)",
+    "cta_type": "Save this before your next meal out / Which one are you trying?",
+    "editing_notes": "Text overlays (Hebrew), calorie numbers, protein counts, good/bad versions of each option, hamburger = 2000kcal ❌ vs 1000kcal ✅ comparisons"
+  },
+  "script": [
+    "אתם רוצים להתחטב אבל היום אוכלים בחוץ.",
+    "בעיה? אתם חושבים שתצטרכו לוותר על כל דבר.",
+    "אבל בואו נתראה משהו — המרבית שלכם פשוט בוחרים בחוץ ללא תוכנית.",
+    "כנתיים אוכלים 2000 קלוריות בארוחה אחת.",
+    "עכשיו, אם תוכננתם נכון, אפשר להגיע ל-1000 קלוריות בלי גם לחוש שאתם מוותרים.",
+    "המבורגר? 500-600 קלוריות קציצה, 200-300 לחמניה — זה סביר.",
+    "אבל אתם מוסיפים ציפס (500), רטבים, תוספות — בחינם כמו שעושים הרבה.",
+    "וזה הופך ל-2000.",
+    "סושי רול שלא מטוגן, בלי רטבים? 400 קלוריות.",
+    "אם שניים משביעים אתכם — זה 800 קלוריות. מאוד סביר.",
+    "נגאטס? מטוגן, מפלסטיק, אבל הערכים ידועים מראש.",
+    "סטייק? בשר טוב, חלבון גבוה, גם אם קצת שמנוני.",
+    "אתם פשוט לוקחים את התוספת בצד.",
+    "אבל אתם לא חייבים מזון טוב כל הזמן.",
+    "כמעט בכל מקום אפשר לקחת: עוף, דגים, בשר רזה.",
+    "צד של אורז, שעועית ירוקה, ירקות.",
+    "זה סביר. זה מעוות. וזה עובד."
+  ],
+  "script_notes": [
+    "ZOOM IN FACE, DIRECT EYE CONTACT",
+    "PAUSE, SKEPTICAL LOOK",
+    "MONTAGE: PEOPLE EATING AT RESTAURANTS",
+    "TEXT OVERLAY: 2000 kcal ❌ IN RED",
+    "TEXT OVERLAY: 1000 kcal ✅ IN GREEN",
+    "SHOW HAMBURGER IMAGE, NUMBERS OVERLAID",
+    "B-ROLL: FRIES, SAUCES, EXTRAS",
+    "TEXT APPEARS: 500+200+300+500+ = 2000",
+    "SHOW SUSHI ROLL, TEXT: 400 kcal",
+    "COMPARISON: 2 ROLLS = 800, SMILEY FACE",
+    "FAST FOOD CHICKEN NUGGETS B-ROLL, NUTRITION LABEL",
+    "STEAK CLOSE-UP, PROTEIN % OVERLAY",
+    "SIDE PLATE ANIMATION",
+    "SHRUG, CASUAL DELIVERY",
+    "QUICK MONTAGE: CHICKEN, FISH, LEAN MEAT",
+    "MEAL COMBO PHOTO, BALANCED PLATE",
+    "FINAL CONFIDENCE LOOK, SLOW MOTION, FADE OUT"
+  ]
+}

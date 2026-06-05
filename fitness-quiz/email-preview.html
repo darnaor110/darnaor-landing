@@ -1,0 +1,904 @@
+﻿<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email 1 Preview — דד נאור</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');
+
+  body {
+    margin: 0;
+    padding: 32px 16px;
+    background: #040e12;
+    font-family: 'Assistant', Arial, sans-serif;
+    direction: rtl;
+  }
+
+  .email-shell {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #0b1e26;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(8,127,163,0.25);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, #071419 0%, #0c2535 60%, #071c28 100%);
+    padding: 44px 36px 36px;
+    text-align: center;
+    border-bottom: 1px solid rgba(8,127,163,0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, rgba(8,127,163,0.13) 0%, transparent 70%);
+    top: -80px; left: 50%; transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .brand-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #5bd4ff;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+  .brand-tagline {
+    font-size: 0.78rem;
+    color: #087fa3;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .brand-credits {
+    font-size: 0.72rem;
+    color: #4a6a7a;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    color: #e2edf2;
+    font-size: clamp(1.35rem, 4vw, 1.8rem);
+    font-weight: 800;
+    margin: 0 0 10px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .hero h1 span { color: #5bd4ff; }
+
+  .hero-sub {
+    color: #8aa4af;
+    font-size: 0.93rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid rgba(8,127,163,0.15);
+  }
+  .stat {
+    padding: 20px 10px;
+    text-align: center;
+    border-left: 1px solid rgba(8,127,163,0.12);
+  }
+  .stat:last-child { border-left: 0; }
+  .stat-val {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #5bd4ff;
+    display: block;
+    line-height: 1;
+  }
+  .stat-unit { font-size: 0.7rem; color: #5bd4ff; opacity: 0.7; }
+  .stat-lbl {
+    font-size: 0.7rem;
+    color: #8aa4af;
+    margin-top: 5px;
+    display: block;
+    line-height: 1.3;
+  }
+  /* delta row under target weight */
+  .stat-delta {
+    font-size: 0.68rem;
+    color: #087fa3;
+    font-weight: 700;
+    margin-top: 2px;
+    display: block;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    padding: 28px 36px;
+    border-bottom: 1px solid rgba(8,127,163,0.1);
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #087fa3;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(8,127,163,0.2);
+  }
+
+  /* ── PERSONAL MESSAGE ── */
+  .message {
+    color: #c8dce6;
+    font-size: 0.94rem;
+    line-height: 1.8;
+    margin: 0 0 16px;
+  }
+  .message strong { color: #5bd4ff; }
+  .message em { color: #e2edf2; font-style: normal; font-weight: 700; }
+
+  .timeline-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(8,127,163,0.1);
+    border: 1px solid rgba(8,127,163,0.3);
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 0.84rem;
+    color: #e2edf2;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .save-note {
+    font-size: 0.82rem;
+    color: #4a6a7a;
+    margin: 0;
+    border-top: 1px solid rgba(8,127,163,0.1);
+    padding-top: 14px;
+  }
+
+  /* ── PLAN CARD WRAPPER ── */
+  .plan-card {
+    background: rgba(5,14,20,0.55);
+    border: 1.5px solid rgba(8,127,163,0.2);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+
+  .block-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #5bd4ff;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(8,127,163,0.18);
+  }
+
+  .plan-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.85rem;
+  }
+  .plan-row:last-child { border-bottom: 0; }
+  .plan-row .lbl { color: #8aa4af; }
+  .plan-row .val { color: #e2edf2; font-weight: 700; }
+  .plan-row .val.hi { color: #5bd4ff; }
+
+  .divider { height: 1px; background: rgba(8,127,163,0.1); margin: 18px 0; }
+
+  /* ── DAY HEADER ── */
+  .day-header {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #e2edf2;
+    margin: 0 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .day-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(8,127,163,0.15);
+  }
+
+  /* ── MEAL TIME BLOCK ── */
+  .meal-time-block {
+    background: rgba(8,127,163,0.04);
+    border: 1px solid rgba(8,127,163,0.14);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .meal-time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .meal-time-name {
+    font-weight: 800;
+    color: #e2edf2;
+    font-size: 0.88rem;
+  }
+  .meal-time-meta {
+    font-size: 0.75rem;
+    color: #087fa3;
+    font-weight: 700;
+  }
+
+  /* ── COMPONENT CARD (per option within a meal time) ── */
+  .comp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .comp-card {
+    background: rgba(5,14,20,0.5);
+    border: 1px solid rgba(8,127,163,0.18);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+  .comp-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .comp-type {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #e2edf2;
+  }
+  .comp-kcal {
+    font-size: 0.72rem;
+    color: #087fa3;
+    font-weight: 700;
+    background: rgba(8,127,163,0.1);
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  /* component options list */
+  .comp-options { margin: 0; padding: 0; list-style: none; }
+  .comp-options li {
+    font-size: 0.8rem;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .comp-options li:last-child { border-bottom: 0; }
+  /* preferred = brighter */
+  .comp-options li.pref { color: #c8dce6; }
+  /* alternatives = dimmer */
+  .comp-options li.alt  { color: #4a6a7a; }
+  .comp-options li .opt-name { flex: 1; }
+  .comp-options li .opt-detail {
+    font-size: 0.72rem;
+    color: #4a6a7a;
+    margin-right: 8px; /* RTL: left side */
+  }
+  .comp-options li.pref .opt-detail { color: #087fa3; }
+
+  /* ── WEEKEND BLOCK ── */
+  .weekend-block {
+    background: rgba(8,127,163,0.06);
+    border: 1.5px solid rgba(8,127,163,0.2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 4px;
+  }
+  .weekend-note {
+    font-size: 0.82rem;
+    color: #8aa4af;
+    line-height: 1.7;
+    margin: 0 0 12px;
+  }
+  .weekend-note strong { color: #5bd4ff; }
+
+  /* ── WORKOUT ── */
+  .workout-general {
+    font-size: 0.84rem;
+    color: #8aa4af;
+    line-height: 1.75;
+    margin: 0 0 18px;
+  }
+  .workout-general strong { color: #e2edf2; }
+
+  .workout-day-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #5bd4ff;
+    margin: 0 0 6px;
+  }
+
+  /* horizontal compact table */
+  .ex-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.79rem;
+    margin-bottom: 4px;
+  }
+  .ex-table th {
+    color: #087fa3;
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-align: right;
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(8,127,163,0.18);
+    white-space: nowrap;
+  }
+  .ex-table td {
+    color: #c8dce6;
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .ex-table tr:last-child td { border-bottom: 0; }
+  .ex-table td.ex-name { color: #e2edf2; }
+  .ex-table td.ex-link { text-align: center; }
+  .ex-table td.ex-link a {
+    color: #5bd4ff;
+    text-decoration: none;
+    font-size: 0.72rem;
+  }
+  /* superset indicator */
+  .ss-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    color: #087fa3;
+    border: 1px solid rgba(8,127,163,0.35);
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-right: 4px;
+    vertical-align: middle;
+    cursor: default;
+  }
+  .ss-footnote {
+    font-size: 0.75rem;
+    color: #4a6a7a;
+    margin: 8px 0 0;
+    line-height: 1.5;
+  }
+  .ss-footnote strong { color: #8aa4af; }
+
+  /* volume summary table */
+  .vol-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 6px;
+  }
+  .vol-table th {
+    color: #087fa3;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-align: right;
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(8,127,163,0.18);
+  }
+  .vol-table td {
+    padding: 4px 8px;
+    color: #c8dce6;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .vol-table tr:last-child td { border-bottom: 0; }
+  .prio-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  .prio-1 { background: #5bd4ff; }
+  .prio-2 { background: #087fa3; }
+  .prio-3 { background: #3a5a6a; }
+
+  /* ── CTA ── */
+  .cta-section {
+    padding: 36px;
+    text-align: center;
+    background: linear-gradient(180deg, transparent 0%, rgba(8,127,163,0.05) 100%);
+  }
+  .cta-label { color: #8aa4af; font-size: 0.88rem; margin: 0 0 6px; }
+  .cta-headline {
+    color: #e2edf2;
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 20px;
+    line-height: 1.4;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: #087fa3;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 13px 34px;
+    border-radius: 10px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 18px 36px;
+    text-align: center;
+    border-top: 1px solid rgba(8,127,163,0.1);
+  }
+  .footer p { color: #2e4a55; font-size: 0.72rem; margin: 3px 0; }
+  .footer a { color: #5bd4ff; text-decoration: none; }
+
+  .demo-notice {
+    text-align: center;
+    color: #5bd4ff;
+    font-size: 0.78rem;
+    margin-bottom: 18px;
+    opacity: 0.6;
+  }
+</style>
+</head>
+<body>
+
+<p class="demo-notice">⬇ תצוגה מקדימה של Email 1 — נתוני דוגמה (יוסי, 85 ק"ג, מטרה: חיטוב)</p>
+
+<div class="email-shell">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="brand-name">דד נאור</div>
+    <div class="brand-tagline">חטובים לנצח</div>
+    <div class="brand-credits">
+      מאמן כושר &nbsp;·&nbsp; מפתח גוף חובב &nbsp;·&nbsp; סטודנט למדעי התזונה — האוניברסיטה העברית<br>
+      יועץ תזונה מטעם וינגייט
+    </div>
+    <h1>התוכנית האישית שלך מוכנה, <span>יוסי</span> ✅</h1>
+    <p class="hero-sub">בנית עבורך תוכנית ייחודית בהתאם למטרות והעדפות שלך</p>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-val">1,950<span class="stat-unit"> קל׳</span></span>
+      <span class="stat-lbl">יעד קלורי יומי</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">175<span class="stat-unit"> ג׳</span></span>
+      <span class="stat-lbl">חלבון ליום</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">78<span class="stat-unit"> ק"ג</span></span>
+      <span class="stat-lbl">משקל יעד</span>
+      <span class="stat-delta">↓ 7 ק"ג</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">4</span>
+      <span class="stat-lbl">אימונים בשבוע</span>
+    </div>
+  </div>
+
+  <!-- PERSONAL MESSAGE -->
+  <div class="section">
+    <div class="section-label">👋 מסר אישי</div>
+    <p class="message">
+      שלום יוסי,<br><br>
+      חישבתי עבורך — הגוף שלך מוציא כ-<strong>2,600 קל׳ ביום</strong>.<br><br>
+      לרדת קילו שומן דורש גרעון מצטבר של 7,700 קלוריות.
+      לכן, בהתאם לקצב שבחרת (<em>מהיר</em>), בנינו תפריט שמאפשר גרעון של
+      <strong>650 קל׳ ביום</strong> — שיאפשר קצב של כ-<strong>0.8 ק"ג לחודש</strong>.
+    </p>
+
+    <div class="timeline-pill">
+      📅 יעד צפוי: ~<strong style="margin-right:4px">9 חודשים</strong> להגיע ל-78 ק"ג
+    </div>
+
+    <p class="save-note">שמור את המייל הזה — הוא הבסיס שלך. בשבועות הקרובים אשלח לך תוכן שיסביר <em>למה</em> כל מספר פה הוא מה שהוא.</p>
+  </div>
+
+  <!-- MEAL PLAN -->
+  <div class="section">
+    <div class="section-label">🍽 תפריט תזונה</div>
+
+    <div class="plan-card">
+
+      <!-- Summary -->
+      <div class="block-title">📊 סיכום ערכים</div>
+      <div class="plan-row">
+        <span class="lbl">הגוף שלך שורף ביום</span>
+        <span class="val">2,600 קל׳</span>
+      </div>
+      <div class="plan-row">
+        <span class="lbl">קלוריות יעד</span>
+        <span class="val hi">1,950 קל׳</span>
+      </div>
+      <div class="plan-row">
+        <span class="lbl">גרעון יומי</span>
+        <span class="val">650 קל׳</span>
+      </div>
+      <div class="plan-row">
+        <span class="lbl">יעד חלבון</span>
+        <span class="val hi">175 ג׳ / יום</span>
+      </div>
+      <div class="plan-row">
+        <span class="lbl">קלוריות חופשיות (פינוקים)</span>
+        <span class="val">100 קל׳</span>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Weekdays -->
+      <div class="day-header">🗓 ימים א׳–ה׳</div>
+
+      <!-- Meal: Breakfast -->
+      <div class="meal-time-block">
+        <div class="meal-time-row">
+          <span class="meal-time-name">🍳 ארוחת בוקר</span>
+          <span class="meal-time-meta">420 קל׳ &nbsp;|&nbsp; ~40 ג׳ חלבון</span>
+        </div>
+        <div class="comp-grid">
+
+          <!-- Component: Protein source -->
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">מקור חלבון</span>
+              <span class="comp-kcal">~230 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref">
+                <span class="opt-name">3 ביצים שלמות + 3 חלבונים</span>
+                <span class="opt-detail">240 קל׳ · 31 ג׳ חלבון</span>
+              </li>
+              <li class="pref">
+                <span class="opt-name">200 ג׳ גבינת קוטג׳ 5%</span>
+                <span class="opt-detail">180 קל׳ · 24 ג׳ חלבון</span>
+              </li>
+              <li class="alt">
+                <span class="opt-name">שייק חלבון (1 מנה)</span>
+                <span class="opt-detail">120 קל׳ · 25 ג׳ חלבון</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Component: Carb -->
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">פחמימה</span>
+              <span class="comp-kcal">~120 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref">
+                <span class="opt-name">2 פרוסות לחם מחיטה מלאה</span>
+                <span class="opt-detail">140 קל׳</span>
+              </li>
+              <li class="pref">
+                <span class="opt-name">30 ג׳ שיבולת שועל</span>
+                <span class="opt-detail">110 קל׳</span>
+              </li>
+              <li class="alt">
+                <span class="opt-name">לחמנייה קטנה</span>
+                <span class="opt-detail">130 קל׳</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Component: Veg -->
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">ירקות</span>
+              <span class="comp-kcal">~30 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref">
+                <span class="opt-name">עגבנייה + מלפפון + עלים</span>
+                <span class="opt-detail">ללא הגבלה</span>
+              </li>
+              <li class="alt">
+                <span class="opt-name">ירקות מוקפצים (100 ג׳)</span>
+                <span class="opt-detail">~40 קל׳</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Meal: Mid-morning -->
+      <div class="meal-time-block">
+        <div class="meal-time-row">
+          <span class="meal-time-name">🥛 ארוחת ביניים</span>
+          <span class="meal-time-meta">280 קל׳ &nbsp;|&nbsp; ~28 ג׳ חלבון</span>
+        </div>
+        <div class="comp-grid">
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">חלב / יוגורט</span>
+              <span class="comp-kcal">~200 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref">
+                <span class="opt-name">250 ג׳ יוגורט יווני 2%</span>
+                <span class="opt-detail">165 קל׳ · 20 ג׳ חלבון</span>
+              </li>
+              <li class="alt">
+                <span class="opt-name">200 מ"ל חלב 3% + שייק חלבון</span>
+                <span class="opt-detail">220 קל׳ · 30 ג׳ חלבון</span>
+              </li>
+            </ul>
+          </div>
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">פרי</span>
+              <span class="comp-kcal">~80 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref"><span class="opt-name">תפוח / אגס / תפוז</span><span class="opt-detail">70–90 קל׳</span></li>
+              <li class="alt"><span class="opt-name">100 ג׳ אוכמניות</span><span class="opt-detail">55 קל׳</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meal: Lunch -->
+      <div class="meal-time-block">
+        <div class="meal-time-row">
+          <span class="meal-time-name">🍗 ארוחת צהריים</span>
+          <span class="meal-time-meta">590 קל׳ &nbsp;|&nbsp; ~55 ג׳ חלבון</span>
+        </div>
+        <div class="comp-grid">
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">בשר / דגים</span>
+              <span class="comp-kcal">~280 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref"><span class="opt-name">200 ג׳ חזה עוף</span><span class="opt-detail">220 קל׳ · 44 ג׳ חלבון</span></li>
+              <li class="pref"><span class="opt-name">150 ג׳ סלמון</span><span class="opt-detail">280 קל׳ · 34 ג׳ חלבון</span></li>
+              <li class="alt"><span class="opt-name">2 קופסאות טונה במים</span><span class="opt-detail">160 קל׳ · 36 ג׳ חלבון</span></li>
+            </ul>
+          </div>
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">פחמימה</span>
+              <span class="comp-kcal">~220 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref"><span class="opt-name">120 ג׳ אורז לבן מבושל</span><span class="opt-detail">156 קל׳</span></li>
+              <li class="pref"><span class="opt-name">150 ג׳ בטטה</span><span class="opt-detail">135 קל׳</span></li>
+              <li class="alt"><span class="opt-name">100 ג׳ פסטה מבושלת</span><span class="opt-detail">158 קל׳</span></li>
+            </ul>
+          </div>
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">ירקות</span>
+              <span class="comp-kcal">~30 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref"><span class="opt-name">סלט ירוק גדול</span><span class="opt-detail">ללא הגבלה</span></li>
+              <li class="alt"><span class="opt-name">ירקות מאודים</span><span class="opt-detail">~50 קל׳</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meal: Dinner -->
+      <div class="meal-time-block">
+        <div class="meal-time-row">
+          <span class="meal-time-name">🥗 ארוחת ערב</span>
+          <span class="meal-time-meta">480 קל׳ &nbsp;|&nbsp; ~48 ג׳ חלבון</span>
+        </div>
+        <div class="comp-grid">
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">חלבון ערב</span>
+              <span class="comp-kcal">~280 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref"><span class="opt-name">150 ג׳ אנטריקוט רזה</span><span class="opt-detail">270 קל׳ · 34 ג׳</span></li>
+              <li class="pref"><span class="opt-name">200 ג׳ פילה עוף</span><span class="opt-detail">220 קל׳ · 44 ג׳</span></li>
+              <li class="alt"><span class="opt-name">3 ביצים + 100 ג׳ גבינה 5%</span><span class="opt-detail">310 קל׳ · 30 ג׳</span></li>
+            </ul>
+          </div>
+          <div class="comp-card">
+            <div class="comp-card-header">
+              <span class="comp-type">ירקות + שומן</span>
+              <span class="comp-kcal">~200 קל׳</span>
+            </div>
+            <ul class="comp-options">
+              <li class="pref"><span class="opt-name">ירקות קלויים + כף שמן זית</span><span class="opt-detail">160 קל׳</span></li>
+              <li class="alt"><span class="opt-name">סלט עם 30 ג׳ אבוקדו</span><span class="opt-detail">130 קל׳</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Weekend -->
+      <div class="day-header">🗓 שישי–שבת</div>
+      <div class="weekend-block">
+        <p class="weekend-note">
+          <strong>הקונספט לסוף שבוע:</strong> יש לך ארוחה אחת שקשה לשלוט בה — ארוחת שבת משפחתית, ברביקיו, מסעדה.
+          במקום לנסות לאכול שם בדיוק, <strong>שמור עליה קלוריות</strong> — אכול קל יותר לאורך היום שמגיע לפניה.
+        </p>
+        <div class="comp-card">
+          <div class="comp-card-header">
+            <span class="comp-type">כל יתר הארוחות ביום שישי/שבת</span>
+            <span class="comp-kcal">~800–1,000 קל׳ לאורך היום</span>
+          </div>
+          <ul class="comp-options">
+            <li class="pref"><span class="opt-name">ארוחת בוקר קלה — יוגורט + פרי</span><span class="opt-detail">~300 קל׳</span></li>
+            <li class="pref"><span class="opt-name">ארוחת ביניים — שייק חלבון</span><span class="opt-detail">~200 קל׳</span></li>
+            <li class="alt"><span class="opt-name">הארוחה הגדולה — תהנה, אל תספור</span><span class="opt-detail">שמורה לך</span></li>
+          </ul>
+        </div>
+      </div>
+
+    </div><!-- end plan-card -->
+  </div><!-- end section -->
+
+  <!-- WORKOUT PLAN -->
+  <div class="section">
+    <div class="section-label">🏋️ תוכנית אימון</div>
+
+    <div class="plan-card">
+
+      <!-- General guidelines — plain language -->
+      <div class="block-title">📌 איך מתאמנים</div>
+      <p class="workout-general">
+        <strong>תנועה מבוקרת:</strong> כשאתה מוריד את המשקל — תעשה את זה לאט (3–4 שניות). כשאתה מרים — מהר ובכוח.<br>
+        <strong>עד הקצה:</strong> בכל סט, תמשיך עד שאתה ממש לא יכול לעשות עוד חזרה נקייה.<br>
+        <strong>איך מתקדמים:</strong> כשאתה מצליח לעשות את כל החזרות בטווח העליון — הוסף משקל בפעם הבאה.
+      </p>
+
+      <div class="divider"></div>
+
+      <!-- Day 1 -->
+      <div class="workout-day-title">📅 יום א׳ — חזה + כתפיים</div>
+      <table class="ex-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>תרגיל</th>
+            <th>סטים</th>
+            <th>חזרות</th>
+            <th>וידאו</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td class="ex-name">לחיצת חזה בשכיבה</td>
+            <td>4</td>
+            <td>8–10</td>
+            <td class="ex-link"><a href="#">▶</a></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td class="ex-name"><span class="ss-badge" title="סופרסט">SS</span>לחיצת חזה בשיפוע</td>
+            <td>3</td>
+            <td>8–10</td>
+            <td class="ex-link"><a href="#">▶</a></td>
+          </tr>
+          <tr>
+            <td>2b</td>
+            <td class="ex-name"><span class="ss-badge">SS</span>פשיטת חזה בכבל</td>
+            <td>3</td>
+            <td>10–12</td>
+            <td class="ex-link"><a href="#">▶</a></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td class="ex-name">לחיצת כתפיים עם דמבלים</td>
+            <td>4</td>
+            <td>8–10</td>
+            <td class="ex-link"><a href="#">▶</a></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td class="ex-name">הרמות לצדדים</td>
+            <td>3</td>
+            <td>10–12</td>
+            <td class="ex-link"><a href="#">▶</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="ss-footnote"><strong>SS = סופרסט</strong> — שני תרגילים שעושים אחד אחרי השני בלי מנוחה ביניהם. מנוחה רק אחרי שסיימת את שניהם.</p>
+
+      <div class="divider"></div>
+
+      <!-- Day 2 -->
+      <div class="workout-day-title">📅 יום ב׳ — גב + ביצפס</div>
+      <table class="ex-table">
+        <thead>
+          <tr><th>#</th><th>תרגיל</th><th>סטים</th><th>חזרות</th><th>וידאו</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="ex-name">מתח רחב</td><td>4</td><td>6–8</td><td class="ex-link"><a href="#">▶</a></td></tr>
+          <tr><td>2</td><td class="ex-name">חתירה במוט</td><td>4</td><td>8–10</td><td class="ex-link"><a href="#">▶</a></td></tr>
+          <tr><td>3</td><td class="ex-name"><span class="ss-badge">SS</span>חתירה בכבל</td><td>3</td><td>8–10</td><td class="ex-link"><a href="#">▶</a></td></tr>
+          <tr><td>3b</td><td class="ex-name"><span class="ss-badge">SS</span>כפיפת ביצפס בדמבל</td><td>3</td><td>10–12</td><td class="ex-link"><a href="#">▶</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="divider"></div>
+
+      <!-- Volume summary -->
+      <div class="block-title">📊 נפח שבועי לפי שריר</div>
+      <table class="vol-table">
+        <thead>
+          <tr>
+            <th>שריר</th>
+            <th>עדיפות</th>
+            <th>סטים בשבוע</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>חזה</td>
+            <td><span class="prio-dot prio-1"></span> ראשי</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>גב</td>
+            <td><span class="prio-dot prio-1"></span> ראשי</td>
+            <td>11</td>
+          </tr>
+          <tr>
+            <td>כתפיים</td>
+            <td><span class="prio-dot prio-2"></span> משני</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>ביצפס</td>
+            <td><span class="prio-dot prio-2"></span> משני</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td>טריצפס</td>
+            <td><span class="prio-dot prio-3"></span> תחזוקה</td>
+            <td>4</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div><!-- end plan-card -->
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <p class="cta-label">יש שאלות? רוצה ליווי אישי מלא?</p>
+    <p class="cta-headline">מוכן לשים על זה מסגרת<br>ולראות תוצאות אמיתיות?</p>
+    <a href="#" class="cta-btn">קביעת שיחת ייעוץ חינמית ←</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>דד נאור — חטובים לנצח</p>
+    <p>קיבלת את המייל הזה כי השתתפת בשאלון הכושר האישי</p>
+    <p><a href="#">הסרה מהרשימה</a></p>
+  </div>
+
+</div>
+</body>
+</html>
+

@@ -1,0 +1,81 @@
+{
+  "name": "Dad Naor — Fitness Quiz Email #1 (Plan PDF)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fitness-quiz",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the full personalized HTML email with the plan\nconst d = $input.first().json;\n\n// Helper to escape HTML in text blocks\nfunction esc(str) {\n  return String(str || '')\n    .replace(/&/g,'&amp;')\n    .replace(/</g,'&lt;')\n    .replace(/>/g,'&gt;')\n    .replace(/\"/g,'&quot;');\n}\n\n// Convert the plain-text plan into styled HTML blocks\nfunction planToHtml(text) {\n  if (!text) return '';\n  return text\n    .split('\\n')\n    .map(line => {\n      // Section headers with ══ or ━━\n      if (/^[══━━]{6,}/.test(line)) return `<hr style=\"border:0;border-top:1px solid #1d3d4a;margin:12px 0\">`;\n      // Meal headers 🍽\n      if (line.startsWith('🍽')) return `<p style=\"margin:14px 0 2px;font-weight:700;color:#5bd4ff;font-size:0.95rem\">${esc(line)}</p>`;\n      // Day headers 📅\n      if (line.startsWith('📅')) return `<p style=\"margin:16px 0 4px;font-weight:800;color:#5bd4ff\">${esc(line)}</p>`;\n      // Summary rows with |\n      if (line.trim().startsWith('|')) return `<p style=\"margin:2px 0;font-family:monospace;font-size:0.82rem;color:#8aa4af\">${esc(line)}</p>`;\n      // Bullet items with -\n      if (/^\\s+-\\s/.test(line)) return `<p style=\"margin:2px 0 2px 16px;color:#c8dce6;font-size:0.88rem\">${esc(line.trim().replace(/^-\\s/,''))}</p>`;\n      // Option headers *\n      if (/^\\s+\\*\\s/.test(line)) return `<p style=\"margin:8px 0 2px 8px;font-weight:700;color:#e2edf2\">${esc(line.trim().replace(/^\\*\\s/,''))}</p>`;\n      // Stat lines with :\n      if (/:/.test(line) && line.trim() !== '') return `<p style=\"margin:3px 0;font-size:0.88rem;color:#c8dce6\">${esc(line)}</p>`;\n      // Empty lines\n      if (line.trim() === '') return '<br>';\n      return `<p style=\"margin:3px 0;color:#e2edf2\">${esc(line)}</p>`;\n    })\n    .join('\\n');\n}\n\nconst mealHtml    = planToHtml(d.meal_plan_text);\nconst workoutHtml = planToHtml(d.workout_plan_text);\n\n// Compute expected timeline label\nconst kgPerMonth = d.kg_to_lose > 0\n  ? Math.round(d.deficit / 7700 * 30 * 10) / 10\n  : null;\nconst timelineHtml = kgPerMonth\n  ? `<p style=\"color:#8aa4af;font-size:0.88rem;margin:4px 0\">בקצב הנוכחי: ~${kgPerMonth} ק\"ג לחודש</p>`\n  : '';\n\nconst fullHtml = `\n<!DOCTYPE html>\n<html dir=\"rtl\" lang=\"he\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>התוכנית האישית שלך — דד נאור</title>\n<style>\n  @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap');\n  body { margin:0; padding:0; background:#071419; font-family:'Assistant',Arial,sans-serif; direction:rtl; }\n  .wrapper { max-width:640px; margin:0 auto; background:#0b1e26; border-radius:16px; overflow:hidden; }\n  .hero { background:linear-gradient(135deg,#071419 0%,#0c2535 100%); padding:40px 32px 32px; text-align:center; border-bottom:1px solid rgba(8,127,163,0.3); }\n  .logo { font-size:1.5rem; font-weight:800; color:#5bd4ff; letter-spacing:1px; margin-bottom:4px; }\n  .hero h1 { color:#e2edf2; font-size:1.6rem; font-weight:800; margin:16px 0 8px; line-height:1.3; }\n  .hero p { color:#8aa4af; font-size:0.95rem; margin:0; }\n  .stats-row { display:flex; gap:0; border-bottom:1px solid rgba(8,127,163,0.2); }\n  .stat-box { flex:1; padding:20px 16px; text-align:center; border-left:1px solid rgba(8,127,163,0.2); }\n  .stat-box:last-child { border-left:0; }\n  .stat-val { font-size:1.6rem; font-weight:800; color:#5bd4ff; display:block; }\n  .stat-lbl { font-size:0.75rem; color:#8aa4af; margin-top:2px; display:block; }\n  .section { padding:24px 32px; border-bottom:1px solid rgba(8,127,163,0.15); }\n  .section-title { font-size:1.1rem; font-weight:800; color:#e2edf2; margin:0 0 16px; display:flex; align-items:center; gap:8px; }\n  .section-title::after { content:''; flex:1; height:1px; background:rgba(8,127,163,0.3); }\n  .plan-block { background:rgba(8,127,163,0.06); border:1.5px solid rgba(8,127,163,0.25); border-radius:12px; padding:16px 20px; font-size:0.88rem; line-height:1.8; }\n  .cta-section { padding:32px; text-align:center; }\n  .cta-btn { display:inline-block; background:#087fa3; color:#fff; text-decoration:none; font-weight:700; font-size:1rem; padding:14px 36px; border-radius:10px; }\n  .footer { padding:20px 32px; text-align:center; border-top:1px solid rgba(8,127,163,0.15); }\n  .footer p { color:#8aa4af; font-size:0.78rem; margin:4px 0; }\n  @media (max-width:480px) {\n    .section { padding:20px 20px; }\n    .stats-row { flex-wrap:wrap; }\n    .stat-box { flex-basis:50%; }\n    .hero { padding:28px 20px 24px; }\n    .hero h1 { font-size:1.3rem; }\n  }\n</style>\n</head>\n<body>\n<div class=\"wrapper\">\n\n  <!-- Hero -->\n  <div class=\"hero\">\n    <div class=\"logo\">💪 דד נאור</div>\n    <h1>התוכנית האישית שלך מוכנה, ${esc(d.name)}!</h1>\n    <p>חישבתי הכל לפי הנתונים שלך — תזונה + אימון מותאמים אישית</p>\n  </div>\n\n  <!-- Stats -->\n  <div class=\"stats-row\">\n    <div class=\"stat-box\">\n      <span class=\"stat-val\">${d.target_calories}</span>\n      <span class=\"stat-lbl\">קל׳ יעד ליום</span>\n    </div>\n    <div class=\"stat-box\">\n      <span class=\"stat-val\">${d.protein_target}ג</span>\n      <span class=\"stat-lbl\">חלבון יעד ליום</span>\n    </div>\n    <div class=\"stat-box\">\n      <span class=\"stat-val\">${d.target_weight}ק\"ג</span>\n      <span class=\"stat-lbl\">משקל יעד</span>\n    </div>\n    <div class=\"stat-box\">\n      <span class=\"stat-val\">${d.training_days}</span>\n      <span class=\"stat-lbl\">אימונים בשבוע</span>\n    </div>\n  </div>\n\n  <!-- Context message -->\n  <div class=\"section\">\n    <p style=\"color:#c8dce6;font-size:0.95rem;line-height:1.7;margin:0\">\n      שלום ${esc(d.name)}, 👋<br><br>\n      מצורפת התוכנית שלך — חושבה לפי ה-TDEE האישי שלך (<strong style=\"color:#5bd4ff\">${d.tdee} קל׳</strong>), \n      אחוז השומן הנוכחי שלך ועומס האימון שבחרת.<br><br>\n      שמור את המייל הזה — זה הבסיס שלך. בשבועות הקרובים אשלח לך תוכן נוסף שיעזור לך להבין <em>למה</em> התוכנית בנויה כך, ואיך לשמור עליה לאורך זמן.\n    </p>\n    ${timelineHtml}\n  </div>\n\n  <!-- Meal Plan -->\n  <div class=\"section\">\n    <div class=\"section-title\">🍽 תפריט תזונה</div>\n    <div class=\"plan-block\">${mealHtml}</div>\n  </div>\n\n  <!-- Workout Plan -->\n  <div class=\"section\">\n    <div class=\"section-title\">🏋️ תוכנית אימון</div>\n    <div class=\"plan-block\">${workoutHtml}</div>\n  </div>\n\n  <!-- CTA -->\n  <div class=\"cta-section\">\n    <p style=\"color:#8aa4af;font-size:0.9rem;margin:0 0 16px\">יש שאלות? רוצה ליווי אישי מלא?</p>\n    <a href=\"BOOKING_LINK_HERE\" class=\"cta-btn\">קביעת שיחת ייעוץ ←</a>\n  </div>\n\n  <!-- Footer -->\n  <div class=\"footer\">\n    <p>דד נאור | מאמן כושר ותזונה</p>\n    <p>קיבלת את המייל הזה כי השתתפת בשאלון הכושר האישי</p>\n    <p><a href=\"{{unsubscribe}}\" style=\"color:#5bd4ff\">הסרה מהרשימה</a></p>\n  </div>\n\n</div>\n</body>\n</html>\n`;\n\nreturn [{ json: { \n  to: d.email, \n  name: d.name, \n  subject: `התוכנית שלך מוכנה, ${d.name} 💪`,\n  html: fullHtml\n}}];\n"
+      },
+      "id": "build-email-html",
+      "name": "Build Email HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "dad@dadnaor.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "send-email",
+      "name": "Send Email (SMTP)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [680, 300],
+      "credentials": {
+        "smtp": {
+          "id": "REPLACE_WITH_YOUR_SMTP_CREDENTIAL_ID",
+          "name": "SMTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"ok\": true}",
+        "options": {}
+      },
+      "id": "respond-ok",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [920, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [{ "node": "Build Email HTML", "type": "main", "index": 0 }]
+      ]
+    },
+    "Build Email HTML": {
+      "main": [
+        [{ "node": "Send Email (SMTP)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send Email (SMTP)": {
+      "main": [
+        [{ "node": "Respond OK", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
