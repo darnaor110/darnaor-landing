@@ -1205,7 +1205,7 @@
         {id:'chili',    lbl:'רוטב צילי דל (כף=15ג)',   kcal:20, prot:0, tier:'g'},
         {id:'mustard',  lbl:'חרדל ודבש לייט (כף=15ג)', kcal:25, prot:0, tier:'y'},
         {id:'teriyaki', lbl:'טריאקי (כף=15ג)',          kcal:30, prot:0, tier:'y'},
-        {id:'ketchup',  lbl:'קטשופ (כף=15ג)',           kcal:30, prot:0, tier:'y'},
+        {id:'ketchup',  lbl:'קטשופ',           kcal:30, prot:0, tier:'y'},
         {id:'pesto',    lbl:'פסטו (כף=15ג)',            kcal:80, prot:1, tier:'r'},
         {id:'mayo',     lbl:'מיוקל / מיונז (כף=15ג)',  kcal:80, prot:0, tier:'r'}
       ]},
@@ -1379,13 +1379,17 @@
     ],
     cottage: [
       { key:'type', lbl:"בחר קוטג'", multi:false, opts:[
-        {id:'c5', lbl:"קוטג' 5% (1 קופסה = 250 גרם)", kcal:140, prot:18, tier:'g', unitWeight:250},
-        {id:'c9', lbl:"קוטג' 9% (1 קופסה = 250 גרם)", kcal:180, prot:18, tier:'y', unitWeight:250}
+        {id:'c0', lbl:"קוטג' 0%",  kcal:115, prot:20, tier:'g', unitWeight:250},
+        {id:'c5', lbl:"קוטג' 5%",  kcal:140, prot:18, tier:'g', unitWeight:250},
+        {id:'c9', lbl:"קוטג' 9%",  kcal:180, prot:18, tier:'y', unitWeight:250},
+        {id:'c15', lbl:"קוטג' 15%", kcal:220, prot:16, tier:'o', unitWeight:250},
+        {id:'gr', lbl:'גריקי טבעי', kcal:160, prot:20, tier:'g', unitWeight:200},
+        {id:'tzfatit', lbl:'צפתית', kcal:110, prot:16, tier:'g', unitWeight:200}
       ]},
-      { key:'side', lbl:'תוספת (רשות)', multi:true, opts:[
+      { key:'side', lbl:'תוספת', multi:true, opts:[
         {id:'prot_chips',  lbl:'ציפס חלבון',              kcal:110, prot:10, tier:'y'},
-        {id:'fit_cracks',  lbl:'קרקרים פיטנס (5 יחידות)',kcal:99,  prot:5,  tier:'y'},
-        {id:'crackers',    lbl:'שקית פריכיות',             kcal:99,  prot:2,  tier:'o'},
+        {id:'fit_cracks',  lbl:'קרקרים פיטנס',           kcal:99,  prot:5,  tier:'y'},
+        {id:'crackers',    lbl:'שקית פריכיות',           kcal:99,  prot:2,  tier:'o'},
         {id:'cuc',         lbl:'מלפפון',                  kcal:15,  prot:1,  tier:'g'}
       ]}
     ],
@@ -1400,14 +1404,14 @@
     ],
     snack: [
       { key:'items', lbl:'בחר נשנושים', multi:true, opts:[
-        {id:'edamame',     lbl:'אדממה (100ג מבושל)',         kcal:100, prot:11, tier:'g'},
-        {id:'popcorn',     lbl:'שליש שקית פופקורן מופחת',   kcal:100, prot:4,  tier:'g'},
-        {id:'kasta',       lbl:'גלידל קסטה (2 יח׳)',         kcal:100, prot:1,  tier:'g'},
-        {id:'kartiv',      lbl:'גלידל קרטיב (2 יח׳)',        kcal:100, prot:1,  tier:'g'},
+        {id:'edamame',     lbl:'אדממה',         kcal:100, prot:11, tier:'g'},
+        {id:'popcorn',     lbl:'פופקורן',   kcal:100, prot:4,  tier:'g'},
+        {id:'kasta',       lbl:'גלידל קסטה',         kcal:100, prot:1,  tier:'g'},
+        {id:'kartiv',      lbl:'גלידל קרטיב',        kcal:100, prot:1,  tier:'g'},
         {id:'pb',          lbl:'כפית חמאת בוטנים',           kcal:90,  prot:4,  tier:'y'},
-        {id:'choc',        lbl:'שוקולד מריר (4 קוביות)',     kcal:50,  prot:1,  tier:'y'},
-        {id:'marshmallow', lbl:'מרשמלו (10 יח׳)',            kcal:100, prot:1,  tier:'y'},
-        {id:'lollipop',    lbl:'סוכריות על מקל (2 יח׳)',     kcal:90,  prot:0,  tier:'y'},
+        {id:'choc',        lbl:'שוקולד מריר',     kcal:50,  prot:1,  tier:'y'},
+        {id:'marshmallow', lbl:'מרשמלו',            kcal:100, prot:1,  tier:'y'},
+        {id:'lollipop',    lbl:'סוכריות על מקל',     kcal:90,  prot:0,  tier:'y'},
         {id:'pesek',       lbl:'פסק זמן קטן',                kcal:100, prot:4,  tier:'y'},
         {id:'slim',        lbl:'סלים דליס',                  kcal:95,  prot:2,  tier:'y'}
       ]}
