@@ -139,8 +139,8 @@
 
     /* Photo: fixed height so it never jumps regardless of content below */
     .bfq-photo {
-      width:100%; height:200px;
-      object-fit:cover; object-position:center 62%;
+      width:100%;
+      object-fit:contain;
       border-radius:8px; border:1.5px solid var(--border);
       display:block; background:var(--bg2);
     }
@@ -173,9 +173,8 @@
     /* Arrow: top-margin pushes it to center of the photo area (title ~28px + half photo 100px) */
     .bfq-arrow { flex:0 0 18px; display:flex; align-items:flex-start; justify-content:center; padding-top:128px; color:var(--accent2); font-size:1rem; }
 
-    /* Mobile: slightly shorter photos */
+    /* Mobile: slightly narrower arrow spacing */
     @media (max-width:480px) {
-      .bfq-photo { height:150px; }
       .bfq-arrow { padding-top:100px; }
     }
 
@@ -571,6 +570,7 @@
           <div class="bfq-title">📍 מה הכי מייצג אותך עכשיו</div>
           <img class="bfq-photo" id="photo-cur" src="" alt="מצב נוכחי" />
           <!-- BF% slider -->
+          <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-cur-bf"></div>
           <div class="sl-row">
             <span class="sl-row-lbl">שומן%</span>
             <input type="range" id="sl-cur-bf" min="0" max="1" step="1" value="0" />
@@ -592,6 +592,7 @@
           <div class="bfq-title">🎯 <span id="title-goal-pane">ומה המטרה שלך</span></div>
           <img class="bfq-photo" id="photo-goal" src="" alt="מצב יעד" />
           <!-- BF% slider — hidden in bulk mode -->
+          <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-goal-bf"></div>
           <div class="sl-row" id="col-goal-bf">
             <span class="sl-row-lbl">שומן%</span>
             <input type="range" id="sl-goal-bf" min="0" max="1" step="1" value="0" />
@@ -621,8 +622,10 @@
       </div>
       <!-- Muscle selection panels -->
       <div class="bfq-row">
-        <div class="bfq-pane-right" style="text-align:center">
+        <div class="bfq-pane-right">
           <div class="bfq-title">📍 מסת השריר הנוכחית שלך</div>
+          <img class="bfq-photo" id="photo-cur-muscle" src="" alt="מסת שריר נוכחית" />
+          <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-cur-muscle"></div>
           <div class="sl-row" id="col-cur-muscle-bulk" style="display:none">
             <span class="sl-row-lbl">שריר</span>
             <input type="range" id="sl-cur-muscle-bulk" min="0" max="1" step="1" value="0" />
@@ -630,8 +633,10 @@
           </div>
         </div>
         <div class="bfq-arrow">←</div>
-        <div class="bfq-pane-left" style="text-align:center">
+        <div class="bfq-pane-left">
           <div class="bfq-title">🎯 מסת השריר שאתה מכוון אליה</div>
+          <img class="bfq-photo" id="photo-goal-muscle" src="" alt="מסת שריר יעד" />
+          <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-goal-muscle"></div>
           <div class="sl-row" id="col-goal-muscle-bulk-new">
             <span class="sl-row-lbl">מטרה</span>
             <input type="range" id="sl-goal-muscle-bulk-new" min="0" max="1" step="1" value="0" />
@@ -1797,17 +1802,20 @@
 
     // ── Set up current BF slider ──
     const slCurBF = document.getElementById('sl-cur-bf');
+    const pronounFemale = isFemale ? 'בחרי' : 'בחר';
     slCurBF.min = 0; slCurBF.max = bfLevels.length - 1; slCurBF.value = initCurBFIdx;
     d.currentBF = bfLevels[initCurBFIdx];
     document.getElementById('badge-cur-bf').textContent = d.currentBF + '%';
+    document.getElementById('label-cur-bf').textContent = pronounFemale + ' את אחוז השומן הנוכחי שלך';
 
-    // ── Set up goal BF slider (only for lean mode) ──
+    // ── Set up goal BF slider ──
     const slGoalBF  = document.getElementById('sl-goal-bf');
     const colGoalBF = document.getElementById('col-goal-bf');
     slGoalBF.min = 0; slGoalBF.max = bfLevels.length - 1; slGoalBF.value = initGoalBFIdx;
     d.targetBF = isBulk ? (isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE) : bfLevels[initGoalBFIdx];
     document.getElementById('badge-goal-bf').textContent = d.targetBF + '%';
-    colGoalBF.style.display = isBulk ? 'none' : '';
+    document.getElementById('label-goal-bf').textContent = pronounFemale + ' את אחוז השומן הרצוי שלך';
+    colGoalBF.style.display = '';
 
     // ── Set up Muscle sliders ──
     const slCurM = document.getElementById('sl-cur-muscle');
@@ -1841,6 +1849,11 @@
       d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulkNew.value, bulkGoalLabels);
       document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
       document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
+      document.getElementById('label-cur-muscle').textContent = pronounFemale + ' תמונה המייצגת את מסת השריר הנוכחית שלך (התעלם/י מאחוז השומן)';
+      document.getElementById('label-goal-muscle').textContent = pronounFemale + ' את מסת השריר אליה תרצה/י להגיע';
+      // Load initial muscle images
+      document.getElementById('photo-cur-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.currentMuscleLevel);
+      document.getElementById('photo-goal-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
       colCurMBulk.style.display = '';
     } else {
       bulkStep1Note.style.display = 'none';
@@ -1897,14 +1910,13 @@
     slCurMBulk.oninput = () => {
       d.currentMuscleLevel = sliderToMuscleLevel(+slCurMBulk.value, bulkGoalLabels);
       document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
-      setPhoto('photo-cur', g, d.currentBF, bfLevels, d.currentMuscleLevel);
+      document.getElementById('photo-cur-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.currentMuscleLevel);
     };
     // Bulk mode: goal muscle slider
     slGoalMBulkNew.oninput = () => {
       d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulkNew.value, bulkGoalLabels);
       document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
-      // photo uses fixed low BF + selected muscle level (1-10 for males, 1-7 for females)
-      document.getElementById('photo-goal').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
+      document.getElementById('photo-goal-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
     };
   }
 
