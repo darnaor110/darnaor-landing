@@ -1412,24 +1412,28 @@
           <span class="how-card-num">07</span>
         </div>
         <div class="how-card" data-how="7" onclick="selectHowItem(7)">
-          <span class="material-symbols-outlined">phone_iphone</span>
+          <span class="material-symbols-outlined">emoji_events</span>
           <span class="how-card-num">08</span>
         </div>
         <div class="how-card" data-how="8" onclick="selectHowItem(8)">
-          <span class="material-symbols-outlined">school</span>
+          <span class="material-symbols-outlined">phone_iphone</span>
           <span class="how-card-num">09</span>
         </div>
         <div class="how-card" data-how="9" onclick="selectHowItem(9)">
-          <span class="material-symbols-outlined">card_giftcard</span>
+          <span class="material-symbols-outlined">school</span>
           <span class="how-card-num">10</span>
         </div>
         <div class="how-card" data-how="10" onclick="selectHowItem(10)">
-          <span class="material-symbols-outlined">auto_awesome</span>
+          <span class="material-symbols-outlined">card_giftcard</span>
           <span class="how-card-num">11</span>
         </div>
         <div class="how-card" data-how="11" onclick="selectHowItem(11)">
-          <span class="material-symbols-outlined" style="color: #d4af37;">percent</span>
+          <span class="material-symbols-outlined">auto_awesome</span>
           <span class="how-card-num">12</span>
+        </div>
+        <div class="how-card" data-how="12" onclick="selectHowItem(12)">
+          <span class="material-symbols-outlined" style="color: #d4af37;">percent</span>
+          <span class="how-card-num">13</span>
         </div>
       </div>
     </div>
@@ -1784,6 +1788,7 @@
       <h2 class="font-headline font-bold text-2xl md:text-3xl text-[#e2edf2] drop-shadow-[0_0_15px_rgba(91,212,255,0.3)]">כל אלו השאירו פרטים. עכשיו תורך.</h2>
       <div style="width:60px; height:3px; background:#087fa3; margin:0.5rem auto 0;"></div>
     </div>
+
     <div class="w-full mt-7 overflow-hidden bg-[#121415]" dir="ltr">
       <div id="ba-viewport-5" class="overflow-hidden w-full" style="cursor: grab; touch-action: pan-y;">
         <div id="ba-track-5" class="flex gap-3" style="will-change: transform; user-select: none;">
@@ -2375,42 +2380,45 @@
 
     // ── What You Get Carousel ──
     const howTitles = [
-      'פגישת אבחון',
+      'תוכנית תזונה מלאה שתביא אותך למטרה שלך מהר',
       'תוכנית תזונה מלאה',
-      'שגרת אימונים ייחודית',
+      'שגרת אימונים יעילה ואפקטיבית',
       'אימון טכניקה מלא',
       'ליווי חודשי יומיומי',
       'מענה יומיומי בוואצפ',
       'פגישת עדכון בווידאו',
+      'ככה לומדים להתחטב לנצח',
       'האפליקציה שלי',
       'חטובים לנצח — הקורס',
       'מעטפת בונוסים מלאה',
       'ועוד...',
-      'הערך הכולל',
+      'כל זה בתוכנית אחת ייחודית',
     ];
     const howDescriptions = [
       'פגישת היכרות פרונטלית מעמיקה. נבין יחד את המטרות שלך, החששות והמגבלות כדי שהתוכנית תיהיה מותאמת ומדויקת במיוחד עבורך. נעשה מדידת היקפים ומדדים כדי להבין את נקודת הפתיחה, ונבין מה נדרש עבורך כדי להצליח.',
-      'אני לוקח את מה שאתם אוהבים ורגילים, ועושה כמה שפחות שינויים, אבל בדיוק מספיק כדי שתראו תוצאות נדירות.',
+      'אני מבין מכם מה אתם אוהבים ורגילים לאכול, ובונה תפריט כמה שיותר קרוב, אבל אפקטיבי ומדויק כדי שתראו תוצאות עם מינימום השקעה.',
       'תגידו לי מה אתם רוצים לראות במראה, וכמה זמן יש לכם. אני אגרום לזה לקרות במכון.',
-      'ניפגש במכון ונוודא שהטכניקה שלך מושלמת, כדי שהתוצאות יהיו מושלמות. לא פחות.',
+      'ניפגש במכון ונוודא שהטכניקה שלך מושלמת, כדי שהתוצאות יהיו מושלמות. לא פחות. וכמובן כדי שנראה שאין שאתם לא עושים טעויות או נזקים.',
       'אני מנטר את ההתקדמות והביצועים שלכם, דוחף אתכם להתקדם ולעשות כל מה שצריך כדי להצליח. אצלי זה אישי.',
       'אני זמין עבורכם בוואצפ לכל שאלה או בעיה. אני פה בשבילכם.',
       'אחת לשבועיים נוודא שאתם אכן בפועל מתקדמים, ואם משהו הכי קטן פחות עובד, נסדר אותו כדי שנגיע אל היעד שלנו ביעילות.',
+      'אני לא כמו כל מאמן. אני לא מאכיל בכפית. אני אלמד אתכם ואעזור לכם תוך כדי שתלמדו לחשוב כמוני וכמו כל מאמן ותזונאי מצוין. זה מה שמיוחד בשיטה שלי - אני מלמד אתכם להבין, ואז הרבהה יותר קל לבצע.',
       'כדי שהכל יהיה מונגש בצורה הכי פשוטה שיש, תוכלו לעקוב אחרי האוכל והאימונים שלכם בצורה הכי קלה שיש, אפילו יש לכם AI שלי לכל שאלה ובעיה.',
       'הדרך שלי לוודא שאני המאמן האחרון שאי פעם תצטרכו. אתם תלמדו איך להתאים לעצמכם את האימונים, התזונה והשגרה כמו מאמני עילית.',
       'קורס טכניקה, מאגר תוכנית האימון שלי, ספר המתכונים שלי לעצלנים, המדריך למזווה מנצח ועוד המון כלים שיעזרו לכם להצליח.',
       'יש דברים שאני שומר רק למי שמצטרף. כניסה לתוכנית פותחת עוד שכבה שלמה שאני לא מדבר עליה בפומבי.',
-      'כמובן שזה המחיר של כל חלק בתוכנית לרכישה בנפרד, אך ביחד השווי שלה הוא המשתלם ביותר שתמצאו, ואם דאגתם — אני מבטיח שהוא נגיש לכל מי שהגוף שלו חשוב עבורו',
+      'כמובן שאלו המחירים של כל דבר שאתם מקבלים בתוכנית שלי בנפרד - אך ביחד השווי שלה הוא המשתלם ביותר בארץ. אם חלילה דאגתם - אני מבטיח לכם שההשקעה בתוכנית נגישה לכל מי שהגוף שלו חשוב לו.',
     ];
 
     const howPrices = [
-      '1,200 ₪',
+      '500 ₪',
       '750 ₪',
       '750 ₪',
       '350 ₪',
       '400 ₪/חודש',
       '250 ₪/חודש',
-      '250 ₪',
+      '250 ₪ לפגישה',
+      'אינסופי, בכנות',
       '59 ₪/חודש',
       '1,950 ₪',
       '',
@@ -2420,7 +2428,7 @@
 
     // Infinite snap carousel — clone-based transform loop
     (function () {
-      var TOTAL = 12; // number of original cards
+      var TOTAL = 13; // number of original cards
       var GAP = 16;   // matches gap-4 (1rem = 16px)
 
       var outer = document.getElementById('how-outer');
