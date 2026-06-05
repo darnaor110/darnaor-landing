@@ -1408,6 +1408,26 @@
     ]
   };
 
+  // ── UNIT DATA — per-100g calories and unit weight for portion calculations ──
+  const UNIT_DATA = {
+    'פירות יער': { per100g_kcal: 40, unit_weight_g: 10, unit_name: 'יחידה' },
+    'תפוח': { per100g_kcal: 52, unit_weight_g: 150, unit_name: 'יחידה' },
+    'בננה': { per100g_kcal: 89, unit_weight_g: 110, unit_name: 'יחידה' },
+    'ענבים': { per100g_kcal: 67, unit_weight_g: 150, unit_name: 'יחידה' },
+    'מנגו': { per100g_kcal: 60, unit_weight_g: 200, unit_name: 'יחידה' },
+    'תמר': { per100g_kcal: 282, unit_weight_g: 25, unit_name: 'יחידה' },
+    'קורנפלקס חלבון': { per100g_kcal: 400, unit_weight_g: 35, unit_name: 'קערה' },
+    'גרנולה חלבון': { per100g_kcal: 450, unit_weight_g: 40, unit_name: 'קערה' },
+    'קורנפלקס פיטנס': { per100g_kcal: 400, unit_weight_g: 35, unit_name: 'קערה' },
+    'גרנולה קלאסית': { per100g_kcal: 440, unit_weight_g: 50, unit_name: 'קערה' }
+  };
+
+  function calcFruitUnits(itemName, allocatedCal) {
+    const data = UNIT_DATA[itemName] || { per100g_kcal: 50, unit_weight_g: 100, unit_name: 'יחידה' };
+    const units = (allocatedCal / data.per100g_kcal) * (100 / data.unit_weight_g);
+    return { units: Math.round(units * 2) / 2, data: data };
+  }
+
   // ── MEAL WEIGHT CONFIG — weights stored as kcal (multiples of 50) ──
   // Limits as fractions of targetCal; resolved to kcal at runtime via mealLimKcal()
   const MEAL_LIMIT_PCT = {
@@ -2858,11 +2878,28 @@
   // Builders emit "name||qty||grams" — split by || for clean table columns
   function parseItemToRow(line) {
     const parts = line.split('||');
-    if (parts.length === 3) {
-      return { name: parts[0].trim(), qty: parts[1].trim() || '—', g: parts[2].trim() || '—' };
+    let row = { name: line.trim(), qty: '—', g: '—', tier: null };
+
+    if (parts.length >= 3) {
+      if (parts.length >= 4) {
+        // New format: name||units||qty||grams (|| tier optional)
+        row = {
+          name: parts[0].trim(),
+          qty: parts[2].trim() || '—',  // use qty (part 3)
+          g: parts[3].trim() || '—',
+          tier: parts[4]?.trim() || null
+        };
+      } else if (parts.length === 3) {
+        // Old format: name||qty||grams
+        row = {
+          name: parts[0].trim(),
+          qty: parts[1].trim() || '—',
+          g: parts[2].trim() || '—',
+          tier: null
+        };
+      }
     }
-    // Fallback for lines that don't use the || format
-    return { name: line.trim(), qty: '—', g: '—' };
+    return row;
   }
 
   // ── RENDER PLAN HTML — styled output matching email-preview design ──
@@ -3041,7 +3078,8 @@
               + '<div class="plan-sc-head"><span class="plan-sc-name">' + escHtml(g.name) + '</span>' + headCal + '</div>'
               + '<table class="plan-sc-tbl">' + colHead + '<tbody>';
             g.rows.forEach(function(r) {
-              tableHtml += '<tr>'
+              const tierClass = r.tier ? ' tier-' + r.tier : '';
+              tableHtml += '<tr class="pst-row' + tierClass + '">'
                 + '<td class="pst-name">' + escHtml(r.name) + '</td>'
                 + '<td class="pst-qty">'  + escHtml(r.qty)  + '</td>'
                 + '<td class="pst-g">'    + escHtml(r.g)    + '</td>'
@@ -3510,6 +3548,12 @@
         '.pst-name{color:#e2edf2;font-weight:600;width:52%}',
         '.pst-qty{color:#8aa4af;width:30%;font-size:0.7rem}',
         '.pst-g{color:#087fa3;font-size:0.68rem;font-weight:700;width:18%;text-align:left!important;white-space:nowrap}',
+        // Tier color indicators for food priorities
+        '.pst-row{border-inline-start:3px solid transparent}',
+        '.pst-row.tier-g{border-inline-start-color:#4ade80}',
+        '.pst-row.tier-y{border-inline-start-color:#facc15}',
+        '.pst-row.tier-o{border-inline-start-color:#fb923c}',
+        '.pst-row.tier-r{border-inline-start-color:#f87171}',
         '@media(max-width:600px){.plan-opts-row{grid-template-columns:1fr}}',
         '.plan-bulk-note{font-size:0.82rem;color:#8aa4af;line-height:1.7;background:rgba(8,127,163,0.07);border:1px solid rgba(8,127,163,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px}',
         '.plan-meal-notes-box{background:rgba(8,127,163,0.06);border:1px solid rgba(8,127,163,0.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:6px}',
@@ -4641,11 +4685,12 @@ ${planHtml}
       : ['תפוח', 'בננה', 'פירות יער'];
     const lines = activeNames.map(name => {
       const calPer = FRUIT_CAL[name] || 80;
-      // כמה גרמים שווה ל cal קלוריות
       const grams = Math.round(cal / calPer * 100 / 5) * 5;
-      // כמה יחידות (לפירות עם גדלי יחידה ידועים)
       const portionDesc = FRUIT_PORTION[name] || (grams + 'ג');
-      return name + '||' + portionDesc + '||' + grams + 'ג';
+      // Calculate units for display
+      const unitCalc = calcFruitUnits(name, cal);
+      const units = unitCalc.units > 0 ? unitCalc.units : '—';
+      return name + '||' + units + ' יחידות||' + portionDesc + '||' + grams + 'ג||g';
     });
     return { lines, prot: 1 };
   }
