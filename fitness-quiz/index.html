@@ -557,6 +557,11 @@
         <div class="gc-desc">עם מינימום עלייה בשומן</div>
       </div>
     </div>
+    <!-- Bulk mode: Step 1 note -->
+    <div id="bulk-step1-note" style="display:none;margin-bottom:2rem;padding:1.2rem;background:rgba(8,127,163,0.12);border:1.5px solid var(--border);border-radius:12px;text-align:center">
+      <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 1: בחר אחוזי שומן</div>
+      <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">תחילה בחר את אחוז השומן הנוכחי והרצוי שלך, בדיוק כמו בהורדת שומן</div>
+    </div>
     <!-- Body composition — 2 panels, each with photo + horizontal sliders below -->
     <div id="bf-section" class="hidden">
       <div class="bfq-row">
@@ -604,10 +609,35 @@
             <input type="range" id="sl-goal-muscle-bulk" min="0" max="1" step="1" value="0" />
             <span class="sl-row-badge" id="badge-goal-muscle-bulk">–</span>
           </div>
-          <!-- Context note shown in bulk mode -->
-          <div id="bulk-goal-note" style="display:none;font-size:0.72rem;color:var(--muted);line-height:1.5;margin-top:0.5rem;text-align:center"></div>
         </div>
 
+      </div>
+    </div>
+    <!-- Bulk mode: Step 2 note and muscle sliders -->
+    <div id="bulk-step2-wrapper" style="display:none;margin-top:2.5rem">
+      <div style="padding:1.2rem;background:rgba(8,127,163,0.12);border:1.5px solid var(--border);border-radius:12px;text-align:center;margin-bottom:2rem">
+        <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 2: בחר מסת שריר</div>
+        <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">עכשיו בחר את מסת השריר הנוכחית שלך, ואת מסת השריר שאתה מכוון אליה</div>
+      </div>
+      <!-- Muscle selection panels -->
+      <div class="bfq-row">
+        <div class="bfq-pane-right" style="text-align:center">
+          <div class="bfq-title">📍 מסת השריר הנוכחית שלך</div>
+          <div class="sl-row" id="col-cur-muscle-bulk" style="display:none">
+            <span class="sl-row-lbl">שריר</span>
+            <input type="range" id="sl-cur-muscle-bulk" min="0" max="1" step="1" value="0" />
+            <span class="sl-row-badge" id="badge-cur-muscle-bulk">–</span>
+          </div>
+        </div>
+        <div class="bfq-arrow">←</div>
+        <div class="bfq-pane-left" style="text-align:center">
+          <div class="bfq-title">🎯 מסת השריר שאתה מכוון אליה</div>
+          <div class="sl-row" id="col-goal-muscle-bulk-new">
+            <span class="sl-row-lbl">מטרה</span>
+            <input type="range" id="sl-goal-muscle-bulk-new" min="0" max="1" step="1" value="0" />
+            <span class="sl-row-badge" id="badge-goal-muscle-bulk-new">–</span>
+          </div>
+        </div>
       </div>
     </div>
     <div class="err-msg" id="err-2">נא לבחור מטרה ואחוזי שומן.</div>
@@ -1790,23 +1820,31 @@
     d.targetMuscleLevel = sliderToMuscleLevel(initGoalMIdx, mLabels);
     document.getElementById('badge-goal-muscle').textContent = mLabels[initGoalMIdx];
 
-    // ── Bulk-mode: muscle-only goal slider ──
+    // ── Bulk-mode: two-step muscle selection (current + goal) ──
     const bulkGoalLabels = isFemale ? BULK_GOAL_LABELS_FEMALE : BULK_GOAL_LABELS_MALE;
     const bulkMax        = bulkGoalLabels.length - 1;
-    const colGoalMBulk   = document.getElementById('col-goal-muscle-bulk');
-    const slGoalMBulk    = document.getElementById('sl-goal-muscle-bulk');
-    const bulkNote       = document.getElementById('bulk-goal-note');
+    const bulkStep1Note  = document.getElementById('bulk-step1-note');
+    const bulkStep2Wrap  = document.getElementById('bulk-step2-wrapper');
+    const colCurMBulk    = document.getElementById('col-cur-muscle-bulk');
+    const slCurMBulk     = document.getElementById('sl-cur-muscle-bulk');
+    const colGoalMBulkNew = document.getElementById('col-goal-muscle-bulk-new');
+    const slGoalMBulkNew = document.getElementById('sl-goal-muscle-bulk-new');
 
     if (isBulk) {
-      slGoalMBulk.min = 0; slGoalMBulk.max = bulkMax; slGoalMBulk.value = Math.floor(bulkMax / 2);
-      d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulk.value, bulkGoalLabels);
-      document.getElementById('badge-goal-muscle-bulk').textContent = bulkGoalLabels[+slGoalMBulk.value];
-      colGoalMBulk.style.display = '';
-      bulkNote.style.display = 'block';
-      bulkNote.textContent = 'עכשיו בוחרים לכמה מסת שריר אתם מכוונים. התמונה מציגה אחוז שומן קבוע — התמקד/י רק בבחירת מסת השריר';
+      // Step 1: Show BF note, current/goal BF sliders
+      bulkStep1Note.style.display = 'block';
+      bulkStep2Wrap.style.display = 'block';
+      // Step 2: Initialize current and goal muscle sliders
+      slCurMBulk.min = 0; slCurMBulk.max = bulkMax; slCurMBulk.value = Math.floor(bulkMax / 2);
+      slGoalMBulkNew.min = 0; slGoalMBulkNew.max = bulkMax; slGoalMBulkNew.value = Math.floor(bulkMax / 2);
+      d.currentMuscleLevel = sliderToMuscleLevel(+slCurMBulk.value, bulkGoalLabels);
+      d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulkNew.value, bulkGoalLabels);
+      document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
+      document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
+      colCurMBulk.style.display = '';
     } else {
-      colGoalMBulk.style.display = 'none';
-      bulkNote.style.display = 'none';
+      bulkStep1Note.style.display = 'none';
+      bulkStep2Wrap.style.display = 'none';
     }
 
     // ── Muscle sliders: hide for lean mode (all users), show only for bulk mode ──
@@ -1821,10 +1859,9 @@
       d.currentMuscleLevel = Math.ceil(mLabels.length / 2);
       d.targetMuscleLevel  = Math.ceil(mLabels.length / 2);
     } else {
-      // Bulk mode: hide both lean-muscle sliders (we use muscle-bulk instead)
+      // Bulk mode: hide the lean-mode muscle sliders (we show muscle-bulk sliders instead)
       colCurM.style.display  = 'none';
       colGoalM.style.display = 'none';
-      d.currentMuscleLevel = Math.ceil(mLabels.length / 2);
     }
 
     // ── Show both photos immediately with default values ──
@@ -1856,10 +1893,16 @@
       document.getElementById('badge-goal-muscle').textContent = mLabels[+slGoalM.value];
       setPhoto('photo-goal', g, d.targetBF, bfLevels, d.targetMuscleLevel);
     };
-    // Bulk muscle-only slider
-    slGoalMBulk.oninput = () => {
-      d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulk.value, bulkGoalLabels);
-      document.getElementById('badge-goal-muscle-bulk').textContent = bulkGoalLabels[+slGoalMBulk.value];
+    // Bulk mode: current muscle slider
+    slCurMBulk.oninput = () => {
+      d.currentMuscleLevel = sliderToMuscleLevel(+slCurMBulk.value, bulkGoalLabels);
+      document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
+      setPhoto('photo-cur', g, d.currentBF, bfLevels, d.currentMuscleLevel);
+    };
+    // Bulk mode: goal muscle slider
+    slGoalMBulkNew.oninput = () => {
+      d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulkNew.value, bulkGoalLabels);
+      document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
       // photo uses fixed low BF + selected muscle level (1-10 for males, 1-7 for females)
       document.getElementById('photo-goal').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
     };
@@ -2478,7 +2521,9 @@
       if (d.targetBF >= d.currentBF)   return showErr('err-2', 'אחוז השומן היעד צריך להיות נמוך מהנוכחי.');
     }
     if (d.goal === 'bulk') {
-      if (d.targetMuscleLevel === null) return showErr('err-2', 'נא לבחור רמת שריריות יעד.');
+      if (d.targetBF === null)          return showErr('err-2', 'נא להגדיר אחוז שומן יעד.');
+      if (d.currentMuscleLevel === null) return showErr('err-2', 'נא לבחור רמת שריריות נוכחית.');
+      if (d.targetMuscleLevel === null)  return showErr('err-2', 'נא לבחור רמת שריריות יעד.');
     }
     // Lean + male: muscle levels also required
     if (d.goal === 'lean' && d.gender !== 'אישה') {
