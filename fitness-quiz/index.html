@@ -1318,8 +1318,9 @@
         {id:'egg',     lbl:'ביצה',             kcal:100, prot:8,  tier:'y'}
       ]},
       { key:'veg', lbl:'ירקות', multi:false, opts:[
-        {id:'small', lbl:'סלט קטן (כ3 ירקות)', tier:'g'},
-        {id:'large', lbl:'סלט גדול (6 ירקות)',  tier:'g'}
+        {id:'small',  lbl:'סלט קטן (100 קל)',      kcal:100, prot:3, tier:'g'},
+        {id:'large',  lbl:'סלט גדול (200 קל)',     kcal:200, prot:6, tier:'g'},
+        {id:'inside', lbl:'ירקות בתוך (50 קל)',    kcal:50,  prot:1, tier:'g'}
       ]},
       { key:'sauce', lbl:'רוטב', multi:true, opts:[
         {id:'chili',   lbl:'רוטב צילי דל (כף=15ג)',   kcal:20, prot:0, tier:'g'},
@@ -1372,8 +1373,8 @@
     ],
     cottage: [
       { key:'type', lbl:"בחר קוטג'", multi:false, opts:[
-        {id:'c5', lbl:"קוטג' 5% (200 גרם)", kcal:140, prot:18, tier:'g'},
-        {id:'c9', lbl:"קוטג' 9% (200 גרם)", kcal:180, prot:18, tier:'y'}
+        {id:'c5', lbl:"קוטג' 5% (1 קופסה = 250 גרם)", kcal:140, prot:18, tier:'g', unitWeight:250},
+        {id:'c9', lbl:"קוטג' 9% (1 קופסה = 250 גרם)", kcal:180, prot:18, tier:'y', unitWeight:250}
       ]},
       { key:'side', lbl:'תוספת (רשות)', multi:true, opts:[
         {id:'prot_chips',  lbl:'ציפס חלבון',              kcal:110, prot:10, tier:'y'},
