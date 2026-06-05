@@ -4394,7 +4394,9 @@ ${planHtml}
     lines.push('ביצים (' + eggsCal + ' קל): ביצים||' + eggsCount + ' ביצים L||—');
     if (breadBudget > 0) {
       const breadOpts = allBreads.map(b => {
-        const bUnits = Math.max(1, Math.floor(breadBudget / b.cal));
+        // Round to nearest 0.5, allow 0.5 units for high-cal breads in tight budgets
+        const rawUnits = breadBudget / b.cal;
+        const bUnits = Math.max(0.5, Math.round(rawUnits * 2) / 2);
         return b.name + '||' + bUnits + ' ' + b.unit + '||—';
       }).join(' / ');
       const breadCal = Math.floor(breadBudget / 50) * 50;
