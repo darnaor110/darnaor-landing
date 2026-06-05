@@ -1151,11 +1151,11 @@
         {id:'madaan', lbl:'מעדן חלבון',       kcal:150, prot:15, tier:'g'}
       ]},
       { key:'fruit', lbl:'פרי', multi:true, opts:[
-        {id:'berries', lbl:'10 יחידות / פירות יער', kcal:40,  prot:1, tier:'g'},
-        {id:'apple',   lbl:'1 יחידה / תפוח',        kcal:75,  prot:0, tier:'g'},
-        {id:'banana',  lbl:'1 יחידה / בננה',        kcal:90,  prot:1, tier:'g'},
-        {id:'grapes',  lbl:'1 יחידה / ענבים',       kcal:100, prot:1, tier:'g'},
-        {id:'mango',   lbl:'0.5 / 2 מנגו',          kcal:100, prot:1, tier:'y'},
+        {id:'berries', lbl:'פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
+        {id:'banana',  lbl:'בננה',        kcal:90,  prot:1, tier:'g'},
+        {id:'grapes',  lbl:'ענבים',       kcal:100, prot:1, tier:'g'},
+        {id:'mango',   lbl:'מנגו',          kcal:100, prot:1, tier:'y'},
         {id:'date',    lbl:'2-3 יחידות / תמר',      kcal:80,  prot:0, tier:'y'}
       ]},
       { key:'cereal', lbl:'דגנים / גרנולה', multi:true, opts:[
@@ -1336,33 +1336,38 @@
     ],
     shake: [
       { key:'milk', lbl:'חלב', multi:true, opts:[
-        {id:'m1', lbl:'חלב 1%', kcal:70,  prot:6, tier:'g'},
-        {id:'m2', lbl:'חלב 2%', kcal:90,  prot:6, tier:'g'},
-        {id:'m3', lbl:'חלב 3%', kcal:110, prot:6, tier:'y'}
+        {id:'m1',  lbl:'חלב 1%',           kcal:70,  prot:6, tier:'g'},
+        {id:'m2',  lbl:'חלב 2%',           kcal:90,  prot:6, tier:'g'},
+        {id:'soy', lbl:'חלב סויה',         kcal:65,  prot:4, tier:'g'},
+        {id:'oat', lbl:'חלב שיבולת שועל', kcal:60,  prot:1, tier:'g'},
+        {id:'m3',  lbl:'חלב 3%',           kcal:110, prot:6, tier:'y'}
       ]},
       { key:'powder', lbl:'אבקת חלבון', multi:true, opts:[
-        {id:'whey', lbl:'אבקת חלבון (25 גרם)', kcal:100, prot:20, tier:'g'}
+        {id:'whey', lbl:'אבקת חלבון', kcal:100, prot:20, tier:'g'}
       ]},
       { key:'fruit', lbl:'פרי', multi:true, opts:[
-        {id:'berries', lbl:'10 יחידות / פירות יער', kcal:40,  prot:1, tier:'g'},
-        {id:'banana',  lbl:'1 יחידה / בננה',        kcal:90,  prot:1, tier:'g'},
-        {id:'frozen',  lbl:'1 יחידה / פירות קפואים',kcal:50,  prot:1, tier:'g'},
-        {id:'mango',   lbl:'0.5 / 2 מנגו',          kcal:100, prot:1, tier:'y'}
+        {id:'berries', lbl:'פירות יער',    kcal:40,  prot:1, tier:'g'},
+        {id:'banana',  lbl:'בננה',         kcal:90,  prot:1, tier:'g'},
+        {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
+        {id:'frozen',  lbl:'פירות קפואים',kcal:50,  prot:1, tier:'g'},
+        {id:'mango',   lbl:'מנגו',         kcal:100, prot:1, tier:'y'},
+        {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'}
       ]},
-      { key:'extras', lbl:'תוספות (רשות)', multi:true, opts:[
-        {id:'oats',     lbl:'שיבולת שועל (2 כפות)', kcal:70, prot:3, tier:'y'},
-        {id:'cinnamon', lbl:'קינמון',               kcal:5,  prot:0, tier:'g'}
+      { key:'extras', lbl:'תוספות', multi:true, opts:[
+        {id:'oats',     lbl:'שיבולת שועל', kcal:70, prot:3, tier:'y'},
+        {id:'cinnamon', lbl:'קינמון',     kcal:5,  prot:0, tier:'g'},
+        {id:'honey',    lbl:'דבש',        kcal:60, prot:0, tier:'y'}
       ]}
     ],
     fruit: [
       { key:'fruit', lbl:'בחר פרי', multi:true, opts:[
-        {id:'berries', lbl:'10 יחידות / פירות יער', kcal:40,  prot:1, tier:'g'},
-        {id:'apple',   lbl:'1 יחידה / תפוח',        kcal:75,  prot:0, tier:'g'},
-        {id:'orange',  lbl:'1 יחידה / תפוז',        kcal:62,  prot:1, tier:'g'},
-        {id:'banana',  lbl:'1 יחידה / בננה',        kcal:90,  prot:1, tier:'g'},
-        {id:'grapes',  lbl:'1 יחידה / ענבים',       kcal:100, prot:1, tier:'g'},
-        {id:'melon',   lbl:'1 יחידה / מלון',        kcal:70,  prot:1, tier:'g'},
-        {id:'mango',   lbl:'0.5 / 2 מנגו',          kcal:100, prot:1, tier:'y'}
+        {id:'berries', lbl:'פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
+        {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'},
+        {id:'banana',  lbl:'בננה',        kcal:90,  prot:1, tier:'g'},
+        {id:'grapes',  lbl:'ענבים',       kcal:100, prot:1, tier:'g'},
+        {id:'melon',   lbl:'מלון',        kcal:70,  prot:1, tier:'g'},
+        {id:'mango',   lbl:'מנגו',          kcal:100, prot:1, tier:'y'}
       ]}
     ],
     bar: [
