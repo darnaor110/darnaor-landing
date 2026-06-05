@@ -570,7 +570,6 @@
           <div class="bfq-title">📍 מה הכי מייצג אותך עכשיו</div>
           <img class="bfq-photo" id="photo-cur" src="" alt="מצב נוכחי" />
           <!-- BF% slider -->
-          <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-cur-bf"></div>
           <div class="sl-row">
             <span class="sl-row-lbl">שומן%</span>
             <input type="range" id="sl-cur-bf" min="0" max="1" step="1" value="0" />
@@ -592,7 +591,6 @@
           <div class="bfq-title">🎯 <span id="title-goal-pane">ומה המטרה שלך</span></div>
           <img class="bfq-photo" id="photo-goal" src="" alt="מצב יעד" />
           <!-- BF% slider — hidden in bulk mode -->
-          <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-goal-bf"></div>
           <div class="sl-row" id="col-goal-bf">
             <span class="sl-row-lbl">שומן%</span>
             <input type="range" id="sl-goal-bf" min="0" max="1" step="1" value="0" />
@@ -1039,9 +1037,9 @@
   const MUSCLE_LABELS_MALE   = ['מתקדם', 'מאוד מאומן', 'מאומן', 'מתחיל', 'עובד עליו', 'לא מאומן'];
   const MUSCLE_LABELS_FEMALE = ['מאוד מאומנת', 'ספורטיבית', 'מאומנת', 'לא מאומנת'];
 
-  // Bulk goal labels — index-0 = most muscular target (most training); 10 levels for males, 7 for females
-  const BULK_GOAL_LABELS_MALE   = ['שיא טבעי', '3 שנים', '2-3 שנים', 'שנתיים', 'שנה וחצי', 'כשנה', 'כ-10 חודשים', '4-6 חודשים', '2-3 חודשים', 'לא מתאמן'];
-  const BULK_GOAL_LABELS_FEMALE = ['תחרותית', 'ספורטיבית מאוד', 'מוגדרת', 'חטובה', 'פעילה', 'מתחילה', 'לא מתאמנת'];
+  // Bulk goal labels — ordered from least muscular (index 0, slider left) to most muscular (index max, slider right)
+  const BULK_GOAL_LABELS_MALE   = ['לא מתאמן', '2-3 חודשים', '4-6 חודשים', 'כ-10 חודשים', 'כשנה', 'שנה וחצי', 'שנתיים', '2-3 שנים', '3 שנים', 'שיא טבעי'];
+  const BULK_GOAL_LABELS_FEMALE = ['לא מתאמנת', 'מתחילה', 'פעילה', 'חטובה', 'מוגדרת', 'ספורטיבית מאוד', 'תחרותית'];
   // BF% used as proxy for goal photo in bulk mode (fixed, low body-fat = muscular look)
   const BULK_GOAL_BF_MALE   = 12;  // always show m_12_1-10 photos for bulk goal (muscle variations)
   const BULK_GOAL_BF_FEMALE = 21;  // always show f_21_1-7 photos for bulk goal (muscle variations)
@@ -1806,7 +1804,6 @@
     slCurBF.min = 0; slCurBF.max = bfLevels.length - 1; slCurBF.value = initCurBFIdx;
     d.currentBF = bfLevels[initCurBFIdx];
     document.getElementById('badge-cur-bf').textContent = d.currentBF + '%';
-    document.getElementById('label-cur-bf').textContent = pronounFemale + ' את אחוז השומן הנוכחי שלך';
 
     // ── Set up goal BF slider ──
     const slGoalBF  = document.getElementById('sl-goal-bf');
@@ -1814,7 +1811,6 @@
     slGoalBF.min = 0; slGoalBF.max = bfLevels.length - 1; slGoalBF.value = initGoalBFIdx;
     d.targetBF = isBulk ? (isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE) : bfLevels[initGoalBFIdx];
     document.getElementById('badge-goal-bf').textContent = d.targetBF + '%';
-    document.getElementById('label-goal-bf').textContent = pronounFemale + ' את אחוז השומן הרצוי שלך';
     colGoalBF.style.display = '';
 
     // ── Set up Muscle sliders ──
@@ -1849,8 +1845,8 @@
       d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulkNew.value, bulkGoalLabels);
       document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
       document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
-      document.getElementById('label-cur-muscle').textContent = pronounFemale + ' תמונה המייצגת את מסת השריר הנוכחית שלך (התעלם/י מאחוז השומן)';
-      document.getElementById('label-goal-muscle').textContent = pronounFemale + ' את מסת השריר אליה תרצה/י להגיע';
+      document.getElementById('label-cur-muscle').textContent = pronounFemale + ' תמונה המייצגת את מסת השריר הנוכחית שלך';
+      document.getElementById('label-goal-muscle').textContent = pronounFemale + ' את מסת השריר אליה תרצה/י להגיע (התעלם/י מאחוז השומן הנוכחי)';
       // Load initial muscle images
       document.getElementById('photo-cur-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.currentMuscleLevel);
       document.getElementById('photo-goal-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
