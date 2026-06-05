@@ -2877,29 +2877,40 @@
   //   "1.5 כפות (~270ג)"           → name=אורז לבן,  qty=1.5 כפות,    g=270ג
   // Builders emit "name||qty||grams" — split by || for clean table columns
   function parseItemToRow(line) {
-    const parts = line.split('||');
-    let row = { name: line.trim(), qty: '—', g: '—', tier: null };
+    // Handle multiple items separated by ' / ' (e.g., multiple sauces)
+    // Each item could be: name||qty||grams or name||units||qty||grams||tier
+    const items = line.split(' / ');
+    const rows = [];
 
-    if (parts.length >= 3) {
-      if (parts.length >= 4) {
-        // New format: name||units||qty||grams (|| tier optional)
-        row = {
-          name: parts[0].trim(),
-          qty: parts[2].trim() || '—',  // use qty (part 3)
-          g: parts[3].trim() || '—',
-          tier: parts[4]?.trim() || null
-        };
-      } else if (parts.length === 3) {
-        // Old format: name||qty||grams
-        row = {
-          name: parts[0].trim(),
-          qty: parts[1].trim() || '—',
-          g: parts[2].trim() || '—',
-          tier: null
-        };
+    items.forEach(item => {
+      const parts = item.split('||');
+      let row = { name: item.trim(), qty: '—', g: '—', tier: null };
+
+      if (parts.length >= 3) {
+        if (parts.length >= 4) {
+          // New format: name||units||qty||grams (|| tier optional)
+          row = {
+            name: parts[0].trim(),
+            qty: parts[2].trim() || '—',  // use qty (part 3)
+            g: parts[3].trim() || '—',
+            tier: parts[4]?.trim() || null
+          };
+        } else if (parts.length === 3) {
+          // Old format: name||qty||grams
+          row = {
+            name: parts[0].trim(),
+            qty: parts[1].trim() || '—',
+            g: parts[2].trim() || '—',
+            tier: null
+          };
+        }
       }
-    }
-    return row;
+      rows.push(row);
+    });
+
+    // Return first row (caller expects single row)
+    // but multiple items will be tracked in the lines array
+    return rows[0] || { name: line.trim(), qty: '—', g: '—', tier: null };
   }
 
   // ── RENDER PLAN HTML — styled output matching email-preview design ──
@@ -4165,18 +4176,18 @@ ${planHtml}
   function roundHalf(n) { return Math.round(n * 2) / 2; }
 
   function buildSnack(meal, cal) {
-    // Snack item id → { name, calUnit, unitDesc, prot }
+    // Snack item id → { name, calUnit, unitDesc, prot, gramsPer100Cal }
     const SNACK_LOOKUP = {
-      'edamame':    { name:'אדממה',              calUnit:100, unitDesc:'יחידות',            prot:11 },
-      'popcorn':    { name:'פופקורן מופחת',       calUnit:100, unitDesc:'יחידות',            prot:4  },
-      'kasta':      { name:'גלידל קסטה',          calUnit:50,  unitDesc:'יחידות',            prot:1  },
-      'kartiv':     { name:'גלידל קרטיב',         calUnit:50,  unitDesc:'יחידות',            prot:1  },
-      'pb':         { name:'חמאת בוטנים',         calUnit:90,  unitDesc:'כפיות',             prot:4  },
-      'choc':       { name:'שוקולד מריר',          calUnit:20,  unitDesc:'קוביות',             prot:1  },
-      'marshmallow':{ name:'מרשמלו',              calUnit:3.2, unitDesc:'יחידות',            prot:1  },
-      'lollipop':   { name:'סוכריות על מקל',      calUnit:15,  unitDesc:'יחידות',            prot:0  },
-      'pesek':      { name:'פסק זמן קטן',         calUnit:100, unitDesc:'יחידות',            prot:4  },
-      'slim':       { name:'סלים דליס',           calUnit:95,  unitDesc:'יחידות',            prot:2  },
+      'edamame':    { name:'אדממה',              calUnit:100, unitDesc:'יחידות',            prot:11, gramsPer100Cal:85 },
+      'popcorn':    { name:'פופקורן מופחת',       calUnit:100, unitDesc:'יחידות',            prot:4,  gramsPer100Cal:25 },
+      'kasta':      { name:'גלידל קסטה',          calUnit:50,  unitDesc:'יחידות',            prot:1,  gramsPer100Cal:50 },
+      'kartiv':     { name:'גלידל קרטיב',         calUnit:50,  unitDesc:'יחידות',            prot:1,  gramsPer100Cal:50 },
+      'pb':         { name:'חמאת בוטנים',         calUnit:90,  unitDesc:'כפיות',             prot:4,  gramsPer100Cal:16 },
+      'choc':       { name:'שוקולד מריר',          calUnit:20,  unitDesc:'קוביות',             prot:1,  gramsPer100Cal:28 },
+      'marshmallow':{ name:'מרשמלו',              calUnit:3.2, unitDesc:'יחידות',            prot:1,  gramsPer100Cal:32 },
+      'lollipop':   { name:'סוכריות על מקל',      calUnit:15,  unitDesc:'יחידות',            prot:0,  gramsPer100Cal:20 },
+      'pesek':      { name:'פסק זמן קטן',         calUnit:100, unitDesc:'יחידות',            prot:4,  gramsPer100Cal:40 },
+      'slim':       { name:'סלים דליס',           calUnit:95,  unitDesc:'יחידות',            prot:2,  gramsPer100Cal:25 },
     };
     // Get user-selected items; fall back to first 3
     const selected = getComp(meal, 'snack', 'items') || [];
@@ -4188,7 +4199,9 @@ ${planHtml}
       const rawU  = cal / item.calUnit;
       const units = Math.max(0.5, roundHalf(rawU));
       const qtyStr = units + ' ' + item.unitDesc;
-      return item.name + '||' + qtyStr + '||—';
+      // Calculate grams: (calAllocated / 100) * gramsPer100Cal
+      const grams = Math.round((cal / 100) * (item.gramsPer100Cal || 30));
+      return item.name + '||' + qtyStr + '||' + grams + 'ג||g';
     });
     const avgProt = Math.round(keys.reduce((s, k) => s + (SNACK_LOOKUP[k] ? SNACK_LOOKUP[k].prot : 1), 0) / Math.max(1, keys.length));
     return { lines: snackLines, prot: avgProt };
