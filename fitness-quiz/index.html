@@ -3330,7 +3330,7 @@
     if (workout && workout.days && workout.days.length > 0) {
       const MUSCLE_HE = { chest:'חזה', back:'גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ארבע ראשי', hamstring:'המסטרינג', glute:'ישבן', calves:'תאומים', abs:'בטן' };
       const PRIO_CLASS = { 1:'prio-none', 2:'prio-3', 3:'prio-2', 4:'prio-1', 5:'prio-1' };
-      const PRIO_LABEL = { 5:'1', 4:'2', 3:'3', 2:'4', 1:'5', 0:'' };
+      const PRIO_LABEL = { 5:'5', 4:'4', 3:'3', 2:'2', 1:'1', 0:'' };
       const userTrainingLevel = userData.trainingLevel || 0;
       // מציג מדריך מפורט למתחילים: רמה 1-2 בשאלון (חדש / מתחיל) = level=0 פנימית
       const isBeginnerUser = (workout && workout.level === 0) || userTrainingLevel <= 2;
@@ -3458,6 +3458,7 @@
         // כל השרירים — כולל כאלו שלא קיבלו נפח בפועל
         const ALL_MUSCLES_ORDER = ['chest','back','shoulders','tricep','bicep','quad','hamstring','glute','calves','abs'];
         const volEntries = ALL_MUSCLES_ORDER.map(mId => [mId, workout.actualVol?.[mId] || 0])
+          .filter(function(kv) { return (workout.prio[kv[0]] || 0) > 0; })
           .sort(function(a, b) { return (workout.prio[b[0]] || 0) - (workout.prio[a[0]] || 0); });
 
         // volume range lookup (copied from engine)
@@ -5869,8 +5870,22 @@ ${planHtml}
         const wMax = volumeRange(p, level)[1];
         if (wMin === 0) return;
 
-        // שלב א: שדרג ל-4 סטים אם חסר נפח
+        // שלב ב (ראשון): הוסף דרופסט אם חסר נפח - בעדיפות גבוהה יותר מ-4 סטים
         let vol = computeActualVol(builtDays)[mId] || 0;
+        if (vol < wMin) {
+          builtDays.forEach(day => {
+            if ((computeActualVol([day])[mId] || 0) > 0) { // יש תרגיל לשריר ביום זה
+              const cands = day.exercises.filter(e => e.muscleId === mId && !e.drop && canDrop(e.ex));
+              if (cands.length > 0 && vol + 1 <= wMax) {
+                cands[0].drop = true;
+                vol += 1;
+              }
+            }
+          });
+          vol = computeActualVol(builtDays)[mId] || 0;
+        }
+
+        // שלב א (שני): שדרג ל-4 סטים רק אם דרופסט לא הספיק
         if (vol < wMin) {
           builtDays.forEach(day => {
             day.exercises.forEach(e => {
@@ -5883,19 +5898,6 @@ ${planHtml}
             });
           });
           vol = computeActualVol(builtDays)[mId] || 0;
-        }
-
-        // שלב ב: הוסף דרופסט רק אם עדיין חסר ויש תרגיל מתאים
-        if (vol < wMin) {
-          builtDays.forEach(day => {
-            if ((computeActualVol([day])[mId] || 0) > 0) { // יש תרגיל לשריר ביום זה
-              const cands = day.exercises.filter(e => e.muscleId === mId && !e.drop && canDrop(e.ex));
-              if (cands.length > 0 && vol + 1 <= wMax) {
-                cands[0].drop = true;
-                vol += 1;
-              }
-            }
-          });
         }
       });
 
