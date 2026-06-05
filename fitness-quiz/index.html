@@ -616,7 +616,7 @@
     <div id="bulk-step2-wrapper" style="display:none;margin-top:2.5rem">
       <div style="padding:1.2rem;background:rgba(8,127,163,0.12);border:1.5px solid var(--border);border-radius:12px;text-align:center;margin-bottom:2rem">
         <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 2: בחר מסת שריר</div>
-        <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">עכשיו בחר את מסת השריר הנוכחית שלך, ואת מסת השריר שאתה מכוון אליה</div>
+        <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">עכשיו בחר את מסת השריר הנוכחית שלך, ואת מסת השריר שאתה מכוון אליה <br/><strong>(התעלם/י מאחוז השומן הנוכחי בתמונות)</strong></div>
       </div>
       <!-- Muscle selection panels -->
       <div class="bfq-row">
@@ -1846,7 +1846,7 @@
       document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
       document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
       document.getElementById('label-cur-muscle').textContent = pronounFemale + ' תמונה המייצגת את מסת השריר הנוכחית שלך';
-      document.getElementById('label-goal-muscle').textContent = pronounFemale + ' את מסת השריר אליה תרצה/י להגיע (התעלם/י מאחוז השומן הנוכחי)';
+      document.getElementById('label-goal-muscle').textContent = pronounFemale + ' את מסת השריר אליה תרצה/י להגיע';
       // Load initial muscle images
       document.getElementById('photo-cur-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.currentMuscleLevel);
       document.getElementById('photo-goal-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
