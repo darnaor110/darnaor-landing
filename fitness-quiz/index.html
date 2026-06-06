@@ -1428,7 +1428,8 @@
 
   // ── UNIT DATA — per-100g calories and unit weight for portion calculations ──
   const UNIT_DATA = {
-    'פירות יער': { per100g_kcal: 40, unit_weight_g: 10, unit_name: 'יחידה' },
+    'אוכמניות': { per100g_kcal: 57, unit_weight_g: 100, unit_name: 'קערית' },
+    'תותים': { per100g_kcal: 32, unit_weight_g: 100, unit_name: 'קערית' },
     'תפוח': { per100g_kcal: 52, unit_weight_g: 150, unit_name: 'יחידה' },
     'בננה': { per100g_kcal: 89, unit_weight_g: 110, unit_name: 'יחידה' },
     'ענבים': { per100g_kcal: 67, unit_weight_g: 150, unit_name: 'יחידה' },
@@ -3301,7 +3302,7 @@
         return n.includes('תפוח') || n.includes('בננה') || n.includes('פרי') || n.includes('תות') ||
                n.includes('תמר') || n.includes('אבוקדו') || n.includes('קלמנטינה') ||
                n.includes('ענבים') || n.includes('מנגו') || n.includes('מלון') ||
-               n.includes('אבטיח') || n.includes('תפוז') || n.includes('פירות יער');
+               n.includes('אבטיח') || n.includes('תפוז') || n.includes('אוכמניות');
       }
       function isSauce(n) { return SAUCE_NAMES.has(n) || n.includes('רוטב'); }
 
@@ -4285,7 +4286,7 @@ ${planHtml}
       const fruitIds = getComp(meal, 'yogurt', 'fruit') || [];
       const fruitNames = fruitIds.length > 0
         ? fruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['תפוח', 'בננה', 'פירות יער'];
+        : ['תפוח', 'בננה', 'אוכמניות'];
       fruitNames.forEach(fname => {
         const frCalPer = FRUIT_CAL[fname] || 80;
         const frG = Math.round(frCal / frCalPer * 100 / 5) * 5;
@@ -4511,7 +4512,7 @@ ${planHtml}
       const shakeFruitIds = getComp(meal, 'shake', 'fruit') || [];
       const shakeFruitNames = shakeFruitIds.length > 0
         ? shakeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['בננה', 'פירות יער']; // ברירת מחדל לשייק
+        : ['בננה', 'אוכמניות']; // ברירת מחדל לשייק
       const fruitOpts = shakeFruitNames.map(fn => {
         const calPer = FRUIT_CAL[fn] || 80;
         const g = Math.round(extraCal / calPer * 100 / 5) * 5;
@@ -4716,7 +4717,7 @@ ${planHtml}
     const fruitIds = getComp(meal, 'fruit', 'fruit') || [];
     const activeNames = fruitIds.length > 0
       ? fruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-      : ['תפוח', 'בננה', 'פירות יער'];
+      : ['תפוח', 'בננה', 'אוכמניות'];
     const lines = activeNames.map(name => {
       const calPer = FRUIT_CAL[name] || 80;
       const grams = Math.round(cal / calPer * 100 / 5) * 5;
