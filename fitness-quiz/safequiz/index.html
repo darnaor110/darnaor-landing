@@ -6264,7 +6264,54 @@ ${planHtml}
       }
 
       // עדכן actual volume אחרי supersets (supersets לא משנה volume, רק time)
-      const finalActualVol = computeActualVol(builtDays);
+      let finalActualVol = computeActualVol(builtDays);
+
+      // ── Stage C: Trim Excess Volume ──
+      // אם actualVol > weeklyMax, הסר drop sets קודם, אחרי כך הוריד מ-4 סטים ל-3
+      // חריג: לא לצמצם glute אצל נשים (מטרתה לא לצמצם נפח לglute)
+      const isFemale = u.gender === 'אישה';
+      Object.keys(EXERCISE_POOLS).forEach(mId => {
+        const p = prio[mId] || 0;
+        if (p === 0) return;
+        const wMax = volumeRange(p, level)[1];
+        const actual = finalActualVol[mId] || 0;
+
+        // חריג: אל תצמצם glute לנשים
+        if (isFemale && mId === 'glute') return;
+
+        if (actual > wMax) {
+          const excess = actual - wMax;
+          let trimmed = 0;
+
+          // C1: הסר drop sets קודם (כל drop = -1 סט)
+          for (let dayIdx = 0; dayIdx < builtDays.length && trimmed < excess; dayIdx++) {
+            const day = builtDays[dayIdx];
+            for (let exIdx = 0; exIdx < day.exercises.length && trimmed < excess; exIdx++) {
+              const ex = day.exercises[exIdx];
+              if (ex.muscleId === mId && ex.drop && !ex.pinned) {
+                ex.drop = false;
+                trimmed += 1;
+              }
+            }
+          }
+
+          // C2: אם עדיין יותר מדי, הוריד מ-4 סטים ל-3 (כל הורדה = -1 סט לכל הופעה)
+          if (trimmed < excess) {
+            for (let dayIdx = 0; dayIdx < builtDays.length && trimmed < excess; dayIdx++) {
+              const day = builtDays[dayIdx];
+              for (let exIdx = 0; exIdx < day.exercises.length && trimmed < excess; exIdx++) {
+                const ex = day.exercises[exIdx];
+                if (ex.muscleId === mId && ex.sets === 4 && !ex.pinned) {
+                  ex.sets = 3;
+                  trimmed += (appearances[mId] || 1);
+                }
+              }
+            }
+          }
+        }
+      });
+
+      finalActualVol = computeActualVol(builtDays);
 
       const suggestedDays = (u.trainingDaysSpecific && u.trainingDaysSpecific.length > 0)
         ? null : suggestTrainingDays(Math.max(1, u.trainingDays || 3));
