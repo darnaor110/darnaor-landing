@@ -2098,7 +2098,7 @@
     const targetCal = getMealTargetCal();
     const lim = mealLimKcal(newId, targetCal);
     const others = MEAL_TIMES.filter(mt => mt.id !== newId && d.meals[mt.id]?.checked);
-    if (others.length === 0) { d.meals[newId].weight = targetCal; return; }
+    if (others.length === 0) { d.meals[newId].weight = Math.min(lim.max, targetCal); return; }
     // Give new meal its minimum, steal from the largest other
     const give = lim.min + 50; // min + one step
     const sorted = [...others].sort((a,b) => d.meals[b.id].weight - d.meals[a.id].weight);
