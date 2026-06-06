@@ -4426,7 +4426,7 @@ ${planHtml}
       lines.push('GROUP:פרי|' + frCal);
       // הצג פירות שנבחרו (עם פירוט), או 3 ירוקים ראשונים כברירת מחדל
       const fruitIds = getComp(meal, 'yogurt', 'fruit') || [];
-      const defaultFruitIds = MEALS.breakfast
+      const defaultFruitIds = COMP.yogurt
         .find(m => m.key === 'fruit')?.opts
         ?.filter(f => f.tier === 'g')
         ?.slice(0, 3)
@@ -4903,7 +4903,7 @@ ${planHtml}
 
   function buildFruit(meal, cal) {
     const fruitIds = getComp(meal, 'fruit', 'fruit') || [];
-    const defaultFruitIds = MEALS.fruit
+    const defaultFruitIds = COMP.fruit
       .find(m => m.key === 'fruit')?.opts
       ?.filter(f => f.tier === 'g')
       ?.slice(0, 3)
