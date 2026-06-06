@@ -6307,14 +6307,17 @@ ${planHtml}
       // ── התאמת נפח — רק כשיש חסר לעומת weeklyMin ──
       // כלל: נסה קודם 4 סטים, רק אם עדיין חסר — הוסף דרופסט (לתרגיל מתאים)
       // לא להוסיף מעבר ל-weeklyMax
-      Object.keys(EXERCISE_POOLS).forEach(mId => {
+      // עדיפות: שרירים בעדיפות גבוהה מקבלים drops/upgrades קודם
+      const musclesByPriority = Object.keys(EXERCISE_POOLS)
+        .filter(mId => (prio[mId] || 0) > 0 && (weeklyMin[mId] || 0) > 0)
+        .sort((a, b) => (prio[b] || 0) - (prio[a] || 0));  // High to low priority
+
+      musclesByPriority.forEach(mId => {
         const p = prio[mId] || 0;
-        if (p === 0) return; // שריר לא רלוונטי
         const wMin = weeklyMin[mId] || 0;
         const wMax = volumeRange(p, level)[1];
-        if (wMin === 0) return;
 
-        // שלב ב (ראשון): הוסף דרופסט אם חסר נפח - בעדיפות גבוהה יותר מ-4 סטים
+        // שלב ב (ראשון): הוסף דרופסט אם חסר נפח - שרירים בעדיפות גבוהה קודם
         let vol = computeActualVol(builtDays)[mId] || 0;
         if (vol < wMin) {
           builtDays.forEach(day => {
@@ -6337,6 +6340,7 @@ ${planHtml}
                 const volIfUpgrade = vol + (appearances[mId] || 1) * 1; // +1 סט לכל הופעה
                 if (volIfUpgrade <= wMax) {
                   e.sets = 4;
+                  vol += appearances[mId];
                 }
               }
             });
