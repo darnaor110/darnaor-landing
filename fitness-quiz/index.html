@@ -1441,8 +1441,8 @@
 
   // ── UNIT DATA — per-100g calories and unit weight for portion calculations ──
   const UNIT_DATA = {
-    'אוכמניות': { per100g_kcal: 57, unit_weight_g: 100, unit_name: 'קערית' },
-    'תותים': { per100g_kcal: 32, unit_weight_g: 100, unit_name: 'קערית' },
+    'אוכמניות': { per100g_kcal: 57, unit_weight_g: 2, unit_name: 'אוכמנייה' },
+    'תותים': { per100g_kcal: 32, unit_weight_g: 10, unit_name: 'תות' },
     'תפוח': { per100g_kcal: 80, unit_weight_g: 100, unit_name: 'יחידה' },
     'תפוז': { per100g_kcal: 80, unit_weight_g: 100, unit_name: 'יחידה' },
     'בננה': { per100g_kcal: 90, unit_weight_g: 100, unit_name: 'יחידה' },
@@ -1608,8 +1608,32 @@
   function pick(gid, btn, field) {
     document.querySelectorAll(`#${gid} .toggle-btn`).forEach(b=>b.classList.remove('selected'));
     btn.classList.add('selected'); d[field]=btn.dataset.val;
+    if (field === 'gender') updateGenderText();
   }
   window.pick = pick;
+
+  // ── עדכון טקסטים בהתאם למין ──
+  function updateGenderText() {
+    const isFemale = d.gender === 'אישה';
+    const genderTexts = {
+      'מסת השריר שאתה מכוון אליה': { זכר: 'מסת השריר שאתה מכוון אליה', נקבה: 'מסת השריר שאתם מכונה אליה' },
+      'כמה צעדים אתה עושה ביום בממוצע?': { זכר: 'כמה צעדים אתה עושה ביום בממוצע?', נקבה: 'כמה צעדים את עושה ביום בממוצע?' },
+      'האם אתה עושה קרדיו בנוסף?': { זכר: 'האם אתה עושה קרדיו בנוסף?', נקבה: 'האם את עושה קרדיו בנוסף?' },
+      'איפה אתה מתאמן?': { זכר: 'איפה אתה מתאמן?', נקבה: 'איפה את מתאמנת?' },
+      'סמן את הארוחות שאתה אוכל': { זכר: 'סמן את הארוחות שאתה אוכל.', נקבה: 'סמני את הארוחות שאתם אוכלת' }
+    };
+    document.querySelectorAll('.section-label, .step-sub, .bfq-title').forEach(el => {
+      const text = el.textContent.trim();
+      for (const [key, variants] of Object.entries(genderTexts)) {
+        if (text === variants.זכר || text === variants.נקבה) {
+          el.textContent = isFemale ? variants.נקבה : variants.זכר;
+          break;
+        }
+      }
+    });
+  }
+  window.updateGenderText = updateGenderText;
+
   function pickDuration(btn) {
     document.querySelectorAll('#grp-sdur .toggle-btn').forEach(b=>b.classList.remove('selected'));
     btn.classList.add('selected');
@@ -3885,16 +3909,25 @@ ${planHtml}
   };
   const DEFAULT_BREAD = 'לחם מלא';
 
-  // גבינות לטוסט — keyed by COMP option id
-  // TOAST_CHEESE: cal = קלוריות לפרוסה (unitG גרם), prot = חלבון לפרוסה
-  // גבינה צהובה: פרוסה ≈ 20ג | צפתית/לבנה: 25ג | חמד: 20ג
+  // Unified cheese data — both toast and eggs use same structure
+  // unit: 'פרוסה' for sliced, null for bulk (grams only)
   const TOAST_CHEESE = {
-    'ch9':     { name:'גבינה צהובה 9%',  cal:45, prot:6,  unitG:20, unitDesc:'פרוסה' },
-    'tsfarit': { name:'צפתית',            cal:55, prot:8,  unitG:50, unitDesc:'פרוסה' },
-    'hemed':   { name:'חמד / טל',         cal:45, prot:6,  unitG:20, unitDesc:'פרוסה' },
-    'ch15':    { name:'גבינה צהובה 15%', cal:65, prot:7,  unitG:20, unitDesc:'פרוסה' },
-    'ch22':    { name:'גבינה צהובה 22%', cal:80, prot:6,  unitG:20, unitDesc:'פרוסה' },
-    'bulgarian': { name:'גבינה בולגרית 5%', cal:100, prot:13, unitG:100, unitDesc:'גרם' }
+    'ch9':       { name:'גבינה צהובה 9%',      cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
+    'tsfarit':   { name:'צפתית',                cal:55,  prot:8,  unitG:50,  unit:'פרוסה' },
+    'hemed':     { name:'חמד / טל',             cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
+    'ch15':      { name:'גבינה צהובה 15%',     cal:65,  prot:7,  unitG:20,  unit:'פרוסה' },
+    'ch22':      { name:'גבינה צהובה 22%',     cal:80,  prot:6,  unitG:20,  unit:'פרוסה' },
+    'bulgarian': { name:'גבינה בולגרית 5%',    cal:100, prot:13, unitG:100, unit:null }
+  };
+
+  // EGGS_CHEESE: identical to TOAST_CHEESE
+  const EGGS_CHEESE = {
+    'ch9':       { name:'גבינה צהובה 9%',      cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
+    'tsfarit':   { name:'צפתית',                cal:55,  prot:8,  unitG:50,  unit:'פרוסה' },
+    'hemed':     { name:'חמד / טל',             cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
+    'ch15':      { name:'גבינה צהובה 15%',     cal:65,  prot:7,  unitG:20,  unit:'פרוסה' },
+    'ch22':      { name:'גבינה צהובה 22%',     cal:80,  prot:6,  unitG:20,  unit:'פרוסה' },
+    'bulgarian': { name:'גבינה בולגרית 5%',    cal:100, prot:13, unitG:100, unit:null }
   };
 
   // Yogurt types — keyed by COMP option id → { name, cal, prot } per container
@@ -4125,28 +4158,27 @@ ${planHtml}
     return meal?.typeComponents?.[type]?.[key] || null;
   }
 
-  // Map COMP option id → BREAD_CAL Hebrew key
+  // Map COMP option id → bread name
   const BREAD_ID_MAP = {
     'light':'לחם קל', 'pita99':'פיתה 99', 'whole':'לחם מלא',
     'white':'לחם לבן', 'pita_w':'פיתה לבנה', 'roll':'לחמניה', 'tortilla':'טורטיה 99'
   };
-  // resolve bread: user-picked or default — returns {name, cal, unit}
+
   function pickBread(meal, type) {
-    // מחזיר לחם ראשון שנבחר (לחישובי קצבה), או ברירת מחדל
     const ids  = getComp(meal, type, 'bread') || [];
     const id   = ids[0] || null;
     const name = (id && BREAD_ID_MAP[id]) || DEFAULT_BREAD;
-    return { name, cal: BREAD_CAL[name] || BREAD_CAL[DEFAULT_BREAD], unit: BREAD_UNIT[name] || 'פרוסות' };
+    const data = BREAD_DATA[name] || BREAD_DATA[DEFAULT_BREAD];
+    return { name, ...data };
   }
-  // ברירות מחדל: 3 הלחמים הטובים ביותר
+
   const DEFAULT_BREADS = ['לחם קל', 'פיתה 99', 'לחם מלא'];
   function pickAllBreads(meal, type) {
     const ids = getComp(meal, type, 'bread') || [];
     if (ids.length > 0) {
-      return ids.map(id => { const n = BREAD_ID_MAP[id] || DEFAULT_BREAD; return { name:n, cal:BREAD_CAL[n]||65, unit:BREAD_UNIT[n]||'פרוסות' }; });
+      return ids.map(id => { const n = BREAD_ID_MAP[id] || DEFAULT_BREAD; return { name: n, ...(BREAD_DATA[n] || BREAD_DATA[DEFAULT_BREAD]) }; });
     }
-    // ברירת מחדל: 3 לחמים
-    return DEFAULT_BREADS.map(n => ({ name:n, cal:BREAD_CAL[n]||65, unit:BREAD_UNIT[n]||'פרוסות' }));
+    return DEFAULT_BREADS.map(n => ({ name: n, ...(BREAD_DATA[n] || BREAD_DATA[DEFAULT_BREAD]) }));
   }
 
   // Convert calories + cal/100g to grams (rounded to 5g)
@@ -4243,34 +4275,65 @@ ${planHtml}
   function roundQuarter(n) { return Math.round(n * 4) / 4; }
 
   function buildSnack(meal, cal) {
-    // Snack item id → { name, calUnit, unitDesc, prot, gramsPer100Cal }
+    // Snack item definitions with specific unit calculations per user specs
     const SNACK_LOOKUP = {
-      'edamame':    { name:'אדממה',              calUnit:100, unitDesc:'יחידות',            prot:11, gramsPer100Cal:85 },
-      'popcorn':    { name:'פופקורן מופחת',       calUnit:100, unitDesc:'יחידות',            prot:4,  gramsPer100Cal:25 },
-      'kasta':      { name:'גלידל קסטה',          calUnit:50,  unitDesc:'יחידות',            prot:1,  gramsPer100Cal:50 },
-      'kartiv':     { name:'גלידל קרטיב',         calUnit:50,  unitDesc:'יחידות',            prot:1,  gramsPer100Cal:50 },
-      'pb':         { name:'חמאת בוטנים',         calUnit:90,  unitDesc:'כפיות',             prot:4,  gramsPer100Cal:16 },
-      'choc':       { name:'שוקולד מריר',          calUnit:20,  unitDesc:'קוביות',             prot:1,  gramsPer100Cal:28 },
-      'marshmallow':{ name:'מרשמלו',              calUnit:3.2, unitDesc:'יחידות',            prot:1,  gramsPer100Cal:32 },
-      'lollipop':   { name:'סוכריות על מקל',      calUnit:15,  unitDesc:'יחידות',            prot:0,  gramsPer100Cal:20 },
-      'pesek':      { name:'פסק זמן קטן',         calUnit:100, unitDesc:'יחידות',            prot:4,  gramsPer100Cal:40 },
-      'slim':       { name:'סלים דליס',           calUnit:95,  unitDesc:'יחידות',            prot:2,  gramsPer100Cal:25 },
+      'edamame':    { name:'אדממה',              type:'grams' },
+      'popcorn':    { name:'פופקורן מופחת',      type:'package', caloriesPerPackage:300 },
+      'kasta':      { name:'גלידל קסטה',         type:'unit', desc:'יחידה', caloriesPerUnit:50 },
+      'kartiv':     { name:'גלידל קרטיב',        type:'unit', desc:'יחידה', caloriesPerUnit:50 },
+      'pb':         { name:'חמאת בוטנים',        type:'teaspoon', desc:'כפית', gramsPerTsp:8, caloriesPerTsp:90 },
+      'choc':       { name:'שוקולד מריר',         type:'cube', desc:'קוביה', caloriesPerCube:25 },
+      'marshmallow':{ name:'מרשמלו',             type:'piece', desc:'מרשמלו', gramsPerPiece:5 },
+      'lollipop':   { name:'סוכריות על מקל',     type:'piece', desc:'יחידה', gramsPerPiece:10, caloriesPerUnit:40 },
+      'pesek':      { name:'פסק זמן קטן',        type:'unit', desc:'יחידה', caloriesPerUnit:100 },
+      'slim':       { name:'סלים דליס',          type:'unit', desc:'יחידה', caloriesPerUnit:95 },
     };
-    // Get user-selected items; fall back to first 3
     const selected = getComp(meal, 'snack', 'items') || [];
-    const keys = selected.length > 0
-      ? selected.filter(k => SNACK_LOOKUP[k])
-      : Object.keys(SNACK_LOOKUP).slice(0, 3);
+    const keys = selected.length > 0 ? selected.filter(k => SNACK_LOOKUP[k]) : Object.keys(SNACK_LOOKUP).slice(0, 3);
     const snackLines = keys.map(k => {
-      const item  = SNACK_LOOKUP[k];
-      // Calculate grams: (calAllocated / 100) * gramsPer100Cal
-      const grams = Math.round((cal / 100) * (item.gramsPer100Cal || 30));
-      // Calculate units: grams / gramsPer100Cal * (100 / calUnit)
-      const units = Math.max(0.5, (grams / (item.gramsPer100Cal || 30)) * (100 / item.calUnit));
-      const qtyStr = units < 2 ? Math.round(units * 2) / 2 + ' ' + item.unitDesc : Math.round(units) + ' ' + item.unitDesc;
+      const item = SNACK_LOOKUP[k];
+      let qtyStr, grams;
+
+      if (item.type === 'grams') {
+        // אדממה - just grams (no units)
+        grams = Math.round(cal * 1.05);
+        qtyStr = '—';
+      } else if (item.type === 'package') {
+        // פופקורן - fraction of 300-cal package (e.g., 0.33, 0.5, 0.66)
+        const frac = cal / item.caloriesPerPackage;
+        qtyStr = (Math.round(frac * 100) / 100) + ' שקית';
+        grams = Math.round(cal * 0.1);
+      } else if (item.type === 'unit') {
+        // Regular units (gelato, pesek, slim)
+        const units = cal / item.caloriesPerUnit;
+        qtyStr = (units < 1 ? Math.round(units * 2) / 2 : Math.round(units)) + ' ' + item.desc;
+        grams = Math.round(units * 30);
+      } else if (item.type === 'teaspoon') {
+        // חמאת בוטנים - teaspoons
+        const tsps = cal / item.caloriesPerTsp;
+        qtyStr = (Math.round(tsps * 2) / 2) + ' ' + item.desc;
+        grams = Math.round(tsps * item.gramsPerTsp);
+      } else if (item.type === 'cube') {
+        // שוקולד - cubes (25 kcal each)
+        const cubes = cal / item.caloriesPerCube;
+        qtyStr = Math.round(cubes) + ' ' + item.desc;
+        grams = Math.round(cubes * 2.5);
+      } else if (item.type === 'piece') {
+        // מרשמלו / סוכריה
+        if (item.name === 'מרשמלו') {
+          const pieces = Math.round(cal / (16.67 / item.gramsPerPiece)); // ~16.67 kcal per gram of marshmallow
+          qtyStr = pieces + ' ' + item.desc;
+          grams = pieces * item.gramsPerPiece;
+        } else {
+          const pieces = Math.round(cal / item.caloriesPerUnit);
+          qtyStr = pieces + ' ' + item.desc;
+          grams = pieces * item.gramsPerPiece;
+        }
+      }
+
       return item.name + '||' + qtyStr + '||' + grams + 'ג';
     });
-    const avgProt = Math.round(keys.reduce((s, k) => s + (SNACK_LOOKUP[k] ? SNACK_LOOKUP[k].prot : 1), 0) / Math.max(1, keys.length));
+    const avgProt = 2; // placeholder
     return { lines: snackLines, prot: avgProt };
   }
 
@@ -4347,19 +4410,9 @@ ${planHtml}
       fruitNames.forEach(fname => {
         const frCalPer = FRUIT_CAL[fname] || 80;
         const frG = Math.round(frCal / frCalPer * 100 / 5) * 5;
-        const unitData = UNIT_DATA[fname];
-        // חשב כמות יחידות לפי UNIT_DATA
-        let portion = frG + 'ג';
-        if (unitData && unitData.unit_weight_g) {
-          const units = frG / unitData.unit_weight_g;
-          const unitNum = Math.round(units * 2) / 2; // round to nearest 0.5
-          const pluralForm = unitData.unit_name === 'יחידה' ? 'יחידות'
-            : unitData.unit_name === 'קערית' ? 'קערוות'
-            : unitData.unit_name + 'ים';
-          const unitCount = unitNum === 1 ? unitData.unit_name : `${unitNum} ${pluralForm}`;
-          portion = unitCount;
-        }
-        lines.push(fname + '||' + portion + '||' + frG + 'ג');
+        const unitCalc = calcFruitUnits(fname, frCal);
+        const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
+        lines.push(fname + '||' + frG + '||' + unitDisplay);
       });
     }
 
@@ -4482,18 +4535,24 @@ ${planHtml}
     const allBreads = pickAllBreads(meal, 'toast');
     const lines = [];
 
-    // לחמים — כל אופציה מקבלת יחידות משלה לפי אותו תקציב קלוריות (breadCalBudget)
+    // לחם - תומך יחידות חצי (0.5, 1, 1.5...) עם גרמים
     const breadLines = allBreads.map(b => {
-      const bUnits = Math.max(1, Math.floor(breadCalBudget / b.cal));
-      return b.name + '||' + bUnits + ' ' + b.unit + '||—';
+      const rawUnits = breadCalBudget / b.cal;
+      const bUnits = Math.max(0.5, Math.round(rawUnits * 2) / 2);
+      const gramsTotal = bUnits * b.unitG;
+      return b.name + '||' + bUnits + ' ' + b.unit + ' (' + gramsTotal + 'ג)' + '||—';
     });
     lines.push('לחם (' + breadCalBudget + ' קל): ' + breadLines.join(' / '));
 
-    // גבינות — עם גרמים
+    // גבינה - מטפלת unit: null (Bulgarian = גרמים בלבד)
     const cheeseLines = activeCheeseIds.map(id => {
       const ch = TOAST_CHEESE[id] || TOAST_CHEESE['ch9'];
-      const chG = units * (ch.unitG || 20);
-      return ch.name + '||' + units + ' ' + (ch.unitDesc || 'פרוסה') + '||' + chG + 'ג';
+      const gramsTotal = units * ch.unitG;
+      if (ch.unit === null) {
+        return ch.name + '||' + gramsTotal + 'ג||—';
+      } else {
+        return ch.name + '||' + units + ' ' + ch.unit + ' (' + gramsTotal + 'ג)' + '||—';
+      }
     });
     lines.push('גבינה (' + (units * avgCheeseCal) + ' קל): ' + cheeseLines.join(' / '));
 
@@ -4513,15 +4572,6 @@ ${planHtml}
     return { lines, prot: avgCheeseProt + avgBreadProt };
   }
 
-  const EGGS_CHEESE_ID_MAP = {
-    'ch9':'גבינה צהובה 9%', 'tsfarit':'גבינה צפתית', 'hemed':'חמד / טל',
-    'ch15':'גבינה צהובה 15%', 'ch22':'גבינה צהובה 22%'
-  };
-  // cal per serving, unitG = grams per serving
-  const EGGS_CHEESE_CAL = { 'ch9':45, 'tsfarit':65, 'hemed':45, 'ch15':65, 'ch22':80 };
-  const EGGS_CHEESE_G   = { 'ch9':20, 'tsfarit':50, 'hemed':20, 'ch15':20, 'ch22':20 };
-  const EGGS_CHEESE_UNIT= { 'ch9':'פרוסה', 'tsfarit':'פרוסה', 'hemed':'פרוסה', 'ch15':'פרוסה', 'ch22':'פרוסה' };
-
   function buildEggs(meal, cal) {
     const eggsCount  = cal > 500 ? 3 : 2;
     const eggsCal    = eggsCount * 100; // 100 קל לביצה L
@@ -4534,7 +4584,7 @@ ${planHtml}
     const cheeseIds   = getComp(meal, 'eggs', 'cheese') || [];
     const hasCheese   = cheeseIds.length > 0;
     const avgCheeseCal = hasCheese
-      ? Math.round(cheeseIds.reduce((s, id) => s + (EGGS_CHEESE_CAL[id] || 45), 0) / cheeseIds.length)
+      ? Math.round(cheeseIds.reduce((s, id) => s + (EGGS_CHEESE[id]?.cal || 45), 0) / cheeseIds.length)
       : 0;
     let cheeseCal  = hasCheese ? avgCheeseCal : 0;
 
@@ -4563,23 +4613,25 @@ ${planHtml}
     lines.push('ביצים (' + eggsCal + ' קל): ביצים||' + eggsCount + ' ביצים L||—');
     if (isBreadRequired || breadBudget > 0) {
       const breadOpts = allBreads.map(b => {
-        // Round to nearest 0.5, allow 0.5 units for high-cal breads in tight budgets
         const rawUnits = breadBudget / b.cal;
         const bUnits = Math.max(0.5, Math.round(rawUnits * 2) / 2);
-        return b.name + '||' + bUnits + ' ' + b.unit + '||—';
+        const gramsTotal = bUnits * b.unitG;
+        return b.name + '||' + bUnits + ' ' + b.unit + ' (' + gramsTotal + 'ג)' + '||—';
       }).join(' / ');
-      const breadCal = Math.floor(breadBudget / 50) * 50;
+      const breadCal = Math.max(100, Math.floor(breadBudget / 50) * 50);
       lines.push('לחם (' + breadCal + ' קל): ' + breadOpts);
     }
     if (vegSize) lines.push('סלט (' + saladCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + Math.round(saladCal/33*100) + 'ג');
     if (hasCheese) {
       const cheeseOpts = cheeseIds.map(id => {
-        const nm  = EGGS_CHEESE_ID_MAP[id] || id;
-        const cPerUnit = EGGS_CHEESE_CAL[id] || 45;
-        const gPerUnit = EGGS_CHEESE_G[id]   || 20;
-        const unitNm   = EGGS_CHEESE_UNIT[id] || 'פרוסה';
-        const cnt  = Math.max(1, Math.round(cheeseCal / cPerUnit));
-        return nm + '||' + cnt + ' ' + unitNm + '||' + (cnt * gPerUnit) + 'ג';
+        const ch = EGGS_CHEESE[id] || EGGS_CHEESE['ch9'];
+        const cnt = Math.max(1, Math.round(cheeseCal / ch.cal));
+        const gramsTotal = cnt * ch.unitG;
+        if (ch.unit === null) {
+          return ch.name + '||' + gramsTotal + 'ג||—';
+        } else {
+          return ch.name + '||' + cnt + ' ' + ch.unit + ' (' + gramsTotal + 'ג)' + '||—';
+        }
       }).join(' / ');
       lines.push('גבינה (' + cheeseCal + ' קל): ' + cheeseOpts);
     }
@@ -4611,10 +4663,10 @@ ${planHtml}
         ? shakeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
         : ['בננה', 'אוכמניות']; // ברירת מחדל לשייק
       const fruitOpts = shakeFruitNames.map(fn => {
-        const calPer = FRUIT_CAL[fn] || 80;
-        const g = Math.round(extraCal / calPer * 100 / 5) * 5;
-        const portion = FRUIT_PORTION[fn] || (g + 'ג');
-        return fn + '||' + portion + '||' + g + 'ג';
+        const g = Math.round(extraCal / (FRUIT_CAL[fn] || 80) * 100 / 5) * 5;
+        const unitCalc = calcFruitUnits(fn, extraCal);
+        const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
+        return fn + '||' + g + '||' + unitDisplay;
       }).join(' / ');
       lines.push('פרי (' + extraCal + ' קל): ' + fruitOpts);
     }
@@ -4664,8 +4716,10 @@ ${planHtml}
     const lines = [];
     if (breadCalBudget > 0) {
       const breadSandLines = allBreads.map(b => {
-        const bU = Math.max(1, Math.floor(breadCalBudget / b.cal));
-        return b.name + '||' + bU + ' ' + b.unit + '||—';
+        const rawUnits = breadCalBudget / b.cal;
+        const bU = Math.max(0.5, Math.round(rawUnits * 2) / 2);
+        const gramsTotal = bU * b.unitG;
+        return b.name + '||' + bU + ' ' + b.unit + ' (' + gramsTotal + 'ג)' + '||—';
       });
       lines.push('לחם (' + Math.round(breadCalBudget) + ' קל): ' + breadSandLines.join(' / '));
     }
@@ -4835,8 +4889,8 @@ ${planHtml}
       const grams = Math.round(cal / calPer * 100 / 5) * 5;
       // Calculate units for display
       const unitCalc = calcFruitUnits(name, cal);
-      const units = unitCalc.units > 0 ? unitCalc.units : '—';
-      return name + '||' + units + ' יחידות||' + grams + 'ג||g';
+      const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
+      return name + '||' + grams + '||' + unitDisplay;
     });
     return { lines, prot: 1 };
   }
