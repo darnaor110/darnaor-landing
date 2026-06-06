@@ -6349,7 +6349,7 @@ ${planHtml}
         }
       });
 
-      const actualVol = computeActualVol(builtDays);
+      let actualVol = computeActualVol(builtDays);
 
       // ── שלב 3: החלט על supersets בהתאם לneed ────────────────────────────
       let supersetsNeeded = 0, useSupersetsForTime = false;
@@ -6369,11 +6369,58 @@ ${planHtml}
         builtDays.forEach(day => { if (day.exercises.length > 0) day.exercises = assignSupersets(day.exercises, true, supsToUse); });
       }
 
+      // ── Stage C: Trim Excess Volume ──
+      // אם actualVol > weeklyMax, הסר drop sets קודם, אחרי כך הוריד מ-4 סטים ל-3
+      // חריג: לא לצמצם glute אצל נשים
+      const isFemale = u.gender === 'אישה';
+      Object.keys(EXERCISE_POOLS).forEach(mId => {
+        const p = prio[mId] || 0;
+        if (p === 0) return;
+        const wMax = volumeRange(p, level)[1];
+        const actual = actualVol[mId] || 0;
+
+        // חריג: אל תצמצם glute לנשים
+        if (isFemale && mId === 'glute') return;
+
+        if (actual > wMax) {
+          const excess = actual - wMax;
+          let trimmed = 0;
+
+          // C1: הסר drop sets קודם (כל drop = -1 סט)
+          for (let dayIdx = 0; dayIdx < builtDays.length && trimmed < excess; dayIdx++) {
+            const day = builtDays[dayIdx];
+            for (let exIdx = 0; exIdx < day.exercises.length && trimmed < excess; exIdx++) {
+              const ex = day.exercises[exIdx];
+              if (ex.muscleId === mId && ex.drop && !ex.pinned) {
+                ex.drop = false;
+                trimmed += 1;
+              }
+            }
+          }
+
+          // C2: אם עדיין יותר מדי, הוריד מ-4 סטים ל-3
+          if (trimmed < excess) {
+            for (let dayIdx = 0; dayIdx < builtDays.length && trimmed < excess; dayIdx++) {
+              const day = builtDays[dayIdx];
+              for (let exIdx = 0; exIdx < day.exercises.length && trimmed < excess; exIdx++) {
+                const ex = day.exercises[exIdx];
+                if (ex.muscleId === mId && ex.sets === 4 && !ex.pinned) {
+                  ex.sets = 3;
+                  trimmed += (appearances[mId] || 1);
+                }
+              }
+            }
+          }
+        }
+      });
+
+      actualVol = computeActualVol(builtDays);
+
       const suggestedDays = (u.trainingDaysSpecific && u.trainingDaysSpecific.length > 0)
         ? null : suggestTrainingDays(Math.max(1, u.trainingDays || 3));
 
       return { level, levelName:['מתחיל','מתקדם','מנוסה מאוד'][level], split,
-        days: builtDays, actualVol: computeActualVol(builtDays), prio,
+        days: builtDays, actualVol: actualVol, prio,
         sessionDuration: sessionMins, supersets: supersetsNeeded > 0 || useSupersetsForTime,
         injuries: u.injuries || [], suggestedDays };
     };
