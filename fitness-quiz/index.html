@@ -5495,6 +5495,12 @@ ${planHtml}
       if (ex1.equipment === 'מכונה' && ex2.equipment === 'מכונה') return false;
       if (ex1.secondary && ex1.secondary.includes(ex2.muscle)) return false;
       if (ex2.secondary && ex2.secondary.includes(ex1.muscle)) return false;
+      // הינג ותרגילי ירך לא יתואמו עם גב או יד קדמית (חפיפה של אמה)
+      const hingeTypes = ['הינג', 'היפ טראסט'];
+      const isEx1Hinge = hingeTypes.includes(ex1.moveType);
+      const isEx2Hinge = hingeTypes.includes(ex2.moveType);
+      if (isEx1Hinge && ['back','bicep'].includes(ex2.muscle)) return false;
+      if (isEx2Hinge && ['back','bicep'].includes(ex1.muscle)) return false;
       return true;
     }
 
