@@ -4115,14 +4115,15 @@ ${planHtml}
   // ── per-type builders — return array of line strings ───
 
   function buildHot(meal, cal) {
-    // 60% protein / 40% carbs (or 60/40 with 100 kcal for veggies if selected)
+    // 60% protein / 40% carbs (or 60/40 with veggies if selected, veggies take 100 kcal)
     const vegIds = getComp(meal, 'hot', 'veg') || [];
     const vegId = Array.isArray(vegIds) ? vegIds[0] : null;
     const vegCal   = vegId ? getVegCalories(vegId) : 0;
     const vegSize  = vegCal > 0 ? calcVeggieCount(vegCal) : null;
     const budgetForProandCarb = cal - vegCal;
-    const protCal  = Math.floor(budgetForProandCarb * 0.6 / 50) * 50;
-    const carbCal  = R50(budgetForProandCarb - protCal);
+    // חלוקה מדויקת: 60% חלבון, 40% פחמימה, מעוגלת ל50 קלוריות
+    const protCal  = Math.round(budgetForProandCarb * 0.6 / 50) * 50;
+    const carbCal  = budgetForProandCarb - protCal;
     const protCalF = protCal;
     const lines    = [];
 
