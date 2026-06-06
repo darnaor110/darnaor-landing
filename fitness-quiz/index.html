@@ -2959,6 +2959,7 @@
         const workout = buildWorkoutPlan(d);
         renderPlanHtml(plan, workout, calc, d);
       } catch(e) {
+        console.error('Plan build error:', e.message, e.stack);
         renderPlanError();
       }
     }, 300);
