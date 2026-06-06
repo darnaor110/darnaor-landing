@@ -3546,7 +3546,6 @@
         // כל השרירים — כולל כאלו שלא קיבלו נפח בפועל
         const ALL_MUSCLES_ORDER = ['chest','back','shoulders','tricep','bicep','quad','hamstring','glute','calves','abs'];
         const volEntries = ALL_MUSCLES_ORDER.map(mId => [mId, workout.actualVol?.[mId] || 0])
-          .filter(function(kv) { return (workout.prio[kv[0]] || 0) > 0; })
           .sort(function(a, b) { return (workout.prio[b[0]] || 0) - (workout.prio[a[0]] || 0); });
 
         // volume range lookup (copied from engine)
