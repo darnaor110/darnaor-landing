@@ -1151,7 +1151,8 @@
         {id:'madaan', lbl:'מעדן חלבון',       kcal:150, prot:15, tier:'g'}
       ]},
       { key:'fruit', lbl:'פרי', multi:true, opts:[
-        {id:'berries', lbl:'פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'blueberries', lbl:'אוכמניות',  kcal:57,  prot:1, tier:'g'},
+        {id:'strawberries', lbl:'תותים',   kcal:32,  prot:1, tier:'g'},
         {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
         {id:'banana',  lbl:'בננה',        kcal:90,  prot:1, tier:'g'},
         {id:'grapes',  lbl:'ענבים',       kcal:100, prot:1, tier:'g'},
@@ -1199,7 +1200,8 @@
         {id:'tsfarit', lbl:'צפתית',            kcal:110, prot:16, tier:'g'},
         {id:'hemed',   lbl:'חמד / טל',         kcal:55, prot:7,  tier:'g'},
         {id:'ch15',    lbl:'גבינה צהובה 15%', kcal:65, prot:7,  tier:'y'},
-        {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'r'}
+        {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'r'},
+        {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'}
       ]},
       { key:'sauce', lbl:'רוטב', multi:true, opts:[
         {id:'tomato',   lbl:'רוטב עגבניות',    kcal:15, prot:0, tier:'g'},
@@ -1231,7 +1233,8 @@
         {id:'tsfarit', lbl:'צפתית',            kcal:110, prot:16, tier:'g'},
         {id:'hemed',   lbl:'חמד / טל',         kcal:55, prot:7,  tier:'g'},
         {id:'ch15',    lbl:'גבינה צהובה 15%', kcal:65, prot:7,  tier:'y'},
-        {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'o'}
+        {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'o'},
+        {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'}
       ]},
       { key:'salad', lbl:'סלט', multi:false, opts:[
         {id:'small', lbl:'סלט קטן', tier:'g'},
@@ -1282,10 +1285,10 @@
         {id:'egg',      lbl:'ביצה קשה',     kcal:75,  prot:6,  tier:'y'}
       ]},
       { key:'cheese', lbl:'גבינה', multi:true, opts:[
-        {id:'tsfarit',  lbl:'צפתית',           kcal:110, prot:16, tier:'g'},
-        {id:'cheese9',  lbl:'גבינה צהובה 9%', kcal:45, prot:6,  tier:'g'},
-        {id:'white',    lbl:'גבינה לבנה 5%',  kcal:60, prot:7,  tier:'y'},
-        {id:'bulgarit', lbl:'בולגרת',          kcal:80, prot:8,  tier:'y'}
+        {id:'tsfarit',  lbl:'צפתית',             kcal:110, prot:16, tier:'g'},
+        {id:'cheese9',  lbl:'גבינה צהובה 9%',   kcal:45, prot:6,  tier:'g'},
+        {id:'white',    lbl:'גבינה לבנה 5%',    kcal:60, prot:7,  tier:'y'},
+        {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'}
       ]},
       { key:'dressing', lbl:'רוטב', multi:true, opts:[
         {id:'chili',   lbl:'רוטב צילי דל',   kcal:20, prot:0, tier:'g'},
@@ -1349,7 +1352,8 @@
         {id:'whey', lbl:'אבקת חלבון', kcal:100, prot:20, tier:'g'}
       ]},
       { key:'fruit', lbl:'פרי', multi:true, opts:[
-        {id:'berries', lbl:'פירות יער',    kcal:40,  prot:1, tier:'g'},
+        {id:'blueberries', lbl:'אוכמניות',      kcal:57,  prot:1, tier:'g'},
+        {id:'strawberries', lbl:'תותים',       kcal:32,  prot:1, tier:'g'},
         {id:'banana',  lbl:'בננה',         kcal:90,  prot:1, tier:'g'},
         {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
         {id:'frozen',  lbl:'פירות קפואים',kcal:50,  prot:1, tier:'g'},
@@ -1364,7 +1368,8 @@
     ],
     fruit: [
       { key:'fruit', lbl:'בחר פרי', multi:true, opts:[
-        {id:'berries', lbl:'פירות יער', kcal:40,  prot:1, tier:'g'},
+        {id:'blueberries', lbl:'אוכמניות',  kcal:57,  prot:1, tier:'g'},
+        {id:'strawberries', lbl:'תותים',   kcal:32,  prot:1, tier:'g'},
         {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
         {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'},
         {id:'banana',  lbl:'בננה',        kcal:90,  prot:1, tier:'g'},
@@ -1399,8 +1404,8 @@
     // ארוחת סלט קטנה לביניים (לא בוחרים ירקות — 3 ירקות לבחירתם)
     salad_snack: [
       { key:'protein', lbl:'תוספת חלבון (רשות)', multi:true, opts:[
-        {id:'tsfarit',  lbl:'צפתית',       kcal:110,  prot:16, tier:'g'},
-        {id:'bulgarit', lbl:'בולגרת',      kcal:80,  prot:8,  tier:'g'},
+        {id:'tsfarit',  lbl:'צפתית',          kcal:110,  prot:16, tier:'g'},
+        {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'},
         {id:'cottage',  lbl:"קוטג' 5%",    kcal:140, prot:18, tier:'g'},
         {id:'chicken',  lbl:'חזה עוף צלוי',kcal:100, prot:20, tier:'g'}
       ]}
@@ -1454,6 +1459,15 @@
 
   // ── MEAL WEIGHT CONFIG — weights stored as kcal (multiples of 50) ──
   // Limits as fractions of targetCal; resolved to kcal at runtime via mealLimKcal()
+  // קלוריות מינימום קבועות לכל ארוחה — לא משתנות לפי יעד הקלוריות
+  const MEAL_MIN_CAL = {
+    'בוקר': 200,
+    'בין_בוקר_לצהריים': 100,
+    'צהריים': 500,
+    'בין_צהריים_לערב': 100,
+    'ערב': 500,
+    'לילה': 100
+  };
   const MEAL_LIMIT_PCT = {
     'בוקר':             { min:0.05, max:0.30 },
     'בין_בוקר_לצהריים': { min:0.05, max:0.20 },
@@ -1463,9 +1477,10 @@
     'לילה':             { min:0.05, max:0.20 }
   };
   function mealLimKcal(mealId, targetCal) {
+    const minCal = MEAL_MIN_CAL[mealId] || 100;
     const pct = MEAL_LIMIT_PCT[mealId] || { min:0.05, max:0.30 };
     return {
-      min: Math.round(targetCal * pct.min / 50) * 50,
+      min: minCal,
       max: Math.round(targetCal * pct.max / 50) * 50
     };
   }
@@ -1481,7 +1496,7 @@
 
   // ── MEAL DEFAULTS — כשמסמנים ארוחה בלי לבחור מאכלים ──
   const MEAL_DEFAULTS = {
-    'בוקר':             { type:'yogurt',      comps:{ type:['pro'], fruit:['berries'] } },
+    'בוקר':             { type:'yogurt',      comps:{ type:['pro'], fruit:['blueberries'] } },
     'בין_בוקר_לצהריים': { type:'fruit',       comps:{ fruit:['apple'] } },
     'צהריים':           { type:'hot',         comps:{ protein:['chicken'], carb:['sweet_p'], veg:['small'] } },
     'בין_צהריים_לערב':  { type:'fruit',       comps:{ fruit:['apple'] } },
@@ -2286,14 +2301,8 @@
       shake:250, sandwich:250, salad:250, fruit:40, bar:150,
       cottage:100, salad_snack:80, snack:30
     };
-    const mealCal = d.meals[mealId]?.weight || 0;
-    const minCal  = TYPE_MIN_CAL[typeId] || 0;
-    // Show a quiet note (not a red alert) when calories are below the minimum
-    const warnHtml = mealCal > 0 && mealCal < minCal
-      ? '<p style="color:var(--muted);font-size:0.77rem;margin:0 0 0.5rem">לא ניתן לבנות ' + typeLbl + ' עם פחות מ‑' + minCal + ' קל — הארוחה הזאת לא תופיע בתוכנית.</p>'
-      : '';
     const altsNote = '<p class="comp-alts-note">סמן את האפשרויות שאתה אוהב — אלו חלופות, לא הכל ביחד</p>';
-    container.innerHTML = warnHtml + altsNote + '<div style="display:flex;flex-wrap:wrap;gap:0.5rem">' + dropdowns + '</div>';
+    container.innerHTML = altsNote + '<div style="display:flex;flex-wrap:wrap;gap:0.5rem">' + dropdowns + '</div>';
   }
   window.renderTypeComps = renderTypeComps;
 
@@ -3837,7 +3846,8 @@ ${planHtml}
     'tsfarit': { name:'צפתית',            cal:55, prot:8,  unitG:50, unitDesc:'פרוסה' },
     'hemed':   { name:'חמד / טל',         cal:45, prot:6,  unitG:20, unitDesc:'פרוסה' },
     'ch15':    { name:'גבינה צהובה 15%', cal:65, prot:7,  unitG:20, unitDesc:'פרוסה' },
-    'ch22':    { name:'גבינה צהובה 22%', cal:80, prot:6,  unitG:20, unitDesc:'פרוסה' }
+    'ch22':    { name:'גבינה צהובה 22%', cal:80, prot:6,  unitG:20, unitDesc:'פרוסה' },
+    'bulgarian': { name:'גבינה בולגרית 5%', cal:100, prot:13, unitG:100, unitDesc:'גרם' }
   };
 
   // Yogurt types — keyed by COMP option id → { name, cal, prot } per container
@@ -3874,8 +3884,8 @@ ${planHtml}
     'תפוח':80,               // יחידה ~100ג (80 קל/100ג)
     'בננה':90,               // יחידה ~100ג (90 קל/100ג)
     'תפוז':80,               // יחידה ~100ג (80 קל/100ג)
-    'תותים / פירות יער':40, // קערית ~100ג / כ-10 תותים (40 קל/100ג, תות אחד ~10ג)
-    'פירות יער':40,          // alias ללא slash — לשייק ויוגורט
+    'אוכמניות':57,           // קערית ~100ג (57 קל/100ג)
+    'תותים':32,              // קערית ~100ג (32 קל/100ג)
     'ענבים':70,              // כ-15 ענבים ~100ג (70 קל/100ג)
     'אבטיח':30,              // פרוסה גדולה ~200ג (15 קל/100ג)
     'מלון':35,               // שמינית מלון ~150ג (23 קל/100ג)
@@ -3887,8 +3897,8 @@ ${planHtml}
     'תפוח':'יחידה אחת (~100ג)',
     'בננה':'בננה בינונית (~100ג) — או חצי בננה גדולה',
     'תפוז':'תפוז אחד (~100ג)',
-    'תותים / פירות יער':'~10 תותים (~100ג, תות בודד ~10ג)',
-    'פירות יער':'~10 תותים (~100ג, תות בודד ~10ג)',
+    'אוכמניות':'קערית אוכמניות (~100ג)',
+    'תותים':'קערית תותים (~100ג)',
     'ענבים':'~15 ענבים (~100ג)',
     'אבטיח':'פרוסה גדולה (~200ג)',
     'מלון':'שמינית מלון (~150ג)',
@@ -4611,7 +4621,7 @@ ${planHtml}
   };
   const SALAD_CHEESE_ID_MAP = {
     'tsfarit':'גבינה צפתית 5%', 'cheese9':'גבינה צהובה 9%',
-    'white':'גבינה לבנה 5%', 'bulgarit':'גבינה בולגרית 5%'
+    'white':'גבינה לבנה 5%', 'bulgarian':'גבינה בולגרית 5%'
   };
   // גרמים לכל סוג גבינה לסלט (ל-50 קל מוקצה)
   // cal100 = קל/100ג, unitG = גרם לפרוסה/מנה
@@ -4697,7 +4707,7 @@ ${planHtml}
   }
 
   const FRUIT_ID_MAP = {
-    'berries':'תותים / פירות יער', 'apple':'תפוח', 'orange':'תפוז',
+    'blueberries':'אוכמניות', 'strawberries':'תותים', 'apple':'תפוח', 'orange':'תפוז',
     'banana':'בננה', 'grapes':'ענבים', 'melon':'מלון',
     'mango':'מנגו', 'date':'תמר'
   };
@@ -4749,7 +4759,7 @@ ${planHtml}
   }
 
   const SNACK_SALAD_PROT_ID_MAP = {
-    'tsfarit':'גבינה צפתית 5%', 'bulgarit':'גבינה בולגרית 5%',
+    'tsfarit':'גבינה צפתית 5%', 'bulgarian':'גבינה בולגרית 5%',
     'cottage':"קוטג' 5%", 'chicken':'חזה עוף צלוי'
   };
   function buildSaladSnack(meal, cal) {
