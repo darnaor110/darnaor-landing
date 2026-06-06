@@ -4230,13 +4230,14 @@ ${planHtml}
   const SANDWICH_PROTEIN_PROT = {
     'חזה עוף פרוס':31, 'פסטרמה':15, 'טונה במים':25,
     'טונה בשמן':22, 'סלמון מעושן':20, 'גבינה צהובה 9%':25,
-    'קוטג׳ 5%':11, 'ביצה':13
+    'קוטג׳ 5%':11, 'ביצה':13, 'שניצל אפוי':25, 'שרימפס':22,
+    'נקניק הודו':16, 'רוסטביף':17
   };
   const SALAD_PROTEIN_PROT = {
     'טונה במים':25, 'חזה עוף צלוי':31, 'שוק עוף (ללא עור)':28,
     'סלמון':20, 'סלמון מעושן':20, 'פסטרמה':15,
     'טונה בשמן':22, 'קוטג׳ 5%':11, 'גבינה צפתית 5%':13,
-    'גבינה בולגרית 5%':13, 'ביצה קשה':8
+    'גבינה בולגרית 5%':13, 'ביצה קשה':8, 'שרימפס':22, 'רוסטביף':17
   };
   // Unit descriptions for salad proteins — shown in qty column
   const SALAD_PROTEIN_UNIT = {
@@ -4331,6 +4332,7 @@ ${planHtml}
     'הודו טחון':24, 'בקר טחון 10%':22,
     'סלמון':20, 'דגים לבנים':18, 'טונה במים':25,
     'סטייק / אנטריקוט':26, 'טופו':18, 'תחליפי בשר':20, 'כבד עוף':27,
+    'שרימפס':22, 'שניצל אפוי':25, 'כנפיים (ללא עור)':27, 'נקניק הודו':16, 'רוסטביף':17,
     // eggs: ביצה L = 100 קל, 8ג חלבון
     'ביצה':8,
     // dairy
@@ -4348,6 +4350,7 @@ ${planHtml}
     'תפוח אדמה מבושל':2, 'שעועית לבנה מבושלת':9,
     'לחם מלא':9, 'לחם לבן':8, 'לחם קל':8,
     'פיתה 99':8, 'פיתה לבנה':8, 'לחמניה':8,
+    'בורגול מבושל':3.1, 'אטריות ביצים מבושלות':4.5, 'אטריות אורז מבושלות':1.8,
     // protein powder
     'אבקת חלבון':83
   };
@@ -4414,7 +4417,9 @@ ${planHtml}
       'beef':'סטייק / אנטריקוט', 'minced':'בקר טחון 10%',
       'salmon':'סלמון', 'shwarma':'שוק עוף (ללא עור)',
       'white_fish':'דגים לבנים', 'tuna':'טונה במים',
-      'tofu':'טופו', 'meat_sub':'תחליפי בשר', 'liver':'כבד עוף'
+      'tofu':'טופו', 'meat_sub':'תחליפי בשר', 'liver':'כבד עוף',
+      'shrimp':'שרימפס', 'schnitzel_baked':'שניצל אפוי', 'wings':'כנפיים (ללא עור)',
+      'sausage_turkey':'נקניק הודו', 'roast_beef':'רוסטביף'
     };
     const selectedProtIds = getComp(meal, 'hot', 'protein') || [];
     // Filter HOT_PROTEINS to user selection, or take first 3 as default
@@ -4494,6 +4499,8 @@ ${planHtml}
       'lollipop':   { name:'סוכריות על מקל',     type:'piece', desc:'יחידה', gramsPerPiece:10, caloriesPerUnit:40 },
       'pesek':      { name:'פסק זמן קטן',        type:'unit', desc:'יחידה', caloriesPerUnit:100 },
       'slim':       { name:'סלים דליס',          type:'unit', desc:'יחידה', caloriesPerUnit:95 },
+      'almonds':    { name:'שקד בודד',           type:'unit', desc:'יחידה', caloriesPerUnit:12 },
+      'cashews':    { name:'קשיו בודד',          type:'unit', desc:'יחידה', caloriesPerUnit:12 },
     };
     const selected = getComp(meal, 'snack', 'items') || [];
     const keys = selected.length > 0 ? selected.filter(k => SNACK_LOOKUP[k]) : Object.keys(SNACK_LOOKUP).slice(0, 3);
