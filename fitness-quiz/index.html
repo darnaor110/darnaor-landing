@@ -4157,7 +4157,10 @@ ${planHtml}
     'אבטיח':30,              // פרוסה גדולה ~200ג (15 קל/100ג)
     'מלון':35,               // שמינית מלון ~150ג (23 קל/100ג)
     'מנגו':60,               // חצי מנגו ~150ג (40 קל/100ג)
-    'תמר':80                 // 2 תמרים ~30ג (270 קל/100ג)
+    'תמר':80,                // 2 תמרים ~30ג (270 קל/100ג)
+    'אננס':50,               // פרוסה ~150ג (50 קל/100ג)
+    'דובדבנים':63,           // 8 יחידות (63 קל/100ג)
+    'קלמנטינה':47            // יחידה אחת ~103ג (47 קל/100ג)
   };
   // Human-readable portion description per fruit
   const FRUIT_PORTION = {
@@ -4170,7 +4173,10 @@ ${planHtml}
     'אבטיח':'פרוסה גדולה (~200ג)',
     'מלון':'שמינית מלון (~150ג)',
     'מנגו':'חצי מנגו (~150ג)',
-    'תמר':'2 תמרים (~30ג)'
+    'תמר':'2 תמרים (~30ג)',
+    'אננס':'פרוסה גדולה (~150ג)',
+    'דובדבנים':'~8 יחידות (~50ג)',
+    'קלמנטינה':'יחידה אחת (~100ג)'
   };
 
   // Sauce cal/tbsp (כף = ~15מ"ל) — used to show spoon count
@@ -4241,7 +4247,7 @@ ${planHtml}
     'שוק עוף (ללא עור)': { unitG: 150, unitDesc: 'שוק' },
   };
   const SNACK_SALAD_PROTEIN_PROT = {
-    'גבינה צפתית 5%':13, 'גבינה בולגרית 5%':13, 'קוטג׳ 5%':11, 'אדממה':11
+    'גבינה צפתית 5%':13, 'גבינה בולגרית 5%':13, 'קוטג׳ 5%':11, 'אדממה':11, 'רוסטביף':17
   };
 
   // Protein for sandwiches (cold/assembled)
@@ -4254,7 +4260,11 @@ ${planHtml}
     'סלמון מעושן':165,   // בגרמים (165 קל/100ג, 20ג חלבון/100ג)
     'גבינה צהובה 9%':200,// פרוסה ~25ג (200 קל/100ג, 25ג חלבון/100ג)
     'קוטג׳ 5%':100,      // חצי קופסה ~125ג (100 קל/100ג, 11ג חלבון/100ג)
-    'ביצה':167           // ביצה L = 100 קל/יחידה (167 קל/100ג proxy)
+    'ביצה':167,          // ביצה L = 100 קל/יחידה (167 קל/100ג proxy)
+    'שניצל אפוי':280,    // פילה ~110ג (280 קל/100ג, 25ג חלבון/100ג)
+    'שרימפס':119,        // פרוסה ~30ג (119 קל/100ג, 22ג חלבון/100ג)
+    'נקניק הודו':133,    // יחידה ~22ג (133 קל/100ג, 16ג חלבון/100ג)
+    'רוסטביף':117        // פרוסה ~22ג (117 קל/100ג, 17ג חלבון/100ג)
   };
   // Human-readable portion per sandwich protein
   const SANDWICH_PROTEIN_UNIT = {
@@ -4265,7 +4275,11 @@ ${planHtml}
     'סלמון מעושן':'בגרמים',
     'גבינה צהובה 9%':'פרוסה (~25ג)',
     'קוטג׳ 5%':'חצי קופסה (~125ג)',
-    'ביצה':'ביצה L (~60ג)'
+    'ביצה':'ביצה L (~60ג)',
+    'שניצל אפוי':'פילה אחת (~110ג)',
+    'שרימפס':'בגרמים',
+    'נקניק הודו':'יחידה אחת (~22ג)',
+    'רוסטביף':'פרוסה אחת (~22ג)'
   };
 
   // Protein for main-meal salads — cal/100g (used to convert calories → grams)
@@ -4280,6 +4294,8 @@ ${planHtml}
     'קוטג׳ 5%':100,           // חצי קופסה ~125ג (100 קל/100ג, 11ג חלבון/100ג)
     'גבינה צפתית 5%':100,    // בגרמים (100 קל/100ג, 13ג חלבון/100ג)
     'גבינה בולגרית 5%':100,  // בגרמים (100 קל/100ג, 13ג חלבון/100ג)
+    'שרימפס':119,             // בגרמים (119 קל/100ג, 22ג חלבון/100ג)
+    'רוסטביף':117             // פרוסה ~22ג (117 קל/100ג, 17ג חלבון/100ג)
     'ביצה קשה':167            // ביצה L ~60ג (167 קל/100ג, 13ג חלבון/100ג)
   };
 
@@ -4288,7 +4304,8 @@ ${planHtml}
     'גבינה צפתית 5%':100,    // בגרמים (100 קל/100ג, 13ג חלבון/100ג)
     'גבינה בולגרית 5%':100,  // בגרמים (100 קל/100ג, 13ג חלבון/100ג)
     'קוטג׳ 5%':100,           // בגרמים (100 קל/100ג, 11ג חלבון/100ג)
-    'אדממה':122               // בגרמים (122 קל/100ג, 11ג חלבון/100ג)
+    'אדממה':122,              // בגרמים (122 קל/100ג, 11ג חלבון/100ג)
+    'רוסטביף':117             // בגרמים (117 קל/100ג, 17ג חלבון/100ג)
   };
 
   // Snack items — { cal per unit, unitDesc, weightG, prot100 }
@@ -4303,6 +4320,8 @@ ${planHtml}
     'סוכריות על מקל':    { calUnit: 90,  unitDesc: '2 יחידות',   weightG: 25,  prot100: 0  },
     'פסק זמן קטן':       { calUnit: 100, unitDesc: 'יחידה',      weightG: 20,  prot100: 4  },
     'סלים דליס':         { calUnit: 95,  unitDesc: 'יחידה',      weightG: 25,  prot100: 2  },
+    'שקד בודד':          { calUnit: 12,  unitDesc: 'יחידה',      weightG: 2,   prot100: 21 },
+    'קשיו בודד':         { calUnit: 12,  unitDesc: 'יחידה',      weightG: 2,   prot100: 15 },
   };
 
   // Protein g/100g for key foods
@@ -4865,12 +4884,14 @@ ${planHtml}
   const SANDWICH_PROT_ID_MAP = {
     'chicken':'חזה עוף פרוס', 'pastrama':'פסטרמה', 'tuna_w':'טונה במים',
     'tuna_o':'טונה בשמן', 'smoked_s':'סלמון מעושן', 'cheese9':'גבינה צהובה 9%',
-    'cottage':"קוטג' 5%", 'egg':'ביצה'
+    'cottage':"קוטג' 5%", 'egg':'ביצה', 'schnitzel_baked':'שניצל אפוי',
+    'shrimp':'שרימפס', 'sausage_turkey':'נקניק הודו', 'roast_beef':'רוסטביף'
   };
 
   const SANDWICH_SAUCE_ID_MAP = {
     'tomato':'רוטב עגבניות', 'chili':'רוטב צ׳ילי דל', 'mustard':'חרדל ודבש לייט',
-    'teriyaki':'טריאקי', 'ketchup':'קטשופ', 'pesto':'פסטו', 'mayo':'מיוקל'
+    'teriyaki':'טריאקי', 'ketchup':'קטשופ', 'pesto':'פסטו', 'mayo':'מיוקל',
+    'tomato_paste':'רסק עגבניות', 'hummus':'חומוס'
   };
 
   function buildSandwich(meal, cal) {
@@ -4961,7 +4982,8 @@ ${planHtml}
 
   const SALAD_PROT_ID_MAP = {
     'tuna_w':'טונה במים', 'pastrama':'פסטרמה', 'chicken':'חזה עוף צלוי',
-    'tuna_o':'טונה בשמן', 'cottage':"קוטג' 5%", 'egg':'ביצה קשה'
+    'tuna_o':'טונה בשמן', 'cottage':"קוטג' 5%", 'egg':'ביצה קשה',
+    'shrimp':'שרימפס', 'roast_beef':'רוסטביף'
   };
   const SALAD_CHEESE_ID_MAP = {
     'tsfarit':'גבינה צפתית 5%', 'cheese9':'גבינה צהובה 9%',
@@ -5060,7 +5082,7 @@ ${planHtml}
   const FRUIT_ID_MAP = {
     'blueberries':'אוכמניות', 'strawberries':'תותים', 'apple':'תפוח', 'orange':'תפוז',
     'banana':'בננה', 'grapes':'ענבים', 'melon':'מלון',
-    'mango':'מנגו', 'date':'תמר'
+    'mango':'מנגו', 'date':'תמר', 'pineapple':'אננס', 'cherries':'דובדבנים', 'clementine':'קלמנטינה'
   };
 
   function buildFruit(meal, cal) {
@@ -5115,7 +5137,7 @@ ${planHtml}
 
   const SNACK_SALAD_PROT_ID_MAP = {
     'tsfarit':'גבינה צפתית 5%', 'bulgarian':'גבינה בולגרית 5%',
-    'cottage':"קוטג' 5%", 'chicken':'חזה עוף צלוי'
+    'cottage':"קוטג' 5%", 'chicken':'חזה עוף צלוי', 'roast_beef':'רוסטביף'
   };
   function buildSaladSnack(meal, cal) {
     const protIds  = getComp(meal, 'salad_snack', 'protein') || [];
@@ -6181,14 +6203,11 @@ ${planHtml}
         return true;
       });
 
-      // ── שלב 7: אין עוד שינוי אוטומטי של סטים כאן ──
-      // שינויי סטים ודרופסטים מבוצעים ב-buildWorkoutPlan אחרי חישוב נפח בפועל
+      // ── שלב 7: הקצאת מספרים סדרתי (עדיין בלי supersets) ──
+      // supersets יוחלטו בbuildWorkoutPlan לפי volume/time הממשי
+      const exWithNum = exercises.map((e, idx) => ({ ...e, num: idx + 1, paired: false }));
 
-      // ── שלב 8: הקצאת סופרסטים ──
-      const userSups = sups || dayForcesSups;
-      const finalExercises = assignSupersets(exercises, userSups, forcedPairs);
-
-      return { name: dayTmpl.name, exercises: finalExercises };
+      return { name: dayTmpl.name, exercises: exWithNum, timeConstrained: exercises.length > timeBudget };
     }
 
     // ── buildWorkoutPlan — הפונקציה הראשית ──
@@ -6307,12 +6326,30 @@ ${planHtml}
 
       const actualVol = computeActualVol(builtDays);
 
+      // ── שלב 3: החלט על supersets בהתאם לneed ────────────────────────────
+      let supersetsNeeded = 0, useSupersetsForTime = false;
+      const stillShortVolume = Object.keys(EXERCISE_POOLS).some(mId => (weeklyMin[mId] || 0) > 0 && (actualVol[mId] || 0) < (weeklyMin[mId] || 0));
+      if (stillShortVolume && sups === 'כן') {
+        let totalShort = 0;
+        Object.keys(EXERCISE_POOLS).forEach(mId => {
+          const wMin = weeklyMin[mId] || 0, actual = actualVol[mId] || 0;
+          if (wMin > 0 && actual < wMin) totalShort += Math.ceil((wMin - actual) / 2);
+        });
+        supersetsNeeded = Math.max(0, totalShort);
+      } else if (sups === 'כן') {
+        useSupersetsForTime = true;
+      }
+      if (supersetsNeeded > 0 || useSupersetsForTime) {
+        const supsToUse = Math.max(supersetsNeeded, useSupersetsForTime ? Math.max(1, Math.floor(builtDays.length / 2)) : 0);
+        builtDays.forEach(day => { if (day.exercises.length > 0) day.exercises = assignSupersets(day.exercises, true, supsToUse); });
+      }
+
       const suggestedDays = (u.trainingDaysSpecific && u.trainingDaysSpecific.length > 0)
         ? null : suggestTrainingDays(Math.max(1, u.trainingDays || 3));
 
       return { level, levelName:['מתחיל','מתקדם','מנוסה מאוד'][level], split,
-        days: builtDays, actualVol, prio,
-        sessionDuration: sessionMins, supersets: sups,
+        days: builtDays, actualVol: computeActualVol(builtDays), prio,
+        sessionDuration: sessionMins, supersets: supersetsNeeded > 0 || useSupersetsForTime,
         injuries: u.injuries || [], suggestedDays };
     };
 
