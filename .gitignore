@@ -14,7 +14,7 @@ landingpage/
 crm/
 recipe-cards/
 tools/
-api/
+# api/ is now used for safequiz-data endpoint
 
 # Old files at root
 index\ \(2\).html
