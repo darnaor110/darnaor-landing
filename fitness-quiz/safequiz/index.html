@@ -6274,15 +6274,15 @@ ${planHtml}
     // בנה תוכנית אימון לשליחה במייל
     let workoutPlanText = '';
     try {
-      const workout = buildWorkoutPlan(userData);
-      workoutPlanText = renderWorkoutPlanText(workout);
+      const workout = window.buildWorkoutPlan(userData);
+      workoutPlanText = window.renderWorkoutPlanText(workout);
     } catch(e) { workoutPlanText = ''; }
 
     // בנה תפריט לשליחה במייל
     let mealPlanText = '';
     try {
-      const mPlan = buildMealPlan(userData, calc);
-      mealPlanText = renderMealPlanText(mPlan);
+      const mPlan = window.buildMealPlan(userData, calc);
+      mealPlanText = window.renderMealPlanText(mPlan);
     } catch(e) { mealPlanText = ''; }
 
     const payload = {
