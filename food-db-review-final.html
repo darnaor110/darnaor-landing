@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Database - Final Review</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f1419 0%, #1a2835 100%);
+      color: #e2edf2;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #5bd4ff;
+      font-size: 2rem;
+    }
+    .search-box { text-align: center; margin-bottom: 2rem; }
+    input[type="text"] {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #087fa3;
+      border-radius: 8px;
+      background: rgba(8, 127, 163, 0.1);
+      color: #e2edf2;
+      font-size: 1rem;
+      width: 100%;
+      max-width: 500px;
+    }
+    input[type="text"]::placeholder { color: #8aa4af; }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #5bd4ff;
+      box-shadow: 0 0 15px rgba(91, 212, 255, 0.3);
+    }
+    .category {
+      margin-bottom: 2.5rem;
+      border: 1.5px solid rgba(8, 127, 163, 0.3);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(8, 127, 163, 0.05);
+    }
+    .category-header {
+      background: linear-gradient(90deg, rgba(8, 127, 163, 0.2), rgba(91, 212, 255, 0.1));
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid rgba(8, 127, 163, 0.3);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    .category-header:hover { background: linear-gradient(90deg, rgba(8, 127, 163, 0.3), rgba(91, 212, 255, 0.15)); }
+    .category-header h2 { color: #5bd4ff; font-size: 1.3rem; margin: 0; }
+    .category-toggle { color: #8aa4af; font-size: 1.2rem; transition: transform 0.3s; }
+    .category.collapsed .category-toggle { transform: rotate(-90deg); }
+    .category-content { max-height: 2000px; overflow: hidden; transition: max-height 0.3s ease; }
+    .category.collapsed .category-content { max-height: 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th {
+      background: rgba(8, 127, 163, 0.15);
+      padding: 0.8rem 1rem;
+      text-align: right;
+      font-weight: 600;
+      color: #5bd4ff;
+      border-bottom: 2px solid rgba(8, 127, 163, 0.3);
+      font-size: 0.8rem;
+    }
+    td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid rgba(8, 127, 163, 0.15);
+      font-size: 0.85rem;
+    }
+    tr:hover { background: rgba(8, 127, 163, 0.1); }
+    .id-col { font-family: 'Courier New', monospace; color: #5bd4ff; font-weight: 600; width: 110px; white-space: nowrap; }
+    .hebrew-col { color: #e2edf2; font-weight: 500; width: 140px; }
+    .num-col { text-align: center; color: #8aa4af; width: 70px; }
+    .name-col { color: #8aa4af; width: 90px; }
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #8aa4af;
+      font-size: 0.9rem;
+    }
+    .total {
+      padding: 1.5rem;
+      text-align: center;
+      background: rgba(8, 127, 163, 0.1);
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+    .total strong { color: #5bd4ff; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✓ Food Database - Final</h1>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="חיפוש (שם או ID)...">
+    </div>
+    <div class="total">
+      <strong>סה"כ: 76 פריטים סופיים</strong>
+    </div>
+
+    <!-- FRUITS -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🍓 פירות</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">blueberries</td><td class="hebrew-col">אוכמניות</td><td class="num-col">57</td><td class="num-col">1.5</td><td class="num-col">2</td><td class="name-col">אוכמנייה</td></tr>
+            <tr><td class="id-col">strawberries</td><td class="hebrew-col">תותים</td><td class="num-col">32</td><td class="num-col">0.8</td><td class="num-col">15</td><td class="name-col">תות</td></tr>
+            <tr><td class="id-col">apple</td><td class="hebrew-col">תפוח</td><td class="num-col">80</td><td class="num-col">0.3</td><td class="num-col">100</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">orange</td><td class="hebrew-col">תפוז</td><td class="num-col">80</td><td class="num-col">1</td><td class="num-col">100</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">banana</td><td class="hebrew-col">בננה</td><td class="num-col">90</td><td class="num-col">1.1</td><td class="num-col">100</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">grapes</td><td class="hebrew-col">ענבים</td><td class="num-col">70</td><td class="num-col">0.7</td><td class="num-col">10</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">melon</td><td class="hebrew-col">מלון</td><td class="num-col">35</td><td class="num-col">0.8</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">mango</td><td class="hebrew-col">מנגו</td><td class="num-col">60</td><td class="num-col">0.8</td><td class="num-col">300</td><td class="name-col">מנגו שלם</td></tr>
+            <tr><td class="id-col">date</td><td class="hebrew-col">תמר</td><td class="num-col">280</td><td class="num-col">1.7</td><td class="num-col">30</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">watermelon</td><td class="hebrew-col">אבטיח</td><td class="num-col">30</td><td class="num-col">0.6</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">pineapple</td><td class="hebrew-col">אננס</td><td class="num-col">50</td><td class="num-col">0.5</td><td class="num-col">150</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">cherries</td><td class="hebrew-col">דובדבנים</td><td class="num-col">63</td><td class="num-col">1</td><td class="num-col">8</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">clementine</td><td class="hebrew-col">קלמנטינה</td><td class="num-col">47</td><td class="num-col">0.8</td><td class="num-col">103</td><td class="name-col">יחידה</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CEREALS -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🥣 דגנים וקורנפלקס</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">prot_cer</td><td class="hebrew-col">קורנפלקס חלבון</td><td class="num-col">400</td><td class="num-col">13</td><td class="num-col">30</td><td class="name-col">כוס חד פעמית</td></tr>
+            <tr><td class="id-col">gran_pro</td><td class="hebrew-col">גרנולה חלבון</td><td class="num-col">450</td><td class="num-col">12</td><td class="num-col">30</td><td class="name-col">כוס חד פעמית</td></tr>
+            <tr><td class="id-col">fitness</td><td class="hebrew-col">קורנפלקס פיטנס</td><td class="num-col">400</td><td class="num-col">10</td><td class="num-col">30</td><td class="name-col">כוס חד פעמית</td></tr>
+            <tr><td class="id-col">classic</td><td class="hebrew-col">גרנולה קלאסית</td><td class="num-col">440</td><td class="num-col">9</td><td class="num-col">30</td><td class="name-col">כוס חד פעמית</td></tr>
+            <tr><td class="id-col">alufim</td><td class="hebrew-col">קורנפלקס אלופים</td><td class="num-col">400</td><td class="num-col">8</td><td class="num-col">30</td><td class="name-col">כוס חד פעמית</td></tr>
+            <tr><td class="id-col">oats</td><td class="hebrew-col">שיבולת שועל</td><td class="num-col">370</td><td class="num-col">11</td><td class="num-col">30</td><td class="name-col">כוס חד פעמית</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MILK -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🥛 חלב ודיירי</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">m1</td><td class="hebrew-col">חלב 1%</td><td class="num-col">41</td><td class="num-col">3.5</td><td class="num-col">170</td><td class="name-col">כוס</td></tr>
+            <tr><td class="id-col">m2</td><td class="hebrew-col">חלב 2%</td><td class="num-col">53</td><td class="num-col">3.5</td><td class="num-col">170</td><td class="name-col">כוס</td></tr>
+            <tr><td class="id-col">soy</td><td class="hebrew-col">חלב סויה</td><td class="num-col">38</td><td class="num-col">2.4</td><td class="num-col">170</td><td class="name-col">כוס</td></tr>
+            <tr><td class="id-col">oat</td><td class="hebrew-col">חלב שיבולת שועל</td><td class="num-col">35</td><td class="num-col">0.6</td><td class="num-col">170</td><td class="name-col">כוס</td></tr>
+            <tr><td class="id-col">m3</td><td class="hebrew-col">חלב 3%</td><td class="num-col">65</td><td class="num-col">3.5</td><td class="num-col">170</td><td class="name-col">כוס</td></tr>
+            <tr><td class="id-col">whey</td><td class="hebrew-col">אבקת חלבון</td><td class="num-col">400</td><td class="num-col">80</td><td class="num-col">25</td><td class="name-col">סקופ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BREADS -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🍞 לחמים</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">light</td><td class="hebrew-col">לחם קל</td><td class="num-col">150</td><td class="num-col">13</td><td class="num-col">30</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">pita99</td><td class="hebrew-col">פיתה 99</td><td class="num-col">200</td><td class="num-col">8</td><td class="num-col">50</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">whole</td><td class="hebrew-col">לחם מלא</td><td class="num-col">200</td><td class="num-col">9</td><td class="num-col">36</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">white</td><td class="hebrew-col">לחם לבן</td><td class="num-col">200</td><td class="num-col">7</td><td class="num-col">35</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">pita_w</td><td class="hebrew-col">פיתה לבנה</td><td class="num-col">250</td><td class="num-col">7</td><td class="num-col">100</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">roll</td><td class="hebrew-col">לחמניה</td><td class="num-col">275</td><td class="num-col">10</td><td class="num-col">100</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">tortilla</td><td class="hebrew-col">טורטייה 99</td><td class="num-col">200</td><td class="num-col">6</td><td class="num-col">50</td><td class="name-col">יחידה</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PROTEINS -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🍗 חלבונים</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">chicken</td><td class="hebrew-col">חזה עוף</td><td class="num-col">170</td><td class="num-col">31</td><td class="num-col">60</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">turkey</td><td class="hebrew-col">הודו טחון</td><td class="num-col">160</td><td class="num-col">24</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">thigh</td><td class="hebrew-col">פרגית</td><td class="num-col">200</td><td class="num-col">27</td><td class="num-col">100</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">shwarma</td><td class="hebrew-col">שוק עוף</td><td class="num-col">200</td><td class="num-col">28</td><td class="num-col">80</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">tuna</td><td class="hebrew-col">טונה במים</td><td class="num-col">110</td><td class="num-col">25</td><td class="num-col">200</td><td class="name-col">פחית</td></tr>
+            <tr><td class="id-col">white_fish</td><td class="hebrew-col">דגים לבנים</td><td class="num-col">150</td><td class="num-col">20</td><td class="num-col">150</td><td class="name-col">פילה</td></tr>
+            <tr><td class="id-col">salmon</td><td class="hebrew-col">סלמון</td><td class="num-col">220</td><td class="num-col">20</td><td class="num-col">150</td><td class="name-col">פילה</td></tr>
+            <tr><td class="id-col">beef</td><td class="hebrew-col">סטייק</td><td class="num-col">250</td><td class="num-col">26</td><td class="num-col">200</td><td class="name-col">מנת מסעדה</td></tr>
+            <tr><td class="id-col">minced</td><td class="hebrew-col">בקר טחון רזה 10%</td><td class="num-col">220</td><td class="num-col">22</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">tofu</td><td class="hebrew-col">טופו</td><td class="num-col">200</td><td class="num-col">18</td><td class="num-col">300</td><td class="name-col">קופסא</td></tr>
+            <tr><td class="id-col">liver</td><td class="hebrew-col">כבד עוף</td><td class="num-col">165</td><td class="num-col">27</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">tuna_o</td><td class="hebrew-col">טונה בשמן</td><td class="num-col">200</td><td class="num-col">23</td><td class="num-col">200</td><td class="name-col">פחית</td></tr>
+            <tr><td class="id-col">pastrama</td><td class="hebrew-col">פסטרמה</td><td class="num-col">100</td><td class="num-col">11</td><td class="num-col">20</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">smoked_s</td><td class="hebrew-col">סלמון מעושן</td><td class="num-col">160</td><td class="num-col">10</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">shrimp</td><td class="hebrew-col">שרימפס</td><td class="num-col">119</td><td class="num-col">22</td><td class="num-col">30</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">schnitzel_baked</td><td class="hebrew-col">שניצל אפוי</td><td class="num-col">280</td><td class="num-col">25</td><td class="num-col">110</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">wings</td><td class="hebrew-col">כנפיים (ללא עור)</td><td class="num-col">181</td><td class="num-col">27</td><td class="num-col">50</td><td class="name-col">זוג</td></tr>
+            <tr><td class="id-col">sausage_turkey</td><td class="hebrew-col">נקניק הודו</td><td class="num-col">133</td><td class="num-col">16</td><td class="num-col">22</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">roast_beef</td><td class="hebrew-col">רוסטביף</td><td class="num-col">117</td><td class="num-col">17</td><td class="num-col">22</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">egg</td><td class="hebrew-col">ביצה קשה</td><td class="num-col">150</td><td class="num-col">12</td><td class="num-col">70</td><td class="name-col">ביצה L</td></tr>
+            <tr><td class="id-col">cottage_salad</td><td class="hebrew-col">קוטג' 5%</td><td class="num-col">110</td><td class="num-col">9</td><td class="num-col">250</td><td class="name-col">קופסא</td></tr>
+            <tr><td class="id-col">cottage_sandwich</td><td class="hebrew-col">קוטג' 5%</td><td class="num-col">110</td><td class="num-col">9</td><td class="num-col">250</td><td class="name-col">קופסא</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CHEESES -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🧀 גבינות</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">ch9</td><td class="hebrew-col">גבינה צהובה 9%</td><td class="num-col">150</td><td class="num-col">20</td><td class="num-col">30</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">tsfarit</td><td class="hebrew-col">צפתית</td><td class="num-col">220</td><td class="num-col">32</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">ch15</td><td class="hebrew-col">גבינה צהובה 15%</td><td class="num-col">260</td><td class="num-col">28</td><td class="num-col">25</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">ch22</td><td class="hebrew-col">גבינה צהובה 22%</td><td class="num-col">320</td><td class="num-col">25</td><td class="num-col">25</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">bulgarian</td><td class="hebrew-col">גבינה בולגרית 5%</td><td class="num-col">200</td><td class="num-col">26</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">cheese9_salad</td><td class="hebrew-col">גבינה צהובה 9%</td><td class="num-col">150</td><td class="num-col">20</td><td class="num-col">30</td><td class="name-col">פרוסה</td></tr>
+            <tr><td class="id-col">white</td><td class="hebrew-col">גבינה לבנה 5%</td><td class="num-col">150</td><td class="num-col">14</td><td class="num-col">-</td><td class="name-col">גרמים</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CARBS -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🥔 פחמימות</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">sweet_p</td><td class="hebrew-col">בטטה</td><td class="num-col">90</td><td class="num-col">1.6</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">rice_w</td><td class="hebrew-col">אורז לבן</td><td class="num-col">130</td><td class="num-col">2.7</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">potato</td><td class="hebrew-col">תפוח אדמה</td><td class="num-col">80</td><td class="num-col">1.7</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">rice_b</td><td class="hebrew-col">אורז מלא</td><td class="num-col">110</td><td class="num-col">2.6</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">pasta_w</td><td class="hebrew-col">פסטה מלאה</td><td class="num-col">130</td><td class="num-col">5</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">pasta</td><td class="hebrew-col">פסטה לבנה</td><td class="num-col">160</td><td class="num-col">5.3</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">cous</td><td class="hebrew-col">קוסקוס</td><td class="num-col">112</td><td class="num-col">3.8</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">quinoa</td><td class="hebrew-col">קינואה</td><td class="num-col">120</td><td class="num-col">4.4</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">buckwheat</td><td class="hebrew-col">כוסמת</td><td class="num-col">92</td><td class="num-col">3.4</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">lentils</td><td class="hebrew-col">עדשים</td><td class="num-col">116</td><td class="num-col">9</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">beans</td><td class="hebrew-col">שעועית לבנה</td><td class="num-col">127</td><td class="num-col">9</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">bulgur</td><td class="hebrew-col">בורגול</td><td class="num-col">83</td><td class="num-col">3.1</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">noodles_egg</td><td class="hebrew-col">אטריות ביצים</td><td class="num-col">138</td><td class="num-col">4.5</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">noodles_rice</td><td class="hebrew-col">אטריות אורז</td><td class="num-col">108</td><td class="num-col">1.8</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">beans_red</td><td class="hebrew-col">שעועית אדומה</td><td class="num-col">127</td><td class="num-col">9</td><td class="num-col">35</td><td class="name-col">כף</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SAUCES -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🥫 רוטבים (כל אחד = 15g כף)</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">tomato</td><td class="hebrew-col">רוטב עגבניות</td><td class="num-col">17</td><td class="num-col">1</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">chili</td><td class="hebrew-col">רוטב צילי</td><td class="num-col">40</td><td class="num-col">2</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">mustard</td><td class="hebrew-col">חרדל ודבש</td><td class="num-col">50</td><td class="num-col">1</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">teriyaki</td><td class="hebrew-col">טריאקי</td><td class="num-col">75</td><td class="num-col">4</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">ketchup</td><td class="hebrew-col">קטשופ</td><td class="num-col">100</td><td class="num-col">1.7</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">pesto</td><td class="hebrew-col">פסטו</td><td class="num-col">300</td><td class="num-col">7</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">mayo</td><td class="hebrew-col">מיוקל/מיונז</td><td class="num-col">680</td><td class="num-col">0</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">tehina</td><td class="hebrew-col">טחינה</td><td class="num-col">300</td><td class="num-col">9</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">olive</td><td class="hebrew-col">שמן זית</td><td class="num-col">884</td><td class="num-col">0</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">garlic</td><td class="hebrew-col">רוטב שום</td><td class="num-col">50</td><td class="num-col">1</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">balsamic</td><td class="hebrew-col">חומץ בלסמי</td><td class="num-col">30</td><td class="num-col">0</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">soy</td><td class="hebrew-col">רוטב סויה</td><td class="num-col">20</td><td class="num-col">2</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">jam</td><td class="hebrew-col">ריבה לייט</td><td class="num-col">100</td><td class="num-col">0</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">tomato_paste</td><td class="hebrew-col">רסק עגבניות</td><td class="num-col">79</td><td class="num-col">3.5</td><td class="num-col">15</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">hummus</td><td class="hebrew-col">חומוס</td><td class="num-col">186</td><td class="num-col">8.2</td><td class="num-col">40</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">honey</td><td class="hebrew-col">דבש</td><td class="num-col">304</td><td class="num-col">0.3</td><td class="num-col">22</td><td class="name-col">כף</td></tr>
+            <tr><td class="id-col">date_syrup</td><td class="hebrew-col">סילאן</td><td class="num-col">248</td><td class="num-col">1.3</td><td class="num-col">22</td><td class="name-col">כף</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VEGETABLES -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🥗 ירקות וסלטים</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">small</td><td class="hebrew-col">סלט קטן</td><td class="num-col">30</td><td class="num-col">1</td><td class="num-col">300</td><td class="name-col">סלט קטן</td></tr>
+            <tr><td class="id-col">large</td><td class="hebrew-col">סלט גדול</td><td class="num-col">30</td><td class="num-col">1</td><td class="num-col">600</td><td class="name-col">סלט גדול</td></tr>
+            <tr><td class="id-col">inside</td><td class="hebrew-col">ירקות בסנדוויץ</td><td class="num-col">30</td><td class="num-col">1</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">antipasti</td><td class="hebrew-col">אנטיפסטי</td><td class="num-col">60</td><td class="num-col">2</td><td class="num-col">-</td><td class="name-col"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SNACKS -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🍫 חטיפים וברים</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">edamame</td><td class="hebrew-col">אדממה</td><td class="num-col">120</td><td class="num-col">11</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">popcorn</td><td class="hebrew-col">פופקורן מופחת</td><td class="num-col">320</td><td class="num-col">8</td><td class="num-col">85</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">kasta</td><td class="hebrew-col">גלידה קסטה</td><td class="num-col">170</td><td class="num-col">1</td><td class="num-col">34</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">kartiv</td><td class="hebrew-col">גלידה קרטיב</td><td class="num-col">170</td><td class="num-col">1</td><td class="num-col">34</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">choc</td><td class="hebrew-col">שוקולד מריר</td><td class="num-col">500</td><td class="num-col">4</td><td class="num-col">4</td><td class="name-col">קוביה</td></tr>
+            <tr><td class="id-col">marshmallow</td><td class="hebrew-col">מרשמלו</td><td class="num-col">320</td><td class="num-col">1</td><td class="num-col">3</td><td class="name-col">מרשמלו</td></tr>
+            <tr><td class="id-col">lollipop</td><td class="hebrew-col">סוכריה על מקל</td><td class="num-col">300</td><td class="num-col">0</td><td class="num-col">10</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">pesek</td><td class="hebrew-col">פסק זמן</td><td class="num-col">550</td><td class="num-col">4</td><td class="num-col">20</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">myprotein</td><td class="hebrew-col">Myprotein Layered</td><td class="num-col">362</td><td class="num-col">20</td><td class="num-col">60</td><td class="name-col">בר</td></tr>
+            <tr><td class="id-col">today</td><td class="hebrew-col">Today Bar</td><td class="num-col">334</td><td class="num-col">20</td><td class="num-col">60</td><td class="name-col">בר</td></tr>
+            <tr><td class="id-col">allin</td><td class="hebrew-col">All In Bar</td><td class="num-col">358</td><td class="num-col">20</td><td class="num-col">60</td><td class="name-col">בר</td></tr>
+            <tr><td class="id-col">almonds</td><td class="hebrew-col">שקדים</td><td class="num-col">575</td><td class="num-col">21</td><td class="num-col">2</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">cashews</td><td class="hebrew-col">קשיו</td><td class="num-col">606</td><td class="num-col">15</td><td class="num-col">2</td><td class="name-col">יחידה</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COTTAGE SIDES -->
+    <div class="category">
+      <div class="category-header">
+        <h2>🥒 תוספות קוטג'</h2>
+        <span class="category-toggle">▼</span>
+      </div>
+      <div class="category-content">
+        <table>
+          <thead><tr><th>ID</th><th>Hebrew</th><th>kcal/100g</th><th>prot/100g</th><th>unit_g</th><th>unit_name</th></tr></thead>
+          <tbody>
+            <tr><td class="id-col">prot_chips</td><td class="hebrew-col">ציפס חלבון</td><td class="num-col">550</td><td class="num-col">10</td><td class="num-col">-</td><td class="name-col"></td></tr>
+            <tr><td class="id-col">fit_cracks</td><td class="hebrew-col">קרקרים פיטנס</td><td class="num-col">495</td><td class="num-col">5</td><td class="num-col">4</td><td class="name-col">יחידה</td></tr>
+            <tr><td class="id-col">crackers</td><td class="hebrew-col">פריכיות</td><td class="num-col">400</td><td class="num-col">2</td><td class="num-col">6</td><td class="name-col">יחידה</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>✓ 76 פריטים מוכנים</p>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.category-header').forEach(header => {
+      header.addEventListener('click', function() {
+        this.parentElement.classList.toggle('collapsed');
+      });
+    });
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+      const searchTerm = this.value.toLowerCase();
+      document.querySelectorAll('.category').forEach(category => {
+        let hasMatch = false;
+        const rows = category.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchTerm)) {
+            row.style.display = '';
+            hasMatch = true;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+        category.style.display = hasMatch || !searchTerm ? '' : 'none';
+      });
+    });
+    document.querySelectorAll('.category').forEach(cat => {
+      cat.classList.remove('collapsed');
+    });
+  </script>
+</body>
+</html>

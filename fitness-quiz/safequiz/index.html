@@ -2267,7 +2267,7 @@
   }
 
   function updateAllWeightUIs() {
-    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500) };
+    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500), 'לילה': 100 };
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
@@ -5088,7 +5088,7 @@ ${planHtml}
     // Suggested minimums per meal (educational, not enforced)
     const isMale = userData.gender === 'גבר';
     const mainMealMin = isMale ? 600 : 500;
-    const SLOT_MIN = { 'בוקר': 200, 'צהריים': mainMealMin, 'ערב': mainMealMin };
+    const SLOT_MIN = { 'בוקר': 200, 'צהריים': mainMealMin, 'ערב': mainMealMin, 'לילה': 100 };
     // No longer force minimums — let users proceed even if below recommended
 
     // ספייר מחלב — כי חלב לא בכפולת 50, השארית הולכת לארוחה האחרונה
