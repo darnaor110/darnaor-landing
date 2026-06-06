@@ -1186,12 +1186,13 @@
     ],
     toast: [
       { key:'bread', lbl:'סוג לחם', multi:true, opts:[
-        {id:'light',  lbl:'לחם קל',    kcal:45,  prot:4, tier:'g'},
-        {id:'pita99', lbl:'פיתה 99',   kcal:99,  prot:4, tier:'g'},
-        {id:'whole',  lbl:'לחם מלא',   kcal:73,  prot:3, tier:'y'},
-        {id:'white',  lbl:'לחם לבן',   kcal:70,  prot:2, tier:'r'},
-        {id:'pita_w', lbl:'פיתה לבנה', kcal:250, prot:8, tier:'r'},
-        {id:'roll',   lbl:'לחמניה',    kcal:140, prot:5, tier:'r'}
+        {id:'light',     lbl:'לחם קל',    kcal:45,  prot:4, tier:'g'},
+        {id:'pita99',    lbl:'פיתה 99',   kcal:99,  prot:4, tier:'g'},
+        {id:'whole',     lbl:'לחם מלא',   kcal:73,  prot:3, tier:'y'},
+        {id:'white',     lbl:'לחם לבן',   kcal:70,  prot:2, tier:'r'},
+        {id:'pita_w',    lbl:'פיתה לבנה', kcal:250, prot:8, tier:'r'},
+        {id:'roll',      lbl:'לחמניה',    kcal:140, prot:5, tier:'r'},
+        {id:'tortilla',  lbl:'טורטייה 99', kcal:99, prot:3, tier:'y'}
       ]},
       { key:'cheese', lbl:'גבינה', multi:true, opts:[
         {id:'ch9',     lbl:'גבינה צהובה 9%',  kcal:45, prot:6,  tier:'g'},
@@ -1213,16 +1214,17 @@
         {id:'small',  lbl:'סלט קטן',    kcal:100, prot:3, tier:'g'},
         {id:'large',  lbl:'סלט גדול',   kcal:200, prot:6, tier:'g'},
         {id:'inside', lbl:'ירקות בתוך', kcal:50,  prot:1, tier:'g'}
-      ]}
+      ]} // Note: labels show "small/large" without veggie count; actual count calculated dynamically
     ],
     eggs: [
       { key:'bread', lbl:'לחם', multi:true, opts:[
-        {id:'light',  lbl:'לחם קל',   kcal:45,  prot:4, tier:'g'},
-        {id:'pita99', lbl:'פיתה 99',  kcal:99,  prot:4, tier:'g'},
-        {id:'whole',  lbl:'לחם מלא', kcal:73,  prot:3, tier:'y'},
-        {id:'white',  lbl:'לחם לבן', kcal:70,  prot:2, tier:'o'},
-        {id:'pita_w', lbl:'פיתה לבנה',kcal:250, prot:8, tier:'o'},
-        {id:'roll',   lbl:'לחמניה',   kcal:140, prot:5, tier:'o'}
+        {id:'light',     lbl:'לחם קל',    kcal:45,  prot:4, tier:'g'},
+        {id:'pita99',    lbl:'פיתה 99',   kcal:99,  prot:4, tier:'g'},
+        {id:'whole',     lbl:'לחם מלא',   kcal:73,  prot:3, tier:'y'},
+        {id:'white',     lbl:'לחם לבן',   kcal:70,  prot:2, tier:'o'},
+        {id:'pita_w',    lbl:'פיתה לבנה', kcal:250, prot:8, tier:'o'},
+        {id:'roll',      lbl:'לחמניה',    kcal:140, prot:5, tier:'o'},
+        {id:'tortilla',  lbl:'טורטייה 99', kcal:99, prot:3, tier:'y'}
       ]},
       { key:'cheese', lbl:'גבינות (רשות)', multi:true, opts:[
         {id:'ch9',     lbl:'גבינה צהובה 9%',  kcal:45, prot:6,  tier:'g'},
@@ -1302,11 +1304,12 @@
     ],
     sandwich: [
       { key:'bread', lbl:'לחם / פיתה', multi:true, opts:[
-        {id:'light',  lbl:'לחם קל',   kcal:90,  prot:8, tier:'g'},
-        {id:'pita99', lbl:'פיתה 99',  kcal:99,  prot:4, tier:'g'},
-        {id:'whole',  lbl:'לחם מלא', kcal:146, prot:12, tier:'y'},
-        {id:'pita_w', lbl:'פיתה לבנה',kcal:250, prot:20, tier:'o'},
-        {id:'roll',   lbl:'לחמניה',   kcal:140, prot:5, tier:'o'}
+        {id:'light',     lbl:'לחם קל',    kcal:90,  prot:8, tier:'g'},
+        {id:'pita99',    lbl:'פיתה 99',   kcal:99,  prot:4, tier:'g'},
+        {id:'whole',     lbl:'לחם מלא',   kcal:146, prot:12, tier:'y'},
+        {id:'pita_w',    lbl:'פיתה לבנה', kcal:250, prot:20, tier:'o'},
+        {id:'roll',      lbl:'לחמניה',    kcal:140, prot:5, tier:'o'},
+        {id:'tortilla',  lbl:'טורטייה 99', kcal:99, prot:3, tier:'y'}
       ]},
       { key:'protein', lbl:'חלבון', multi:true, opts:[
         {id:'chicken', lbl:'חזה עוף פרוס',   kcal:50,  prot:11, tier:'g'},
@@ -1438,6 +1441,17 @@
     return { units: Math.round(units * 2) / 2, data: data };
   }
 
+  function calcVeggieCount(calorieAmount) {
+    // 50 cal = 1.5 veggies, 100 cal = 3 veggies, 150 cal = 4.5 veggies, 200 cal = 6 veggies
+    return Math.round((calorieAmount / 50) * 1.5 * 2) / 2;
+  }
+
+  function getVegCalories(vegId) {
+    // Map vegetable option IDs to their calorie values
+    const vegCalsMap = { 'small': 100, 'large': 200, 'inside': 50 };
+    return vegCalsMap[vegId] || 0;
+  }
+
   // ── MEAL WEIGHT CONFIG — weights stored as kcal (multiples of 50) ──
   // Limits as fractions of targetCal; resolved to kcal at runtime via mealLimKcal()
   const MEAL_LIMIT_PCT = {
@@ -1496,20 +1510,20 @@
 
   // ── MUSCLES ──
   const MUSCLES = [
-    { id:'chest',     nm:'chest' },
+    { id:'chest',     nm:'חזה' },
     { id:'back',      nm:'שרירי גב' },
-    { id:'shoulders', nm:'shoulders' },
-    { id:'bicep',     nm:'bicep' },
-    { id:'tricep',    nm:'tricep' },
-    { id:'quad',      nm:'quad' },
-    { id:'hamstring', nm:'hamstring' },
-    { id:'glute',     nm:'glute' },
-    { id:'calves',    nm:'calves' },
-    { id:'abs',       nm:'abs' }
+    { id:'shoulders', nm:'כתפיים' },
+    { id:'bicep',     nm:'יד קדמית' },
+    { id:'tricep',    nm:'יד אחורית' },
+    { id:'quad',      nm:'ירך קדמית' },
+    { id:'hamstring', nm:'ירך אחורית' },
+    { id:'glute',     nm:'ישבן' },
+    { id:'calves',    nm:'תאומים' },
+    { id:'abs',       nm:'בטן' }
   ];
   const MUSCLE_DEFAULTS = {
-    male:   { chest:4, back:4, shoulders:5, tricep:3, bicep:3, quad:3, hamstring:3, glute:5, calves:2, abs:2 },
-    female: { chest:2, back:3, shoulders:2, tricep:2, bicep:2, quad:4, hamstring:4, glute:5, calves:2, abs:3 }
+    male:   { chest:3, back:3, shoulders:4, tricep:4, bicep:4, quad:3, hamstring:3, glute:0, calves:3, abs:3 },
+    female: { chest:2, back:4, shoulders:2, tricep:2, bicep:2, quad:3, hamstring:3, glute:5, calves:0, abs:4 }
   };
 
   // ── NAVIGATION ──
@@ -2097,41 +2111,12 @@
   function initMealWeight(newId) {
     const targetCal = getMealTargetCal();
     const lim = mealLimKcal(newId, targetCal);
-    const others = MEAL_TIMES.filter(mt => mt.id !== newId && d.meals[mt.id]?.checked);
-    if (others.length === 0) { d.meals[newId].weight = Math.min(lim.max, targetCal); return; }
-    // Give new meal its minimum, steal from the largest other
-    const give = lim.min + 50; // min + one step
-    const sorted = [...others].sort((a,b) => d.meals[b.id].weight - d.meals[a.id].weight);
-    let remaining = give;
-    for (const mt of sorted) {
-      const lm = mealLimKcal(mt.id, targetCal);
-      const steal = Math.min(remaining, d.meals[mt.id].weight - lm.min);
-      d.meals[mt.id].weight -= steal;
-      remaining -= steal;
-      if (remaining <= 0) break;
-    }
-    d.meals[newId].weight = Math.max(lim.min, give - remaining);
+    // Each meal starts with only its minimum calories — user distributes manually
+    d.meals[newId].weight = lim.min;
   }
   function redistributeOnUncheck(removedId) {
-    const w = d.meals[removedId].weight;
+    // When a meal is unchecked, just clear its calories — user keeps control of distribution
     d.meals[removedId].weight = 0;
-    const others = MEAL_TIMES.filter(mt => mt.id !== removedId && d.meals[mt.id]?.checked);
-    if (others.length === 0) return;
-    const targetCal = getMealTargetCal();
-    const sorted = [...others].sort((a,b) => {
-      const la = mealLimKcal(a.id, targetCal);
-      const lb = mealLimKcal(b.id, targetCal);
-      return (lb.max - d.meals[b.id].weight) - (la.max - d.meals[a.id].weight);
-    });
-    let rem = w;
-    for (const mt of sorted) {
-      const lm = mealLimKcal(mt.id, targetCal);
-      const room = lm.max - d.meals[mt.id].weight;
-      const add = Math.min(rem, room);
-      d.meals[mt.id].weight += add;
-      rem -= add;
-      if (rem <= 0) break;
-    }
   }
   function adjMealKcal(mealId, dir, evt) {
     if (evt) evt.stopPropagation();
@@ -2823,7 +2808,14 @@
         return;
       }
     }
-    goStep(6);
+    // Show confirmation that this is how they want to split calories
+    const summary = MEAL_TIMES.filter(mt => d.meals[mt.id]?.checked)
+      .map(mt => `${mt.label}: ${d.meals[mt.id].weight} קל`)
+      .join(' • ');
+    const msg = `בטוח שככה תרצה לחלק את הקלוריות?\n\n${summary}`;
+    if (confirm(msg)) {
+      goStep(6);
+    }
   }
   window.s5next=s5next;
 
@@ -3338,7 +3330,7 @@
     // ── Workout section ──
     var workoutHtml = '';
     if (workout && workout.days && workout.days.length > 0) {
-      const MUSCLE_HE = { chest:'chest', back:'back', shoulders:'shoulders', tricep:'tricep', bicep:'bicep', quad:'quad', hamstring:'hamstring', glute:'glute', calves:'calves', abs:'abs' };
+      const MUSCLE_HE = { chest:'חזה', back:'שרירי גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ירך קדמית', hamstring:'ירך אחורית', glute:'ישבן', calves:'תאומים', abs:'בטן' };
       const PRIO_CLASS = { 1:'prio-none', 2:'prio-3', 3:'prio-2', 4:'prio-1', 5:'prio-1' };
       const PRIO_LABEL = { 5:'5', 4:'4', 3:'3', 2:'2', 1:'1', 0:'' };
       const userTrainingLevel = userData.trainingLevel || 0;
@@ -4110,7 +4102,10 @@ ${planHtml}
 
   function buildHot(meal, cal) {
     const protCal  = Math.floor(cal * 0.5 / 50) * 50;
-    const vegCal   = hasType(meal, 'hot') && getComp(meal, 'hot', 'veg') ? 100 : 0;
+    const vegIds = getComp(meal, 'hot', 'veg') || [];
+    const vegId = Array.isArray(vegIds) ? vegIds[0] : null;
+    const vegCal   = vegId ? getVegCalories(vegId) : 0;
+    const vegSize  = vegCal > 0 ? calcVeggieCount(vegCal) : null;
     const carbCal  = R50(cal - protCal - vegCal);
     const protCalF = cal - carbCal - vegCal;
     const lines    = [];
@@ -4172,7 +4167,7 @@ ${planHtml}
     // 100 קל ירקות ≈ 300ג (33 קל/100ג בממוצע לרוב הירקות)
     if (vegCal) {
       const vegG = Math.round(vegCal / 33 * 100);
-      lines.push('ירקות (' + vegCal + ' קל): ירקות מוקפצים/מאודים||לבחירה||~' + vegG + 'ג');
+      lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + vegG + 'ג');
     }
 
     // avg protein across selected protein options
@@ -4369,8 +4364,8 @@ ${planHtml}
     const activeSauceIds = toastSauceIds.length > 0 ? toastSauceIds : ['tomato', 'chili', 'mustard'];
     const toastExtras = getComp(meal, 'toast', 'extras') || [];
     const vegExtrasId = Array.isArray(toastExtras) ? toastExtras[0] : null;
-    const vegSize   = vegExtrasId === 'large' ? '6 ירקות' : toastExtras.length > 0 ? '3 ירקות' : null;
-    const vegCal    = vegSize ? 50 : 0;
+    const vegCal    = vegExtrasId ? getVegCalories(vegExtrasId) : 0;
+    const vegSize   = vegCal > 0 ? calcVeggieCount(vegCal) : null;
     const sauceCap   = 50; // תמיד 50 קל לרוטב
 
     // בחר גבינה לפי בחירת המשתמש — ראשונה שנבחרה, או ברירת מחדל ch9
@@ -4411,7 +4406,7 @@ ${planHtml}
     });
     lines.push('גבינה (' + (units * avgCheeseCal) + ' קל): ' + cheeseLines.join(' / '));
 
-    if (vegSize)       lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + '||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
+    if (vegSize)       lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
     if (sauceCal > 0) {
       const toastSauceNames = activeSauceIds.map(id => TOAST_SAUCE_ID_MAP[id]).filter(Boolean);
       const toastSauceOpts = toastSauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ');
@@ -4442,8 +4437,8 @@ ${planHtml}
     // סלט — מגודל הבסיס שנבחר
     const saladIds  = getComp(meal, 'eggs', 'salad') || [];
     const saladId   = Array.isArray(saladIds) ? saladIds[0] : saladIds;
-    const vegSize   = saladId === 'large' ? '6 ירקות' : saladIds && (Array.isArray(saladIds) ? saladIds.length > 0 : true) && saladId ? '3 ירקות' : null;
-    const saladCal  = vegSize ? 100 : 0;
+    const saladCal  = saladId ? getVegCalories(saladId) : 0;
+    const vegSize   = saladCal > 0 ? calcVeggieCount(saladCal) : null;
     // גבינה — לפי בחירת המשתמש
     const cheeseIds   = getComp(meal, 'eggs', 'cheese') || [];
     const hasCheese   = cheeseIds.length > 0;
@@ -4468,7 +4463,7 @@ ${planHtml}
       const breadCal = Math.floor(breadBudget / 50) * 50;
       lines.push('לחם (' + breadCal + ' קל): ' + breadOpts);
     }
-    if (vegSize) lines.push('סלט (' + saladCal + ' קל): סלט ' + vegSize + '||לבחירה||~' + Math.round(saladCal/33*100) + 'ג');
+    if (vegSize) lines.push('סלט (' + saladCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + Math.round(saladCal/33*100) + 'ג');
     if (hasCheese) {
       const cheeseOpts = cheeseIds.map(id => {
         const nm  = EGGS_CHEESE_ID_MAP[id] || id;
@@ -4536,8 +4531,8 @@ ${planHtml}
     const sauceCal  = 50; // תמיד 50 קל לרוטב
     const vegExtras = getComp(meal, 'sandwich', 'extras') || getComp(meal, 'sandwich', 'veg') || [];
     const vegExtraId = Array.isArray(vegExtras) ? vegExtras[0] : null;
-    const vegSize   = vegExtraId === 'large' ? '6 ירקות' : vegExtras.length > 0 ? '3 ירקות' : null;
-    const vegCal    = vegSize ? 50 : 0;
+    const vegCal    = vegExtraId ? getVegCalories(vegExtraId) : 0;
+    const vegSize   = vegCal > 0 ? calcVeggieCount(vegCal) : null;
     const allBreads = pickAllBreads(meal, 'sandwich');
     const bread     = allBreads[0]; // לחם ראשון לחישוב קצבה
 
@@ -4593,7 +4588,7 @@ ${planHtml}
     });
     // סדר: חלבון → ירקות → לחם → רוטב
     lines.unshift('חלבון (' + Math.round(finalProtCal) + ' קל): ' + protSandLines.join(' / '));
-    if (vegSize)   lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + '||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
+    if (vegSize)   lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
     if (sauceCal) {
       const sauceNames = activeSandwichSauceIds.map(id => SANDWICH_SAUCE_ID_MAP[id]).filter(Boolean);
       const sauceOpts = sauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ');
@@ -4760,11 +4755,13 @@ ${planHtml}
   function buildSaladSnack(meal, cal) {
     const protIds  = getComp(meal, 'salad_snack', 'protein') || [];
     const protName = Array.isArray(protIds) ? (SNACK_SALAD_PROT_ID_MAP[protIds[0]] || firstKey(SNACK_SALAD_PROTEIN_CAL)) : (protIds || firstKey(SNACK_SALAD_PROTEIN_CAL));
-    const protCal  = R50(cal - 50);
+    const saladCal = 50;
+    const vegSize  = calcVeggieCount(saladCal);
+    const protCal  = R50(cal - saladCal);
     const protG    = calToGrams(protCal, SNACK_SALAD_PROTEIN_CAL[protName] || 100);
     const lines    = [];
     // כל רכיב בפורמט header נפרד
-    lines.push('סלט (50 קל): ירקות טריים||3 ירקות||~150ג');
+    lines.push('סלט (' + saladCal + ' קל): ירקות טריים||' + vegSize + ' ירקות||~150ג');
     if (protCal > 0) lines.push('חלבון (' + protCal + ' קל): ' + protName + '||—||' + protG + 'ג');
     const snackSaladProt = Math.round(protG * (SNACK_SALAD_PROTEIN_PROT[protName] || 11) / 100);
     return { lines, prot: snackSaladProt };
@@ -5365,7 +5362,10 @@ ${planHtml}
       const isMale = u.gender === 'גבר';
 
       if (days <= 2) return 'fullbody';
-      if (days === 3) return 'ab_fb'; // A / B / Full Body rotation
+      if (days === 3) {
+        // 3 ימים: ab_fb רק אם יש ימים צמודים, אחרת fullbody בגלל הפיזור
+        return hasConsecutiveDays(u) ? 'ab_fb' : 'fullbody';
+      }
       if (days === 4) return isMale ? 'ab4' : 'upper_lower4';
       if (days === 5) {
         if (!isMale) return 'upper_lower5';
@@ -5680,11 +5680,11 @@ ${planHtml}
         const pool = EXERCISE_POOLS[cfg.muscle] || [];
         const allPools = Object.values(EXERCISE_POOLS).flat();
 
+        // עבור תרגילי יעד (strength goals), עוקפים את בדיקת הפציעה — המשתמש בחר במפורש
         const findEx = name => {
           if (!name) return null;
           const found = allPools.find(e => e.name === name);
           if (!found) return null;
-          if (avoid.has(found.name)) return null;
           if (equipAllowed && !equipAllowed.has(found.equipment)) return null;
           return found;
         };
@@ -5967,7 +5967,7 @@ ${planHtml}
       lines.push('');
       lines.push('| שריר | עדיפות | יעד | בפועל |');
       lines.push('|------|--------|-----|-------|');
-      const MUSCLE_NAMES = { chest:'chest', back:'back', shoulders:'shoulders', tricep:'tricep', bicep:'bicep', quad:'quad', hamstring:'hamstring', glute:'glute', calves:'calves', abs:'abs' };
+      const MUSCLE_NAMES = { chest:'חזה', back:'שרירי גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ירך קדמית', hamstring:'ירך אחורית', glute:'ישבן', calves:'תאומים', abs:'בטן' };
       Object.keys(EXERCISE_POOLS).forEach(mId => {
         const p = plan.prio[mId] || 0;
         if (p === 0) return;
