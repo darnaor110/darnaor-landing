@@ -693,7 +693,7 @@
     <span class="section-label">אזורים עם פציעה / כאב (רשות)</span>
     <div class="check-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <div class="check-item" onclick="toggleInjury(this,'גב תחתון')"><div class="chk-box">✓</div><span class="chk-lbl">גב תחתון</span></div>
-      <div class="check-item" onclick="toggleInjury(this,'כתפיים')"><div class="chk-box">✓</div><span class="chk-lbl">כתפיים</span></div>
+      <div class="check-item" onclick="toggleInjury(this,'shoulders')"><div class="chk-box">✓</div><span class="chk-lbl">כתפיים</span></div>
       <div class="check-item" onclick="toggleInjury(this,'ברכיים')"><div class="chk-box">✓</div><span class="chk-lbl">ברכיים</span></div>
       <div class="check-item" onclick="toggleInjury(this,'צוואר')"><div class="chk-box">✓</div><span class="chk-lbl">צוואר</span></div>
       <div class="check-item" onclick="toggleInjury(this,'מפרק כף היד')"><div class="chk-box">✓</div><span class="chk-lbl">כף היד</span></div>
@@ -1496,16 +1496,16 @@
 
   // ── MUSCLES ──
   const MUSCLES = [
-    { id:'chest',     nm:'חזה' },
+    { id:'chest',     nm:'chest' },
     { id:'back',      nm:'שרירי גב' },
-    { id:'shoulders', nm:'כתפיים' },
-    { id:'bicep',     nm:'יד קדמית' },
-    { id:'tricep',    nm:'יד אחורית' },
-    { id:'quad',      nm:'ארבע ראשי' },
-    { id:'hamstring', nm:'המסטרינג' },
-    { id:'glute',     nm:'ישבן' },
-    { id:'calves',    nm:'תאומים' },
-    { id:'abs',       nm:'בטן' }
+    { id:'shoulders', nm:'shoulders' },
+    { id:'bicep',     nm:'bicep' },
+    { id:'tricep',    nm:'tricep' },
+    { id:'quad',      nm:'quad' },
+    { id:'hamstring', nm:'hamstring' },
+    { id:'glute',     nm:'glute' },
+    { id:'calves',    nm:'calves' },
+    { id:'abs',       nm:'abs' }
   ];
   const MUSCLE_DEFAULTS = {
     male:   { chest:4, back:4, shoulders:5, tricep:3, bicep:3, quad:3, hamstring:3, glute:5, calves:2, abs:2 },
@@ -3338,7 +3338,7 @@
     // ── Workout section ──
     var workoutHtml = '';
     if (workout && workout.days && workout.days.length > 0) {
-      const MUSCLE_HE = { chest:'חזה', back:'גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ארבע ראשי', hamstring:'המסטרינג', glute:'ישבן', calves:'תאומים', abs:'בטן' };
+      const MUSCLE_HE = { chest:'chest', back:'back', shoulders:'shoulders', tricep:'tricep', bicep:'bicep', quad:'quad', hamstring:'hamstring', glute:'glute', calves:'calves', abs:'abs' };
       const PRIO_CLASS = { 1:'prio-none', 2:'prio-3', 3:'prio-2', 4:'prio-1', 5:'prio-1' };
       const PRIO_LABEL = { 5:'5', 4:'4', 3:'3', 2:'2', 1:'1', 0:'' };
       const userTrainingLevel = userData.trainingLevel || 0;
@@ -5111,7 +5111,7 @@ ${planHtml}
     // מפתח = אזור פציעה (כמו שמגיע מ-d.injuries[])
     const INJURY_AVOID = {
       'גב תחתון': ['סקווט עם מוט','דדליפט רומני עם מוט','דדליפט רומני עם משקולות יד','גוד מורנינג','חתירה כנגד מוט בפרונציה','חתירה כנגד מוט בסופינציה','חתירה רחבה כנגד מוט ארוך'],
-      'כתפיים':   ['לחיצת כתפיים עם מוט','לחיצת חזה במוט','לחיצת חזה במוט בשיפוע חיובי','מקבילים','פייספול','חתירת כתפיים'],
+      'shoulders':   ['לחיצת כתפיים עם מוט','לחיצת חזה במוט','לחיצת חזה במוט בשיפוע חיובי','מקבילים','פייספול','חתירת כתפיים'],
       'ברכיים':   ['סקווט עם מוט','סקווט בסמית משין','לאנץ בולגרי','לאנצים בהליכה עם משקולות יד','סיסי סקווט','פשיטת ברכיים במכונה'],
       'צוואר':    ['לחיצת כתפיים עם מוט','לחיצת כתפיים עם משקולת יד','חתירת כתפיים'],
       'מפרק כף היד': ['לחיצה צרפתית כנגד מוט דאבליו','פריצר עם מוט דאבליו','חתירה כנגד מוט בפרונציה','חתירה כנגד מוט בסופינציה','לחיצת כתפיים עם מוט','לחיצת חזה במוט'],
@@ -5136,128 +5136,128 @@ ${planHtml}
 
     // חזה — לחיצה (מרכז → עליון → תחתון) → פרפר → מקבילים
     const POOL_CHEST = [
-      { name:'לחיצת חזה במכונה',                          muscle:'חזה', secondary:['כתפיים','יד אחורית'], equipment:'מכונה',      moveType:'לחיצה',   head:'מרכז' },
-      { name:'לחיצת חזה עם משקולות יד',                   muscle:'חזה', secondary:['כתפיים','יד אחורית'], equipment:'משקולת',    moveType:'לחיצה',   head:'מרכז' },
-      { name:'לחיצת חזה במוט',                            muscle:'חזה', secondary:['כתפיים','יד אחורית'], equipment:'מוט',        moveType:'לחיצה',   head:'מרכז' },
-      { name:'לחיצת חזה במכונה בשיפוע חיובי',             muscle:'חזה', secondary:['כתפיים','יד אחורית'], equipment:'מכונה',      moveType:'לחיצה',   head:'עליון' },
-      { name:'לחיצת חזה במוט בשיפוע חיובי',               muscle:'חזה', secondary:['כתפיים','יד אחורית'], equipment:'מוט',        moveType:'לחיצה',   head:'עליון' },
-      { name:'לחיצת חזה עם משקולות יד בשיפוע חיובי',      muscle:'חזה', secondary:['כתפיים','יד אחורית'], equipment:'משקולת',    moveType:'לחיצה',   head:'עליון' },
-      { name:'לחיצת חזה במכונה לחזה תחתון',               muscle:'חזה', secondary:['יד אחורית'],           equipment:'מכונה',      moveType:'לחיצה',   head:'תחתון' },
-      { name:'פרפר במכונה',                               muscle:'חזה', secondary:[],                       equipment:'מכונה',      moveType:'פרפר',    head:'מרכז' },
-      { name:'פרפר בכבלים',                               muscle:'חזה', secondary:[],                       equipment:'כבל',        moveType:'פרפר',    head:'מרכז' },
-      { name:'פרפר בכבלים לחזה עליון',                    muscle:'חזה', secondary:[],                       equipment:'כבל',        moveType:'פרפר',    head:'עליון' },
-      { name:'פרפר בכבלים לחזה תחתון',                    muscle:'חזה', secondary:[],                       equipment:'כבל',        moveType:'פרפר',    head:'תחתון' },
-      { name:'מקבילים',                                   muscle:'חזה', secondary:['יד אחורית'],            equipment:'משקל גוף',  moveType:'מקבילים', head:'תחתון' },
-      { name:'ג׳קסונס',                                   muscle:'חזה', secondary:['יד אחורית'],            equipment:'משקל גוף',  moveType:'מקבילים', head:'תחתון' },
-      { name:'שכיבות סמיכה עם הגבהה לידיים',              muscle:'חזה', secondary:['כתפיים','יד אחורית'],   equipment:'משקל גוף',  moveType:'לחיצה',   head:'מרכז' },
+      { name:'לחיצת חזה במכונה',                          muscle:'chest', secondary:['shoulders','tricep'], equipment:'מכונה',      moveType:'לחיצה',   head:'מרכז' },
+      { name:'לחיצת חזה עם משקולות יד',                   muscle:'chest', secondary:['shoulders','tricep'], equipment:'משקולת',    moveType:'לחיצה',   head:'מרכז' },
+      { name:'לחיצת חזה במוט',                            muscle:'chest', secondary:['shoulders','tricep'], equipment:'מוט',        moveType:'לחיצה',   head:'מרכז' },
+      { name:'לחיצת חזה במכונה בשיפוע חיובי',             muscle:'chest', secondary:['shoulders','tricep'], equipment:'מכונה',      moveType:'לחיצה',   head:'עליון' },
+      { name:'לחיצת חזה במוט בשיפוע חיובי',               muscle:'chest', secondary:['shoulders','tricep'], equipment:'מוט',        moveType:'לחיצה',   head:'עליון' },
+      { name:'לחיצת חזה עם משקולות יד בשיפוע חיובי',      muscle:'chest', secondary:['shoulders','tricep'], equipment:'משקולת',    moveType:'לחיצה',   head:'עליון' },
+      { name:'לחיצת חזה במכונה לחזה תחתון',               muscle:'chest', secondary:['tricep'],           equipment:'מכונה',      moveType:'לחיצה',   head:'תחתון' },
+      { name:'פרפר במכונה',                               muscle:'chest', secondary:[],                       equipment:'מכונה',      moveType:'פרפר',    head:'מרכז' },
+      { name:'פרפר בכבלים',                               muscle:'chest', secondary:[],                       equipment:'כבל',        moveType:'פרפר',    head:'מרכז' },
+      { name:'פרפר בכבלים לחזה עליון',                    muscle:'chest', secondary:[],                       equipment:'כבל',        moveType:'פרפר',    head:'עליון' },
+      { name:'פרפר בכבלים לחזה תחתון',                    muscle:'chest', secondary:[],                       equipment:'כבל',        moveType:'פרפר',    head:'תחתון' },
+      { name:'מקבילים',                                   muscle:'chest', secondary:['tricep'],            equipment:'משקל גוף',  moveType:'מקבילים', head:'תחתון' },
+      { name:'ג׳קסונס',                                   muscle:'chest', secondary:['tricep'],            equipment:'משקל גוף',  moveType:'מקבילים', head:'תחתון' },
+      { name:'שכיבות סמיכה עם הגבהה לידיים',              muscle:'chest', secondary:['shoulders','tricep'],   equipment:'משקל גוף',  moveType:'לחיצה',   head:'מרכז' },
     ];
 
     // גב — משיכה אנכית → חתירה צרה → חתירה רחבה → פול אובר
     const POOL_BACK = [
-      { name:'מתח אחיזה רחבה',                            muscle:'גב', secondary:['יד קדמית'], equipment:'משקל גוף', moveType:'משיכה אנכית' },
-      { name:'משיכת פולי אחיזה רחבה',                     muscle:'גב', secondary:['יד קדמית'], equipment:'מכונה',    moveType:'משיכה אנכית' },
-      { name:'משיכת פולי אחיזה נטרלית',                   muscle:'גב', secondary:['יד קדמית'], equipment:'מכונה',    moveType:'משיכה אנכית' },
-      { name:'חתירה עם משקולת יד',                        muscle:'גב', secondary:['יד קדמית'], equipment:'משקולת',  moveType:'חתירה צרה' },
-      { name:'חתירה במכונה עם תמיכה לרגליים',              muscle:'גב', secondary:['יד קדמית'], equipment:'מכונה',    moveType:'חתירה צרה' },
-      { name:'חתירה במכונה עם תמיכה לחזה',                muscle:'גב', secondary:['יד קדמית'], equipment:'מכונה',    moveType:'חתירה צרה' },
-      { name:'חתירה כנגד מוט בסופינציה',                   muscle:'גב', secondary:['יד קדמית'], equipment:'מוט',      moveType:'חתירה צרה' },
-      { name:'חתירה כנגד מוט בפרונציה',                   muscle:'גב', secondary:['יד קדמית'], equipment:'מוט',      moveType:'חתירה רחבה' },
-      { name:'חתירה רחבה במכונה',                         muscle:'גב', secondary:['יד קדמית'], equipment:'מכונה',    moveType:'חתירה רחבה' },
-      { name:'פולאובר עם מוט קצר בכבלים',                 muscle:'גב', secondary:['יד אחורית'], equipment:'כבל',     moveType:'פול אובר' },
-      { name:'מתח שלילי',                                 muscle:'גב', secondary:['יד קדמית'], equipment:'משקל גוף', moveType:'משיכה אנכית' },
+      { name:'מתח אחיזה רחבה',                            muscle:'back', secondary:['bicep'], equipment:'משקל גוף', moveType:'משיכה אנכית' },
+      { name:'משיכת פולי אחיזה רחבה',                     muscle:'back', secondary:['bicep'], equipment:'מכונה',    moveType:'משיכה אנכית' },
+      { name:'משיכת פולי אחיזה נטרלית',                   muscle:'back', secondary:['bicep'], equipment:'מכונה',    moveType:'משיכה אנכית' },
+      { name:'חתירה עם משקולת יד',                        muscle:'back', secondary:['bicep'], equipment:'משקולת',  moveType:'חתירה צרה' },
+      { name:'חתירה במכונה עם תמיכה לרגליים',              muscle:'back', secondary:['bicep'], equipment:'מכונה',    moveType:'חתירה צרה' },
+      { name:'חתירה במכונה עם תמיכה לחזה',                muscle:'back', secondary:['bicep'], equipment:'מכונה',    moveType:'חתירה צרה' },
+      { name:'חתירה כנגד מוט בסופינציה',                   muscle:'back', secondary:['bicep'], equipment:'מוט',      moveType:'חתירה צרה' },
+      { name:'חתירה כנגד מוט בפרונציה',                   muscle:'back', secondary:['bicep'], equipment:'מוט',      moveType:'חתירה רחבה' },
+      { name:'חתירה רחבה במכונה',                         muscle:'back', secondary:['bicep'], equipment:'מכונה',    moveType:'חתירה רחבה' },
+      { name:'פולאובר עם מוט קצר בכבלים',                 muscle:'back', secondary:['tricep'], equipment:'כבל',     moveType:'פול אובר' },
+      { name:'מתח שלילי',                                 muscle:'back', secondary:['bicep'], equipment:'משקל גוף', moveType:'משיכה אנכית' },
     ];
 
     // כתפיים — לחיצה → הרחקה → הרחקה אופקית → כפיפה קדמית (אחרון)
     const POOL_SHOULDERS = [
-      { name:'לחיצת כתפיים במכונה',                       muscle:'כתפיים', secondary:['יד אחורית'], equipment:'מכונה',   moveType:'לחיצה' },
-      { name:'לחיצת כתפיים עם משקולת יד',                 muscle:'כתפיים', secondary:['יד אחורית'], equipment:'משקולת', moveType:'לחיצה' },
-      { name:'לחיצת כתפיים עם מוט',                       muscle:'כתפיים', secondary:['יד אחורית'], equipment:'מוט',     moveType:'לחיצה' },
-      { name:'הרחקת כתפיים עם משקולות יד',                muscle:'כתפיים', secondary:[],             equipment:'משקולת', moveType:'הרחקה' },
-      { name:'הרחקת כתף כנגד כבל',                        muscle:'כתפיים', secondary:[],             equipment:'כבל',     moveType:'הרחקה' },
-      { name:'חתירת כתפיים',                              muscle:'כתפיים', secondary:[],             equipment:'מוט',     moveType:'הרחקה' },
-      { name:'הרחקה אופקית עם משקולת יד בהשענות קדימה',   muscle:'כתפיים', secondary:[],             equipment:'משקולת', moveType:'הרחקה אופקית' },
-      { name:'הרחקה אופקית במכונת פרפר',                  muscle:'כתפיים', secondary:[],             equipment:'מכונה',   moveType:'הרחקה אופקית' },
-      { name:'הרחקה אופקית כנגד כבל',                     muscle:'כתפיים', secondary:[],             equipment:'כבל',     moveType:'הרחקה אופקית' },
-      { name:'פייספול',                                   muscle:'כתפיים', secondary:[],             equipment:'כבל',     moveType:'הרחקה אופקית' },
-      { name:'כפיפת כתף עם כבל',                          muscle:'כתפיים', secondary:[],             equipment:'כבל',     moveType:'כפיפה קדמית' },
-      { name:'כפיפת כתף עם משקולת יד',                    muscle:'כתפיים', secondary:[],             equipment:'משקולת', moveType:'כפיפה קדמית' },
+      { name:'לחיצת כתפיים במכונה',                       muscle:'shoulders', secondary:['tricep'], equipment:'מכונה',   moveType:'לחיצה' },
+      { name:'לחיצת כתפיים עם משקולת יד',                 muscle:'shoulders', secondary:['tricep'], equipment:'משקולת', moveType:'לחיצה' },
+      { name:'לחיצת כתפיים עם מוט',                       muscle:'shoulders', secondary:['tricep'], equipment:'מוט',     moveType:'לחיצה' },
+      { name:'הרחקת כתפיים עם משקולות יד',                muscle:'shoulders', secondary:[],             equipment:'משקולת', moveType:'הרחקה' },
+      { name:'הרחקת כתף כנגד כבל',                        muscle:'shoulders', secondary:[],             equipment:'כבל',     moveType:'הרחקה' },
+      { name:'חתירת כתפיים',                              muscle:'shoulders', secondary:[],             equipment:'מוט',     moveType:'הרחקה' },
+      { name:'הרחקה אופקית עם משקולת יד בהשענות קדימה',   muscle:'shoulders', secondary:[],             equipment:'משקולת', moveType:'הרחקה אופקית' },
+      { name:'הרחקה אופקית במכונת פרפר',                  muscle:'shoulders', secondary:[],             equipment:'מכונה',   moveType:'הרחקה אופקית' },
+      { name:'הרחקה אופקית כנגד כבל',                     muscle:'shoulders', secondary:[],             equipment:'כבל',     moveType:'הרחקה אופקית' },
+      { name:'פייספול',                                   muscle:'shoulders', secondary:[],             equipment:'כבל',     moveType:'הרחקה אופקית' },
+      { name:'כפיפת כתף עם כבל',                          muscle:'shoulders', secondary:[],             equipment:'כבל',     moveType:'כפיפה קדמית' },
+      { name:'כפיפת כתף עם משקולת יד',                    muscle:'shoulders', secondary:[],             equipment:'משקולת', moveType:'כפיפה קדמית' },
     ];
 
     // יד אחורית — פשיטה מעל ראש → פשיטה רגילה
     const POOL_TRICEP = [
-      { name:'לחיצה צרפתית עם משקולות יד בשכיבה',         muscle:'יד אחורית', secondary:[], equipment:'משקולת',   moveType:'פשיטה מעל ראש' },
-      { name:'לחיצה צרפתית כנגד מוט דאבליו',              muscle:'יד אחורית', secondary:[], equipment:'מוט קצר',  moveType:'פשיטה מעל ראש' },
-      { name:'פשיטת מרפקים מעל הראש עם כבל',              muscle:'יד אחורית', secondary:[], equipment:'כבל',       moveType:'פשיטה מעל ראש' },
-      { name:'פשיטת מרפק מעל הראש (קטאנה)',               muscle:'יד אחורית', secondary:[], equipment:'מכונה',     moveType:'פשיטה מעל ראש' },
-      { name:'פשיטת מרפקים כנגד מוט קצר',                 muscle:'יד אחורית', secondary:[], equipment:'כבל',       moveType:'פשיטה רגילה' },
-      { name:'פשיטת מרפקים כנגד חבל',                     muscle:'יד אחורית', secondary:[], equipment:'כבל',       moveType:'פשיטה רגילה' },
-      { name:'קיק בק עם כבל',                             muscle:'יד אחורית', secondary:[], equipment:'כבל',       moveType:'פשיטה רגילה' },
-      { name:'קיק בק עם משקולת יד',                       muscle:'יד אחורית', secondary:[], equipment:'משקולת',   moveType:'פשיטה רגילה' },
+      { name:'לחיצה צרפתית עם משקולות יד בשכיבה',         muscle:'tricep', secondary:[], equipment:'משקולת',   moveType:'פשיטה מעל ראש' },
+      { name:'לחיצה צרפתית כנגד מוט דאבליו',              muscle:'tricep', secondary:[], equipment:'מוט קצר',  moveType:'פשיטה מעל ראש' },
+      { name:'פשיטת מרפקים מעל הראש עם כבל',              muscle:'tricep', secondary:[], equipment:'כבל',       moveType:'פשיטה מעל ראש' },
+      { name:'פשיטת מרפק מעל הראש (קטאנה)',               muscle:'tricep', secondary:[], equipment:'מכונה',     moveType:'פשיטה מעל ראש' },
+      { name:'פשיטת מרפקים כנגד מוט קצר',                 muscle:'tricep', secondary:[], equipment:'כבל',       moveType:'פשיטה רגילה' },
+      { name:'פשיטת מרפקים כנגד חבל',                     muscle:'tricep', secondary:[], equipment:'כבל',       moveType:'פשיטה רגילה' },
+      { name:'קיק בק עם כבל',                             muscle:'tricep', secondary:[], equipment:'כבל',       moveType:'פשיטה רגילה' },
+      { name:'קיק בק עם משקולת יד',                       muscle:'tricep', secondary:[], equipment:'משקולת',   moveType:'פשיטה רגילה' },
     ];
 
     // יד קדמית — ראש ארוך → ראש קצר → פטישים → כללי
     const POOL_BICEP = [
-      { name:'כפיפת מרפקים על ספסל בשיפוע חיובי כנגד משקולות', muscle:'יד קדמית', secondary:[], equipment:'משקולת',  moveType:'ראש ארוך' },
-      { name:'כפיפת מרפקים כנגד קרוסאובר תחתון',              muscle:'יד קדמית', secondary:[], equipment:'כבל',       moveType:'ראש ארוך' },
-      { name:'פריצר עם מוט דאבליו',                           muscle:'יד קדמית', secondary:[], equipment:'מוט קצר',  moveType:'ראש קצר' },
-      { name:'פריצר כנגד משקולת יד',                          muscle:'יד קדמית', secondary:[], equipment:'משקולת',  moveType:'ראש קצר' },
-      { name:'פטישים כנגד משקולות יד',                        muscle:'יד קדמית', secondary:[], equipment:'משקולת',  moveType:'פטישים' },
-      { name:'פטישים כנגד כבל',                               muscle:'יד קדמית', secondary:[], equipment:'כבל',       moveType:'פטישים' },
-      { name:'כפיפת מרפקים בעמידה כנגד כבל',                  muscle:'יד קדמית', secondary:[], equipment:'כבל',       moveType:'כללי' },
+      { name:'כפיפת מרפקים על ספסל בשיפוע חיובי כנגד משקולות', muscle:'bicep', secondary:[], equipment:'משקולת',  moveType:'ראש ארוך' },
+      { name:'כפיפת מרפקים כנגד קרוסאובר תחתון',              muscle:'bicep', secondary:[], equipment:'כבל',       moveType:'ראש ארוך' },
+      { name:'פריצר עם מוט דאבליו',                           muscle:'bicep', secondary:[], equipment:'מוט קצר',  moveType:'ראש קצר' },
+      { name:'פריצר כנגד משקולת יד',                          muscle:'bicep', secondary:[], equipment:'משקולת',  moveType:'ראש קצר' },
+      { name:'פטישים כנגד משקולות יד',                        muscle:'bicep', secondary:[], equipment:'משקולת',  moveType:'פטישים' },
+      { name:'פטישים כנגד כבל',                               muscle:'bicep', secondary:[], equipment:'כבל',       moveType:'פטישים' },
+      { name:'כפיפת מרפקים בעמידה כנגד כבל',                  muscle:'bicep', secondary:[], equipment:'כבל',       moveType:'כללי' },
     ];
 
     // ישבן — היפ טראסט → הרחקת ירך → הרחקה אנכית
     const POOL_GLUTE = [
-      { name:'היפ טראסט עם מכונה',                        muscle:'ישבן', secondary:['המסטרינג'], equipment:'מכונה',   moveType:'היפ טראסט' },
-      { name:'היפ טראסט עם מוט',                          muscle:'ישבן', secondary:['המסטרינג'], equipment:'מוט',     moveType:'היפ טראסט' },
-      { name:'הרחקת ירכיים במכונה',                       muscle:'ישבן', secondary:[],            equipment:'מכונה',   moveType:'הרחקת ירך' },
-      { name:'הרחקת ירך כנגד כבל בעמידה',                 muscle:'ישבן', secondary:[],            equipment:'כבל',     moveType:'הרחקת ירך' },
-      { name:'בעיטות חמור כנגד כבלים',                    muscle:'ישבן', secondary:['המסטרינג'], equipment:'כבל',     moveType:'הרחקה אנכית' },
-      { name:'סטפ אפ',                                    muscle:'ישבן', secondary:['ארבע ראשי','המסטרינג'], equipment:'משקולת', moveType:'הרחקה אנכית' },
+      { name:'היפ טראסט עם מכונה',                        muscle:'glute', secondary:['hamstring'], equipment:'מכונה',   moveType:'היפ טראסט' },
+      { name:'היפ טראסט עם מוט',                          muscle:'glute', secondary:['hamstring'], equipment:'מוט',     moveType:'היפ טראסט' },
+      { name:'הרחקת ירכיים במכונה',                       muscle:'glute', secondary:[],            equipment:'מכונה',   moveType:'הרחקת ירך' },
+      { name:'הרחקת ירך כנגד כבל בעמידה',                 muscle:'glute', secondary:[],            equipment:'כבל',     moveType:'הרחקת ירך' },
+      { name:'בעיטות חמור כנגד כבלים',                    muscle:'glute', secondary:['hamstring'], equipment:'כבל',     moveType:'הרחקה אנכית' },
+      { name:'סטפ אפ',                                    muscle:'glute', secondary:['quad','hamstring'], equipment:'משקולת', moveType:'הרחקה אנכית' },
     ];
 
     // ארבע ראשי — סקווט/compound → פשיטת ברכיים → לאנצים
     const POOL_QUAD = [
-      { name:'סקווט עם מוט',                              muscle:'ארבע ראשי', secondary:['ישבן','המסטרינג'], equipment:'מוט',      moveType:'סקווט' },
-      { name:'לחיצת רגליים',                              muscle:'ארבע ראשי', secondary:['ישבן','המסטרינג'], equipment:'מכונה',    moveType:'סקווט' },
-      { name:'סקווט בסמית משין',                          muscle:'ארבע ראשי', secondary:['ישבן','המסטרינג'], equipment:'מכונה',    moveType:'סקווט' },
-      { name:'פשיטת ברכיים במכונה',                       muscle:'ארבע ראשי', secondary:[],                  equipment:'מכונה',    moveType:'פשיטת ברכיים' },
-      { name:'סיסי סקווט',                                muscle:'ארבע ראשי', secondary:[],                  equipment:'משקל גוף', moveType:'פשיטת ברכיים' },
-      { name:'לאנץ בולגרי',                               muscle:'ארבע ראשי', secondary:['ישבן','המסטרינג'], equipment:'משקולת',  moveType:'לאנצים' },
-      { name:'לאנצים בהליכה עם משקולות יד',               muscle:'ארבע ראשי', secondary:['ישבן','המסטרינג'], equipment:'משקולת',  moveType:'לאנצים' },
+      { name:'סקווט עם מוט',                              muscle:'quad', secondary:['glute','hamstring'], equipment:'מוט',      moveType:'סקווט' },
+      { name:'לחיצת רגליים',                              muscle:'quad', secondary:['glute','hamstring'], equipment:'מכונה',    moveType:'סקווט' },
+      { name:'סקווט בסמית משין',                          muscle:'quad', secondary:['glute','hamstring'], equipment:'מכונה',    moveType:'סקווט' },
+      { name:'פשיטת ברכיים במכונה',                       muscle:'quad', secondary:[],                  equipment:'מכונה',    moveType:'פשיטת ברכיים' },
+      { name:'סיסי סקווט',                                muscle:'quad', secondary:[],                  equipment:'משקל גוף', moveType:'פשיטת ברכיים' },
+      { name:'לאנץ בולגרי',                               muscle:'quad', secondary:['glute','hamstring'], equipment:'משקולת',  moveType:'לאנצים' },
+      { name:'לאנצים בהליכה עם משקולות יד',               muscle:'quad', secondary:['glute','hamstring'], equipment:'משקולת',  moveType:'לאנצים' },
     ];
 
     // המסטרינג — הינג → כפיפת ברכיים
     const POOL_HAMSTRING = [
-      { name:'דדליפט רומני עם מוט',                       muscle:'המסטרינג', secondary:['ישבן'], equipment:'מוט',      moveType:'הינג' },
-      { name:'דדליפט רומני עם משקולות יד',                muscle:'המסטרינג', secondary:['ישבן'], equipment:'משקולת',  moveType:'הינג' },
-      { name:'גוד מורנינג',                               muscle:'המסטרינג', secondary:['ישבן'], equipment:'מוט',      moveType:'הינג' },
-      { name:'כפיפת ברכיים במכונה בישיבה',                muscle:'המסטרינג', secondary:[],       equipment:'מכונה',    moveType:'כפיפת ברכיים' },
-      { name:'כפיפת ברכיים במכונה בשכיבה',                muscle:'המסטרינג', secondary:[],       equipment:'מכונה',    moveType:'כפיפת ברכיים' },
-      { name:'כפיפות נורדיות',                            muscle:'המסטרינג', secondary:[],       equipment:'משקל גוף', moveType:'כפיפת ברכיים' },
+      { name:'דדליפט רומני עם מוט',                       muscle:'hamstring', secondary:['glute'], equipment:'מוט',      moveType:'הינג' },
+      { name:'דדליפט רומני עם משקולות יד',                muscle:'hamstring', secondary:['glute'], equipment:'משקולת',  moveType:'הינג' },
+      { name:'גוד מורנינג',                               muscle:'hamstring', secondary:['glute'], equipment:'מוט',      moveType:'הינג' },
+      { name:'כפיפת ברכיים במכונה בישיבה',                muscle:'hamstring', secondary:[],       equipment:'מכונה',    moveType:'כפיפת ברכיים' },
+      { name:'כפיפת ברכיים במכונה בשכיבה',                muscle:'hamstring', secondary:[],       equipment:'מכונה',    moveType:'כפיפת ברכיים' },
+      { name:'כפיפות נורדיות',                            muscle:'hamstring', secondary:[],       equipment:'משקל גוף', moveType:'כפיפת ברכיים' },
     ];
 
     // תאומים — אחיד
     const POOL_CALVES = [
-      { name:'עליות תאומים בסמית משין',                   muscle:'תאומים', secondary:[], equipment:'מכונה',    moveType:'עליות תאומים' },
-      { name:'עליות תאומים בלחיצת רגליים',                muscle:'תאומים', secondary:[], equipment:'מכונה',    moveType:'עליות תאומים' },
-      { name:'עליות תאומים על מדרגה ברגל אחת עם משקולת יד', muscle:'תאומים', secondary:[], equipment:'משקולת', moveType:'עליות תאומים' },
+      { name:'עליות תאומים בסמית משין',                   muscle:'calves', secondary:[], equipment:'מכונה',    moveType:'עליות תאומים' },
+      { name:'עליות תאומים בלחיצת רגליים',                muscle:'calves', secondary:[], equipment:'מכונה',    moveType:'עליות תאומים' },
+      { name:'עליות תאומים על מדרגה ברגל אחת עם משקולת יד', muscle:'calves', secondary:[], equipment:'משקולת', moveType:'עליות תאומים' },
     ];
 
     // בטן — כפיפה → כפיפה צידית → הרמות רגליים
     const POOL_ABS = [
-      { name:'כפיפות בטן כנגד מכונה',                     muscle:'בטן', secondary:[], equipment:'מכונה',      moveType:'כפיפה' },
-      { name:'כפיפות בטן בשכיבה עם משקולת יד',            muscle:'בטן', secondary:[], equipment:'משקולת',    moveType:'כפיפה' },
-      { name:'כפיפות בטן על בוסו עם משקולת יד',           muscle:'בטן', secondary:[], equipment:'משקולת',    moveType:'כפיפה' },
-      { name:'כפיפות בטן על בוסו כנגד כבלים',             muscle:'בטן', secondary:[], equipment:'כבל',        moveType:'כפיפה' },
-      { name:'כפיפות בטן בכריעה כנגד פולי עליון',         muscle:'בטן', secondary:[], equipment:'כבל',        moveType:'כפיפה' },
-      { name:'ראשן טוויסט',                               muscle:'בטן', secondary:[], equipment:'משקולת',    moveType:'כפיפה צידית' },
-      { name:'הרמות אגן בעמידה כנגד משקולת יד',           muscle:'בטן', secondary:[], equipment:'משקולת',    moveType:'כפיפה צידית' },
-      { name:'הרמות אגן בשכיבה במנח סייד פלאנק',          muscle:'בטן', secondary:[], equipment:'משקל גוף',  moveType:'כפיפה צידית' },
-      { name:'כפיפות בטן אלכסוניות',                      muscle:'בטן', secondary:[], equipment:'משקל גוף',  moveType:'כפיפה צידית' },
-      { name:'הרמות רגליים על מקבילים',                   muscle:'בטן', secondary:[], equipment:'משקל גוף',  moveType:'הרמות רגליים' },
-      { name:'הרמות רגליים על מתח',                       muscle:'בטן', secondary:[], equipment:'משקל גוף',  moveType:'הרמות רגליים' },
-      { name:'הרמות רגליים בשכיבה',                       muscle:'בטן', secondary:[], equipment:'משקל גוף',  moveType:'הרמות רגליים' },
+      { name:'כפיפות בטן כנגד מכונה',                     muscle:'abs', secondary:[], equipment:'מכונה',      moveType:'כפיפה' },
+      { name:'כפיפות בטן בשכיבה עם משקולת יד',            muscle:'abs', secondary:[], equipment:'משקולת',    moveType:'כפיפה' },
+      { name:'כפיפות בטן על בוסו עם משקולת יד',           muscle:'abs', secondary:[], equipment:'משקולת',    moveType:'כפיפה' },
+      { name:'כפיפות בטן על בוסו כנגד כבלים',             muscle:'abs', secondary:[], equipment:'כבל',        moveType:'כפיפה' },
+      { name:'כפיפות בטן בכריעה כנגד פולי עליון',         muscle:'abs', secondary:[], equipment:'כבל',        moveType:'כפיפה' },
+      { name:'ראשן טוויסט',                               muscle:'abs', secondary:[], equipment:'משקולת',    moveType:'כפיפה צידית' },
+      { name:'הרמות אגן בעמידה כנגד משקולת יד',           muscle:'abs', secondary:[], equipment:'משקולת',    moveType:'כפיפה צידית' },
+      { name:'הרמות אגן בשכיבה במנח סייד פלאנק',          muscle:'abs', secondary:[], equipment:'משקל גוף',  moveType:'כפיפה צידית' },
+      { name:'כפיפות בטן אלכסוניות',                      muscle:'abs', secondary:[], equipment:'משקל גוף',  moveType:'כפיפה צידית' },
+      { name:'הרמות רגליים על מקבילים',                   muscle:'abs', secondary:[], equipment:'משקל גוף',  moveType:'הרמות רגליים' },
+      { name:'הרמות רגליים על מתח',                       muscle:'abs', secondary:[], equipment:'משקל גוף',  moveType:'הרמות רגליים' },
+      { name:'הרמות רגליים בשכיבה',                       muscle:'abs', secondary:[], equipment:'משקל גוף',  moveType:'הרמות רגליים' },
     ];
 
     // ── EXERCISE_POOLS — pool לכל שריר, מסודר לפי עדיפות תנועה ──
@@ -5289,7 +5289,7 @@ ${planHtml}
     const DAYS = {
       push_legs:    makeDay('push_legs',   'פוש + רגליים', ['chest','shoulders','tricep','quad']),
       pull_hinge:   makeDay('pull_hinge',  'פול + הינג',   ['back','bicep','hamstring','calves','abs']),
-      fb_male:      makeDay('fb_male',     'Full Body',     ['chest','back','quad','hamstring'], true),
+      fb_male:      makeDay('fb_male',     'Full Body',     ['chest','back','quad','hamstring','glute'], true),
       fb_female:    makeDay('fb_female',   'Full Body',     ['glute','quad','hamstring','back','chest','abs'], true),
       upper_f:      makeDay('upper_f',     'עליון',         ['back','chest','shoulders','tricep','abs']),
       lower_f:      makeDay('lower_f',     'תחתון',         ['glute','hamstring','quad','calves','abs']),
@@ -5957,7 +5957,7 @@ ${planHtml}
       lines.push('');
       lines.push('| שריר | עדיפות | יעד | בפועל |');
       lines.push('|------|--------|-----|-------|');
-      const MUSCLE_NAMES = { chest:'חזה', back:'גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ארבע ראשי', hamstring:'המסטרינג', glute:'ישבן', calves:'תאומים', abs:'בטן' };
+      const MUSCLE_NAMES = { chest:'chest', back:'back', shoulders:'shoulders', tricep:'tricep', bicep:'bicep', quad:'quad', hamstring:'hamstring', glute:'glute', calves:'calves', abs:'abs' };
       Object.keys(EXERCISE_POOLS).forEach(mId => {
         const p = plan.prio[mId] || 0;
         if (p === 0) return;
