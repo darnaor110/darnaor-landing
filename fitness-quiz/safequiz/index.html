@@ -4776,46 +4776,36 @@ ${planHtml}
       finalProtCal = protCal - breadCalBudget;
     }
 
+    const SAND_PROT_TO_DB = {
+      'tuna_w':'tuna', 'cheese9':'ch9', 'cottage':'cottage_sandwich',
+      'tuna_o':'tuna_o', 'smoked_s':'smoked_s', 'egg':'egg',
+      'chicken':'chicken', 'pastrama':'pastrama',
+      'schnitzel_baked':'schnitzel_baked', 'shrimp':'shrimp',
+      'sausage_turkey':'sausage_turkey', 'roast_beef':'roast_beef'
+    };
+
     const lines = [];
     if (breadCalBudget > 0) {
       const breadSandLines = allBreads.map(b => {
         const rawUnits = breadCalBudget / b.cal;
         const bU = Math.max(0.5, Math.round(rawUnits * 2) / 2);
         const gramsTotal = bU * b.unitG;
-        return b.name + '||' + bU + ' ' + b.unit + ' (' + gramsTotal + 'ג)' + '||—';
+        return b.name + '||' + bU + ' ' + b.unit + '||' + gramsTotal + 'ג';
       });
       lines.push('לחם (' + Math.round(breadCalBudget) + ' קל): ' + breadSandLines.join(' / '));
     }
-    // unit gram sizes + max units per protein
-    const SANDWICH_UNIT_G = {
-      'חזה עוף פרוס':55, 'פסטרמה':20, 'טונה במים':100, 'טונה בשמן':100,
-      'גבינה צהובה 9%':25, 'קוטג׳ 5%':125, 'ביצה':60
-    };
-    const SANDWICH_MAX_UNITS = {
-      'פסטרמה':6, 'טונה במים':2, 'טונה בשמן':1, 'גבינה צהובה 9%':4
-    };
-    const SANDWICH_UNIT_NAME = {
-      'חזה עוף פרוס':'חתיכה', 'פסטרמה':'פרוסה', 'טונה במים':'קופסה',
-      'טונה בשמן':'קופסה', 'גבינה צהובה 9%':'פרוסה', 'קוטג׳ 5%':'קופסה', 'ביצה':'ביצה'
-    };
-    const protSandLines = activeProtNames.map(name => {
-      const protCal100 = SANDWICH_PROTEIN_CAL[name] || 165;
-      const protG      = calToGrams(finalProtCal, protCal100);
-      const unitG      = SANDWICH_UNIT_G[name];
-      const unitNm     = SANDWICH_UNIT_NAME[name];
-      var qtyStr;
-      if (unitG && unitNm) {
-        const rawCnt = Math.max(1, Math.round(protG / unitG));
-        const maxU = SANDWICH_MAX_UNITS[name] || 99;
-        const cnt = Math.min(rawCnt, maxU);
-        qtyStr = cnt + ' ' + unitNm + ' (~' + protG + 'ג)';
-      } else {
-        const unitDesc = SANDWICH_PROTEIN_UNIT[name] || '';
-        qtyStr = unitDesc || protG + 'ג';
-      }
-      return name + '||' + qtyStr + '||' + protG + 'ג';
-    });
-    // סדר: חלבון → ירקות → לחם → רוטב
+
+    const protSandLines = protIds
+      .map(id => {
+        const dbId = SAND_PROT_TO_DB[id] || id;
+        const food = FOOD_DB[dbId];
+        if (!food) return null;
+        const grams = Math.round(finalProtCal * 100 / food.kcal_per_100g);
+        const lbl = COMP.sandwich.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
+        return lbl + '||—||' + grams + 'ג';
+      })
+      .filter(Boolean);
+
     lines.unshift('חלבון (' + Math.round(finalProtCal) + ' קל): ' + protSandLines.join(' / '));
     if (vegSize)   lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
     if (sauceCal) {
@@ -4825,11 +4815,12 @@ ${planHtml}
     }
 
     const avgProt = Math.round(
-      activeProtNames.reduce((s, name) => {
-        const protCal100 = SANDWICH_PROTEIN_CAL[name] || 165;
-        const protG = calToGrams(finalProtCal, protCal100);
-        return s + protG * (SANDWICH_PROTEIN_PROT[name] || 20) / 100;
-      }, 0) / Math.max(1, activeProtNames.length)
+      protIds.reduce((s, id) => {
+        const food = FOOD_DB[SAND_PROT_TO_DB[id] || id];
+        if (!food) return s;
+        const grams = Math.round(finalProtCal * 100 / food.kcal_per_100g);
+        return s + grams * food.prot_per_100g / 100;
+      }, 0) / Math.max(1, protIds.length)
     );
     return { lines, prot: avgProt };
   }
@@ -4982,23 +4973,36 @@ ${planHtml}
     return { lines, prot: Math.round(grams * 11 / 100) };
   }
 
-  const SNACK_SALAD_PROT_ID_MAP = {
-    'tsfarit':'גבינה צפתית 5%', 'bulgarian':'גבינה בולגרית 5%',
-    'cottage':"קוטג' 5%", 'chicken':'חזה עוף צלוי'
+  const SNACK_SALAD_DB_MAP = {
+    'tsfarit':'tsfarit', 'bulgarian':'bulgarian',
+    'cottage':'cottage_salad', 'chicken':'chicken', 'roast_beef':'roast_beef'
   };
   function buildSaladSnack(meal, cal) {
-    const protIds  = getComp(meal, 'salad_snack', 'protein') || [];
-    const protName = Array.isArray(protIds) ? (SNACK_SALAD_PROT_ID_MAP[protIds[0]] || firstKey(SNACK_SALAD_PROTEIN_CAL)) : (protIds || firstKey(SNACK_SALAD_PROTEIN_CAL));
     const saladCal = 50;
     const vegSize  = calcVeggieCount(saladCal);
     const protCal  = R50(cal - saladCal);
-    const protG    = calToGrams(protCal, SNACK_SALAD_PROTEIN_CAL[protName] || 100);
     const lines    = [];
-    // כל רכיב בפורמט header נפרד
     lines.push('סלט (' + saladCal + ' קל): ירקות טריים||' + vegSize + ' ירקות||~150ג');
-    if (protCal > 0) lines.push('חלבון (' + protCal + ' קל): ' + protName + '||—||' + protG + 'ג');
-    const snackSaladProt = Math.round(protG * (SNACK_SALAD_PROTEIN_PROT[protName] || 11) / 100);
-    return { lines, prot: snackSaladProt };
+    if (protCal > 0) {
+      const selProtIds = getComp(meal, 'salad_snack', 'protein') || [];
+      const activeProtIds = selProtIds.length > 0 ? selProtIds : ['cottage'];
+      const protLines = activeProtIds.map(id => {
+        const food = FOOD_DB[SNACK_SALAD_DB_MAP[id] || id];
+        if (!food) return null;
+        const grams = Math.round(protCal * 100 / food.kcal_per_100g);
+        const lbl = COMP.salad_snack?.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
+        return lbl + '||—||' + grams + 'ג';
+      }).filter(Boolean);
+      if (protLines.length) lines.push('חלבון (' + protCal + ' קל): ' + protLines.join(' / '));
+      const avgProt = Math.round(activeProtIds.reduce((s, id) => {
+        const food = FOOD_DB[SNACK_SALAD_DB_MAP[id] || id];
+        if (!food) return s;
+        const g = Math.round(protCal * 100 / food.kcal_per_100g);
+        return s + g * food.prot_per_100g / 100;
+      }, 0) / Math.max(1, activeProtIds.length));
+      return { lines, prot: avgProt };
+    }
+    return { lines, prot: 0 };
   }
 
   // ── build one meal's options ────────────────────────────
