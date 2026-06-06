@@ -6162,12 +6162,16 @@ ${planHtml}
         }
       }
 
-      // ── שלב 3: בחר תרגילים ──
+      // ── שלב 3: בחר תרגילים עד לlimit של time budget ──
       for (const mId of muscles) {
         const count = muscleExCount[mId] || 0;
         if (count === 0) continue;
+        // בדוק אם יש עדיין מקום בtime budget
+        if (exercises.length >= timeBudget) break;
         const picked = pickExercisesForMuscle(mId, avoid, count, equipAllowed, false);
         for (const ex of picked) {
+          // בדוק שוב לפני כל הוספה
+          if (exercises.length >= timeBudget) break;
           // אל תכפיל תרגיל מוצמד
           if (exercises.some(e => e.ex.name === ex.name)) continue;
           exercises.push({ muscleId: mId, ex, sets: 3, reps: repRange(ex.moveType, level), drop: false });
