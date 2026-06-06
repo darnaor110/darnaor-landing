@@ -140,7 +140,8 @@
     /* Photo: fixed height so it never jumps regardless of content below */
     .bfq-photo {
       width:100%;
-      object-fit:contain;
+      object-fit:cover;
+      object-position:center 43%;
       border-radius:8px; border:1.5px solid var(--border);
       display:block; background:var(--bg2);
     }
@@ -1044,7 +1045,7 @@
   // Male:   16 fat% cols (6–51) × 1 muscle level (no muscle variation in lean mode)
   // Female: 16 fat% cols (12–57) × 1 muscle level (no muscle variation in lean mode)
   const BF_LEVELS_MALE   = [6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51];
-  const BF_LEVELS_FEMALE = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57, 60];
+  const BF_LEVELS_FEMALE = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57];
 
   // Labels ordered index-0 = MOST muscular; uniform lengths prevent badge width jump
   const MUSCLE_LABELS_MALE   = ['מתקדם', 'מאוד מאומן', 'מאומן', 'מתחיל', 'עובד עליו', 'לא מאומן'];

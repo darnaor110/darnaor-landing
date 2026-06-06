@@ -18,7 +18,7 @@ const html = fs.readFileSync(__dirname + '/index.html', 'utf8');
 // המנוע עטוף ב- (function(){ ... })() בתוך תג <script>
 // אנחנו מחלצים את הבלוק שמתחיל ב-INJURY_AVOID ועד לסוף ה-IIFE
 
-const startMarker = '// ── פציעות ──';
+const startMarker = '// ── WORKOUT PLAN ENGINE ──';
 const endMarker   = '})(); // end workout plan engine IIFE';
 
 const startIdx = html.indexOf(startMarker);
