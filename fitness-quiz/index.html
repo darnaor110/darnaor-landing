@@ -6102,7 +6102,7 @@ ${planHtml}
         pinnedMusclesUsed.add(p.muscleId);
       }
 
-      // ── שלב 2: חשב כמה תרגילים נדרשים לכל שריר ──
+      // ── שלב 2: חשב כמה תרגילים נדרשים לכל שריר (מוגבל לtime budget) ──
       const secVolAccum = {};
       // קרדיט משני מהתרגילים המוצמדים
       for (const e of exercises) {
@@ -6116,7 +6116,14 @@ ${planHtml}
         pinnedSetCount[e.muscleId] = (pinnedSetCount[e.muscleId] || 0) + e.sets;
       }
 
+      // חשב כמה time blocks זמינים לתרגילים לא-מוצמדים
+      const maxNonPinnedExercises = Math.max(0, timeBudget - exercises.length);
+
       const muscleExCount = {};
+      let totalExercisesPlanned = 0;
+
+      // תחילה, חשב כמה כל שריר צריך
+      const muscleNeedData = {};
       for (const mId of muscles) {
         const needed   = dayVolMin[mId] || 0;
         const p        = prio[mId] || 0;
@@ -6128,9 +6135,24 @@ ${planHtml}
           muscleExCount[mId] = 0;
         } else {
           const remaining = Math.max(0, needed - totalAlready);
-          muscleExCount[mId] = Math.max(pinnedMusclesUsed.has(mId) ? 0 : 1, Math.ceil(remaining / 3));
+          const minEx = pinnedMusclesUsed.has(mId) ? 0 : 1;
+          const maxEx = Math.ceil(remaining / 3);
+          muscleNeedData[mId] = { need: maxEx, min: minEx, prio: p };
         }
-        // עדכן secondary accum
+      }
+
+      // בחר תרגילים בהתאם לtime budget וראיות
+      const musclesWithNeed = Object.keys(muscleNeedData).sort((a, b) => (muscleNeedData[b].prio || 0) - (muscleNeedData[a].prio || 0));
+      for (const mId of musclesWithNeed) {
+        const { need, min } = muscleNeedData[mId];
+        // קח עד `need` תרגילים, אבל מוגבל לtime budget הנותר
+        const take = Math.min(need, Math.max(min, maxNonPinnedExercises - totalExercisesPlanned));
+        muscleExCount[mId] = take;
+        totalExercisesPlanned += take;
+      }
+
+      // עדכן secondary accum
+      for (const mId of Object.keys(muscleExCount)) {
         const pool = EXERCISE_POOLS[mId] || [];
         const exC  = muscleExCount[mId] || 0;
         for (let ei = 0; ei < Math.min(exC, pool.length); ei++) {
