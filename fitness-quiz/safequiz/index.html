@@ -4394,6 +4394,8 @@ ${planHtml}
     return { lines: snackLines, prot: avgProt };
   }
 
+  // NOTE: safequiz buildSnack still uses legacy SNACK_LOOKUP. Main quiz uses FOOD_DB.
+
   function buildYogurt(meal, cal) {
     const selectedTypeIds = getComp(meal, 'yogurt', 'type') || [];
     // ברירת מחדל: 3 ירוקים ראשונים או כל הקיימים
@@ -4894,21 +4896,17 @@ ${planHtml}
     });
     lines.push('חלבון (' + protCal + ' קל): ' + saladProtLines.join(' / '));
     if (cheeseCal) {
-      const cheeseNames = cheeseIds.map(id => SALAD_CHEESE_ID_MAP[id]).filter(Boolean);
-      const cheeseNamesFinal = cheeseNames.length > 0 ? cheeseNames : ['גבינה לבחירה'];
-      const cheeseOpts = cheeseNamesFinal.map(n => {
-        const cd = SALAD_CHEESE_DATA[n] || SALAD_CHEESE_DATA['גבינה לבחירה'];
-        const grams = Math.round(cheeseCal / cd.cal100 * 100 / 5) * 5;
-        let qtyStr;
-        if (cd.unitG === 0 || !cd.unitDesc) {
-          // No units — grams only
-          qtyStr = grams + 'ג';
-        } else {
-          const cnt = Math.max(1, Math.round(grams / cd.unitG));
-          qtyStr = cnt + ' ' + cd.unitDesc;
-        }
-        return n + '||' + qtyStr + '||' + grams + 'ג';
-      }).join(' / ');
+      const activCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9'];
+      const cheeseOpts = activCheeseIds
+        .map(id => {
+          const food = FOOD_DB[id];
+          if (!food) return null;
+          const formatted = formatFoodItem(id, cheeseCal);
+          let cheeseName = COMP.salad.find(c => c.key==='cheese')?.opts.find(o => o.id===id)?.lbl || id;
+          return cheeseName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        })
+        .filter(Boolean)
+        .join(' / ');
       lines.push('גבינה (' + cheeseCal + ' קל): ' + cheeseOpts);
     }
     if (dressingCal) {

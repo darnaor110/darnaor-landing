@@ -4499,67 +4499,30 @@ ${planHtml}
   function roundQuarter(n) { return Math.round(n * 4) / 4; }
 
   function buildSnack(meal, cal) {
-    // Snack item definitions with specific unit calculations per user specs
-    const SNACK_LOOKUP = {
-      'edamame':    { name:'אדממה',              type:'grams' },
-      'popcorn':    { name:'פופקורן מופחת',      type:'package', caloriesPerPackage:300 },
-      'kasta':      { name:'גלידל קסטה',         type:'unit', desc:'יחידה', caloriesPerUnit:50 },
-      'kartiv':     { name:'גלידל קרטיב',        type:'unit', desc:'יחידה', caloriesPerUnit:50 },
-      'pb':         { name:'חמאת בוטנים',        type:'teaspoon', desc:'כפית', gramsPerTsp:8, caloriesPerTsp:90 },
-      'choc':       { name:'שוקולד מריר',         type:'cube', desc:'קוביה', caloriesPerCube:25 },
-      'marshmallow':{ name:'מרשמלו',             type:'piece', desc:'מרשמלו', gramsPerPiece:5 },
-      'lollipop':   { name:'סוכריות על מקל',     type:'piece', desc:'יחידה', gramsPerPiece:10, caloriesPerUnit:40 },
-      'pesek':      { name:'פסק זמן קטן',        type:'unit', desc:'יחידה', caloriesPerUnit:100 },
-      'slim':       { name:'סלים דליס',          type:'unit', desc:'יחידה', caloriesPerUnit:95 },
-      'almonds':    { name:'שקד בודד',           type:'unit', desc:'יחידה', caloriesPerUnit:12 },
-      'cashews':    { name:'קשיו בודד',          type:'unit', desc:'יחידה', caloriesPerUnit:12 },
-    };
     const selected = getComp(meal, 'snack', 'items') || [];
-    const keys = selected.length > 0 ? selected.filter(k => SNACK_LOOKUP[k]) : Object.keys(SNACK_LOOKUP).slice(0, 3);
-    const snackLines = keys.map(k => {
-      const item = SNACK_LOOKUP[k];
-      let qtyStr, grams;
+    const defaultSnackIds = ['edamame', 'popcorn', 'choc'];
+    const snackIds = selected.length > 0 ? selected : defaultSnackIds;
 
-      if (item.type === 'grams') {
-        // אדממה - just grams (no units)
-        grams = Math.round(cal * 1.05);
-        qtyStr = '—';
-      } else if (item.type === 'package') {
-        // פופקורן - fraction of 300-cal package (e.g., 0.33, 0.5, 0.66)
-        const frac = cal / item.caloriesPerPackage;
-        qtyStr = (Math.round(frac * 100) / 100) + ' שקית';
-        grams = Math.round(cal * 0.1);
-      } else if (item.type === 'unit') {
-        // Regular units (gelato, pesek, slim)
-        const units = cal / item.caloriesPerUnit;
-        qtyStr = (units < 1 ? Math.round(units * 2) / 2 : Math.round(units)) + ' ' + item.desc;
-        grams = Math.round(units * 30);
-      } else if (item.type === 'teaspoon') {
-        // חמאת בוטנים - teaspoons
-        const tsps = cal / item.caloriesPerTsp;
-        qtyStr = (Math.round(tsps * 2) / 2) + ' ' + item.desc;
-        grams = Math.round(tsps * item.gramsPerTsp);
-      } else if (item.type === 'cube') {
-        // שוקולד - cubes (25 kcal each)
-        const cubes = cal / item.caloriesPerCube;
-        qtyStr = Math.round(cubes) + ' ' + item.desc;
-        grams = Math.round(cubes * 2.5);
-      } else if (item.type === 'piece') {
-        // מרשמלו / סוכריה
-        if (item.name === 'מרשמלו') {
-          const pieces = Math.round(cal / (16.67 / item.gramsPerPiece)); // ~16.67 kcal per gram of marshmallow
-          qtyStr = pieces + ' ' + item.desc;
-          grams = pieces * item.gramsPerPiece;
-        } else {
-          const pieces = Math.round(cal / item.caloriesPerUnit);
-          qtyStr = pieces + ' ' + item.desc;
-          grams = pieces * item.gramsPerPiece;
-        }
-      }
+    const snackLines = snackIds
+      .map(id => {
+        const food = FOOD_DB[id];
+        if (!food) return null;
+        const formatted = formatFoodItem(id, cal);
+        const snackName = COMP.snack
+          ?.find(c => c.key === 'items')?.opts
+          ?.find(o => o.id === id)?.lbl || id;
+        return snackName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+      })
+      .filter(Boolean);
 
-      return item.name + '||' + qtyStr + '||' + grams + 'ג';
-    });
-    const avgProt = 2; // placeholder
+    const avgProt = Math.round(
+      snackIds.reduce((s, id) => {
+        const food = FOOD_DB[id];
+        if (!food) return s;
+        const grams = Math.round(cal * 100 / food.kcal_per_100g);
+        return s + grams * food.prot_per_100g / 100;
+      }, 0) / Math.max(1, snackIds.length)
+    );
     return { lines: snackLines, prot: avgProt };
   }
 
@@ -5057,21 +5020,17 @@ ${planHtml}
       .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + saladProtLines.join(' / '));
     if (cheeseCal) {
-      const cheeseNames = cheeseIds.map(id => SALAD_CHEESE_ID_MAP[id]).filter(Boolean);
-      const cheeseNamesFinal = cheeseNames.length > 0 ? cheeseNames : ['גבינה לבחירה'];
-      const cheeseOpts = cheeseNamesFinal.map(n => {
-        const cd = SALAD_CHEESE_DATA[n] || SALAD_CHEESE_DATA['גבינה לבחירה'];
-        const grams = Math.round(cheeseCal / cd.cal100 * 100 / 5) * 5;
-        let qtyStr;
-        if (cd.unitG === 0 || !cd.unitDesc) {
-          // No units — grams only
-          qtyStr = grams + 'ג';
-        } else {
-          const cnt = Math.max(1, Math.round(grams / cd.unitG));
-          qtyStr = cnt + ' ' + cd.unitDesc;
-        }
-        return n + '||' + qtyStr + '||' + grams + 'ג';
-      }).join(' / ');
+      const activCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9'];
+      const cheeseOpts = activCheeseIds
+        .map(id => {
+          const food = FOOD_DB[id];
+          if (!food) return null;
+          const formatted = formatFoodItem(id, cheeseCal);
+          let cheeseName = COMP.salad.find(c => c.key==='cheese')?.opts.find(o => o.id===id)?.lbl || id;
+          return cheeseName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        })
+        .filter(Boolean)
+        .join(' / ');
       lines.push('גבינה (' + cheeseCal + ' קל): ' + cheeseOpts);
     }
     if (dressingCal) {
