@@ -4455,7 +4455,6 @@ ${planHtml}
     }
     if (frCal > 0) {
       lines.push('GROUP:פרי|' + frCal);
-      // הצג פירות שנבחרו (עם פירוט), או 3 ירוקים ראשונים כברירת מחדל
       const fruitIds = getComp(meal, 'yogurt', 'fruit') || [];
       const defaultFruitIds = COMP.yogurt
         .find(m => m.key === 'fruit')?.opts
@@ -4463,14 +4462,16 @@ ${planHtml}
         ?.slice(0, 3)
         ?.map(f => f.id) || [];
       const activeFruitIds = fruitIds.length > 0 ? fruitIds : defaultFruitIds;
-      const fruitNames = activeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean);
-      fruitNames.forEach(fname => {
-        const frCalPer = FRUIT_CAL[fname] || 80;
-        const frG = Math.round(frCal / frCalPer * 100 / 5) * 5;
-        const unitCalc = calcFruitUnits(fname, frCal);
-        const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
-        lines.push(fname + '||' + frG + '||' + unitDisplay);
-      });
+      const fruitLines = activeFruitIds
+        .map(id => {
+          const food = FOOD_DB[id];
+          if (!food) return null;
+          const formatted = formatFoodItem(id, frCal);
+          const fruitName = FRUIT_ID_MAP[id] || id;
+          return fruitName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        })
+        .filter(Boolean);
+      fruitLines.forEach(line => lines.push(line));
     }
 
     // ממוצע חלבון על כל האופציות
@@ -4940,15 +4941,13 @@ ${planHtml}
       ?.slice(0, 3)
       ?.map(f => f.id) || [];
     const activeFruitIds = fruitIds.length > 0 ? fruitIds : defaultFruitIds;
-    const activeNames = activeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean);
-    const lines = activeNames.map(name => {
-      const calPer = FRUIT_CAL[name] || 80;
-      const grams = Math.round(cal / calPer * 100 / 5) * 5;
-      // Calculate units for display
-      const unitCalc = calcFruitUnits(name, cal);
-      const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
-      return name + '||' + grams + '||' + unitDisplay;
-    });
+    const lines = activeFruitIds.map(id => {
+      const food = FOOD_DB[id];
+      if (!food) return null;
+      const formatted = formatFoodItem(id, cal);
+      const fruitName = FRUIT_ID_MAP[id] || id;
+      return fruitName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+    }).filter(Boolean);
     return { lines, prot: 1 };
   }
 

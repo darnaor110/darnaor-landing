@@ -4624,7 +4624,6 @@ ${planHtml}
     }
     if (frCal > 0) {
       lines.push('GROUP:פרי|' + frCal);
-      // הצג פירות שנבחרו (עם פירוט), או 3 ירוקים ראשונים כברירת מחדל
       const fruitIds = getComp(meal, 'yogurt', 'fruit') || [];
       const defaultFruitIds = COMP.yogurt
         .find(m => m.key === 'fruit')?.opts
@@ -4632,14 +4631,16 @@ ${planHtml}
         ?.slice(0, 3)
         ?.map(f => f.id) || [];
       const activeFruitIds = fruitIds.length > 0 ? fruitIds : defaultFruitIds;
-      const fruitNames = activeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean);
-      fruitNames.forEach(fname => {
-        const frCalPer = FRUIT_CAL[fname] || 80;
-        const frG = Math.round(frCal / frCalPer * 100 / 5) * 5;
-        const unitCalc = calcFruitUnits(fname, frCal);
-        const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
-        lines.push(fname + '||' + frG + '||' + unitDisplay);
-      });
+      const fruitLines = activeFruitIds
+        .map(id => {
+          const food = FOOD_DB[id];
+          if (!food) return null;
+          const formatted = formatFoodItem(id, frCal);
+          const fruitName = FRUIT_ID_MAP[id] || id;
+          return fruitName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        })
+        .filter(Boolean);
+      fruitLines.forEach(line => lines.push(line));
     }
 
     // ממוצע חלבון על כל האופציות
@@ -4885,15 +4886,18 @@ ${planHtml}
     lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + scoops + ' סקופ||—');
     if (extraCal > 0) {
       const shakeFruitIds = getComp(meal, 'shake', 'fruit') || [];
-      const shakeFruitNames = shakeFruitIds.length > 0
-        ? shakeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['בננה', 'אוכמניות']; // ברירת מחדל לשייק
-      const fruitOpts = shakeFruitNames.map(fn => {
-        const g = Math.round(extraCal / (FRUIT_CAL[fn] || 80) * 100 / 5) * 5;
-        const unitCalc = calcFruitUnits(fn, extraCal);
-        const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
-        return fn + '||' + g + '||' + unitDisplay;
-      }).join(' / ');
+      const defaultShakeFruitIds = ['banana', 'blueberries'];
+      const activeFruitIds = shakeFruitIds.length > 0 ? shakeFruitIds : defaultShakeFruitIds;
+      const fruitOpts = activeFruitIds
+        .map(id => {
+          const food = FOOD_DB[id];
+          if (!food) return null;
+          const formatted = formatFoodItem(id, extraCal);
+          const fruitName = FRUIT_ID_MAP[id] || id;
+          return fruitName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        })
+        .filter(Boolean)
+        .join(' / ');
       lines.push('פרי (' + extraCal + ' קל): ' + fruitOpts);
     }
     return { lines, prot: powderProt + milkProt };
@@ -5118,7 +5122,7 @@ ${planHtml}
       if (!food) return null;
       const formatted = formatFoodItem(id, cal);
       const fruitName = FRUIT_ID_MAP[id] || id;
-      return fruitName + '||' + formatted.grams + '||' + formatted.qty;
+      return fruitName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
     }).filter(Boolean);
     return { lines, prot: 1 };
   }
@@ -6191,39 +6195,62 @@ ${planHtml}
         }
       }
 
-      // ── שלב 4: חיתוך לפי זמן ──
+      // ── שלב 4: חיתוך לפי זמן (עם הרשאה ל-+1 overflow אם צריך לvolume) ──
       // תרגיל סופרסט = חצי בלוק. כדי לחסוך X בלוקים צריך X סופרסטים.
       const effectiveCount = (exList, forcedPairs) => exList.length - forcedPairs;
 
       let forcedPairs = 0;
 
-      if (exercises.length > timeBudget) {
-        const excess = exercises.length - timeBudget;
+      if (exercises.length > timeBudget + 1) {  // Allow +1 exercise if needed for volume
+        const excess = exercises.length - (timeBudget + 1);
         // ניסיון 1: האם סופרסטים יספיקו (כל סופרסט חוסך בלוק אחד)
         if (excess <= Math.floor(exercises.length / 2)) {
           // מספיק סופרסטים — לא מוחקים, רק כופים
           forcedPairs = excess;
         } else {
-          // צריך גם למחוק תרגילים
+          // צריך גם למחוק תרגילים (אבל בעיון לא להפר volume targets)
           // מחק לפי עדיפות עולה (פחות חשוב קודם), ולא מוצמד
           const sortedByPrioAsc = [...muscles].sort((a,b) => (prio[a]||0) - (prio[b]||0));
           for (const mId of sortedByPrioAsc) {
-            if (exercises.length <= timeBudget) break;
+            if (exercises.length <= timeBudget + 1) break;  // Stop if within allowance (+1 buffer)
             const mExs = exercises.filter(e => e.muscleId === mId && !e.pinned);
             const p = prio[mId] || 0;
+
             if (p <= 1) {
-              const lastNonPinned = exercises.filter(e => e.muscleId !== mId && !e.pinned).pop();
-              if (lastNonPinned && canDrop(lastNonPinned.ex)) lastNonPinned.drop = true;
-              exercises = exercises.filter(e => !(e.muscleId === mId && !e.pinned));
+              // Low priority muscle — try to eliminate entirely
+              const volBeforeCut = exercises
+                .filter(e => e.muscleId === mId)
+                .reduce((sum, e) => sum + e.sets + (e.drop ? 1 : 0), 0);
+
+              // Only cut if it doesn't break volume (or prio=0, so no min required)
+              if (p === 0 || volBeforeCut >= (dayVolMin[mId] || 0)) {
+                const lastNonPinned = exercises.filter(e => e.muscleId !== mId && !e.pinned).pop();
+                if (lastNonPinned && canDrop(lastNonPinned.ex)) lastNonPinned.drop = true;
+                exercises = exercises.filter(e => !(e.muscleId === mId && !e.pinned));
+              }
             } else if (mExs.length > 1) {
-              exercises = exercises.filter(e => e !== mExs[mExs.length - 1]);
+              // Multiple exercises — try to remove last one
+              const exToRemove = mExs[mExs.length - 1];
+              const volBeforeCut = exercises
+                .filter(e => e.muscleId === mId)
+                .reduce((sum, e) => sum + e.sets + (e.drop ? 1 : 0), 0);
+              const volAfterCut = volBeforeCut - (exToRemove.sets + (exToRemove.drop ? 1 : 0));
+
+              // Only cut if it leaves volume >= target
+              if (volAfterCut >= (dayVolMin[mId] || 0)) {
+                exercises = exercises.filter(e => e !== exToRemove);
+              }
+              // If cutting would break volume, keep the exercise (use the +1 allowance)
             }
           }
           // אחרי המחיקות, אם עדיין חורג — כפה סופרסטים
-          if (exercises.length > timeBudget) {
-            forcedPairs = exercises.length - timeBudget;
+          if (exercises.length > timeBudget + 1) {
+            forcedPairs = exercises.length - timeBudget - 1;
           }
         }
+      } else if (exercises.length > timeBudget) {
+        // Still within +1 allowance, just use supersets if needed
+        forcedPairs = exercises.length - timeBudget;
       }
 
       // ── FullBody: בימי FB תמיד מאפשרים כפיית סופרסטים ──
