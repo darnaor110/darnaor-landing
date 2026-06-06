@@ -5139,7 +5139,11 @@ ${planHtml}
     // 1 מנה → אין שינוי; 2 → הורד 50 קל; 3-4 → הורד עוד 50; 5-6 → ממיר קלוריות חופשיות
     let alcoholNote = null;
     let snackSpare = baseSpare;
-    if (alcServings >= 5) {
+    // אם המתאמן בקלוריות מינימום — אין קלוריות חופשיות
+    const calFloor = userData.gender === 'גבר' ? 1700 : 1300;
+    if (targetCal === calFloor) {
+      snackSpare = 0;
+    } else if (alcServings >= 5) {
       // 5-6 מנות: חסר ממוצע יומי מהארוחה הגדולה + בטל פינוקים
       const weeklyAlcCalEx = alcServings * 150;
       const dailyAlcCalEx  = Math.round(weeklyAlcCalEx / 7);
@@ -6056,14 +6060,11 @@ ${planHtml}
         return true;
       });
 
-      // ── שלב 7: אין עוד שינוי אוטומטי של סטים כאן ──
-      // שינויי סטים ודרופסטים מבוצעים ב-buildWorkoutPlan אחרי חישוב נפח בפועל
+      // ── שלב 7: הקצאת מספרים סדרתי (עדיין בלי supersets) ──
+      // supersets יוחלטו בbuildWorkoutPlan לפי volume/time הממשי
+      const exWithNum = exercises.map((e, idx) => ({ ...e, num: idx + 1, paired: false }));
 
-      // ── שלב 8: הקצאת סופרסטים ──
-      const userSups = sups || dayForcesSups;
-      const finalExercises = assignSupersets(exercises, userSups, forcedPairs);
-
-      return { name: dayTmpl.name, exercises: finalExercises };
+      return { name: dayTmpl.name, exercises: exWithNum, timeConstrained: exercises.length > timeBudget };
     }
 
     // ── buildWorkoutPlan — הפונקציה הראשית ──
@@ -6182,12 +6183,56 @@ ${planHtml}
 
       const actualVol = computeActualVol(builtDays);
 
+      // ── שלב 3: החלט על supersets בהתאם לneed ─────────────────────────────
+      // כפה supersets רק אם:
+      // 1. volume עדיין לא מספיק (לאחרי sets ודרופסטים)
+      // 2. או user בחר "כן" וזמן/זיכרון מאפשרים
+      let supersetsNeeded = 0;
+      let useSupersetsForTime = false;
+
+      // בדוק אם volume עדיין חסר
+      const stillShortVolume = Object.keys(EXERCISE_POOLS).some(mId => {
+        const wMin = weeklyMin[mId] || 0;
+        const actual = actualVol[mId] || 0;
+        return wMin > 0 && actual < wMin;
+      });
+
+      if (stillShortVolume && sups === 'כן') {
+        // חשב כמה supersets צריכים כדי להגיע לvolume
+        let totalShort = 0;
+        Object.keys(EXERCISE_POOLS).forEach(mId => {
+          const wMin = weeklyMin[mId] || 0;
+          const actual = actualVol[mId] || 0;
+          if (wMin > 0 && actual < wMin) {
+            totalShort += Math.ceil((wMin - actual) / 2); // כל supersets pair = 2 sets per muscle
+          }
+        });
+        supersetsNeeded = Math.max(0, totalShort);
+      } else if (sups === 'כן') {
+        // user רוצה supersets וvolume יש — בשביל זמן/compactness
+        useSupersetsForTime = true;
+      }
+
+      // ── יישום supersets ────────────────────────────────────────
+      if (supersetsNeeded > 0 || useSupersetsForTime) {
+        const supsToUse = Math.max(supersetsNeeded, useSupersetsForTime ? Math.max(1, Math.floor(builtDays.length / 2)) : 0);
+        builtDays.forEach(day => {
+          if (day.exercises.length > 0) {
+            // קרא assignSupersets עם המינימום required
+            day.exercises = assignSupersets(day.exercises, true, supsToUse);
+          }
+        });
+      }
+
+      // עדכן actual volume אחרי supersets (supersets לא משנה volume, רק time)
+      const finalActualVol = computeActualVol(builtDays);
+
       const suggestedDays = (u.trainingDaysSpecific && u.trainingDaysSpecific.length > 0)
         ? null : suggestTrainingDays(Math.max(1, u.trainingDays || 3));
 
       return { level, levelName:['מתחיל','מתקדם','מנוסה מאוד'][level], split,
-        days: builtDays, actualVol, prio,
-        sessionDuration: sessionMins, supersets: sups,
+        days: builtDays, actualVol: finalActualVol, prio,
+        sessionDuration: sessionMins, supersets: supersetsNeeded > 0 || useSupersetsForTime,
         injuries: u.injuries || [], suggestedDays };
     };
 
