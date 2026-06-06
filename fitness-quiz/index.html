@@ -4105,7 +4105,6 @@ ${planHtml}
   const TOAST_CHEESE = {
     'ch9':       { name:'גבינה צהובה 9%',      cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'tsfarit':   { name:'צפתית',                cal:55,  prot:8,  unitG:50,  unit:'פרוסה' },
-    'hemed':     { name:'חמד / טל',             cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'ch15':      { name:'גבינה צהובה 15%',     cal:65,  prot:7,  unitG:20,  unit:'פרוסה' },
     'ch22':      { name:'גבינה צהובה 22%',     cal:80,  prot:6,  unitG:20,  unit:'פרוסה' },
     'bulgarian': { name:'גבינה בולגרית 5%',    cal:100, prot:13, unitG:100, unit:null }
@@ -4115,7 +4114,6 @@ ${planHtml}
   const EGGS_CHEESE = {
     'ch9':       { name:'גבינה צהובה 9%',      cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'tsfarit':   { name:'צפתית',                cal:55,  prot:8,  unitG:50,  unit:'פרוסה' },
-    'hemed':     { name:'חמד / טל',             cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'ch15':      { name:'גבינה צהובה 15%',     cal:65,  prot:7,  unitG:20,  unit:'פרוסה' },
     'ch22':      { name:'גבינה צהובה 22%',     cal:80,  prot:6,  unitG:20,  unit:'פרוסה' },
     'bulgarian': { name:'גבינה בולגרית 5%',    cal:100, prot:13, unitG:100, unit:null }
@@ -4723,7 +4721,7 @@ ${planHtml}
     // בחר גבינה לפי בחירת המשתמש
     const cheeseIds  = getComp(meal, 'toast', 'cheese') || [];
     // הצג כל הגבינות שנבחרו כחלופות, או 3 ברירות מחדל
-    const activeCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9', 'tsfarit', 'hemed'];
+    const activeCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9', 'tsfarit'];
 
     const avgCheeseCal = Math.round(
       activeCheeseIds.reduce((s, id) => s + (TOAST_CHEESE[id]?.cal || 45), 0) / activeCheeseIds.length

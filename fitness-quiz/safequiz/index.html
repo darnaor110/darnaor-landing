@@ -1242,7 +1242,6 @@
       { key:'cheese', lbl:'גבינה', multi:true, opts:[
         {id:'ch9',     lbl:'גבינה צהובה 9%',  kcal:45, prot:6,  tier:'g'},
         {id:'tsfarit', lbl:'צפתית',            kcal:110, prot:16, tier:'g'},
-        {id:'hemed',   lbl:'חמד / טל',         kcal:55, prot:7,  tier:'g'},
         {id:'ch15',    lbl:'גבינה צהובה 15%', kcal:65, prot:7,  tier:'y'},
         {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'r'},
         {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'}
@@ -1275,7 +1274,6 @@
       { key:'cheese', lbl:'גבינות (רשות)', multi:true, opts:[
         {id:'ch9',     lbl:'גבינה צהובה 9%',  kcal:45, prot:6,  tier:'g'},
         {id:'tsfarit', lbl:'צפתית',            kcal:110, prot:16, tier:'g'},
-        {id:'hemed',   lbl:'חמד / טל',         kcal:55, prot:7,  tier:'g'},
         {id:'ch15',    lbl:'גבינה צהובה 15%', kcal:65, prot:7,  tier:'y'},
         {id:'ch22',    lbl:'גבינה צהובה 22%', kcal:80, prot:6,  tier:'o'},
         {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'}
@@ -1509,7 +1507,6 @@
     'קורנפלקס פיטנס': { per100g_kcal: 400, unit_weight_g: 35, unit_name: 'קערה' },
     'גרנולה קלאסית': { per100g_kcal: 440, unit_weight_g: 50, unit_name: 'קערה' },
     'חמד': { per100g_kcal: 225, unit_weight_g: 20, unit_name: 'כף' },
-    'חמד / טל': { per100g_kcal: 225, unit_weight_g: 20, unit_name: 'כף' }
   };
 
   function calcFruitUnits(itemName, allocatedCal) {
@@ -3988,7 +3985,6 @@ ${planHtml}
   const TOAST_CHEESE = {
     'ch9':       { name:'גבינה צהובה 9%',      cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'tsfarit':   { name:'צפתית',                cal:55,  prot:8,  unitG:50,  unit:'פרוסה' },
-    'hemed':     { name:'חמד / טל',             cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'ch15':      { name:'גבינה צהובה 15%',     cal:65,  prot:7,  unitG:20,  unit:'פרוסה' },
     'ch22':      { name:'גבינה צהובה 22%',     cal:80,  prot:6,  unitG:20,  unit:'פרוסה' },
     'bulgarian': { name:'גבינה בולגרית 5%',    cal:100, prot:13, unitG:100, unit:null }
@@ -3998,7 +3994,6 @@ ${planHtml}
   const EGGS_CHEESE = {
     'ch9':       { name:'גבינה צהובה 9%',      cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'tsfarit':   { name:'צפתית',                cal:55,  prot:8,  unitG:50,  unit:'פרוסה' },
-    'hemed':     { name:'חמד / טל',             cal:45,  prot:6,  unitG:20,  unit:'פרוסה' },
     'ch15':      { name:'גבינה צהובה 15%',     cal:65,  prot:7,  unitG:20,  unit:'פרוסה' },
     'ch22':      { name:'גבינה צהובה 22%',     cal:80,  prot:6,  unitG:20,  unit:'פרוסה' },
     'bulgarian': { name:'גבינה בולגרית 5%',    cal:100, prot:13, unitG:100, unit:null }
@@ -4580,7 +4575,7 @@ ${planHtml}
     // בחר גבינה לפי בחירת המשתמש
     const cheeseIds  = getComp(meal, 'toast', 'cheese') || [];
     // הצג כל הגבינות שנבחרו כחלופות, או 3 ברירות מחדל
-    const activeCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9', 'tsfarit', 'hemed'];
+    const activeCheeseIds = cheeseIds.length > 0 ? cheeseIds : ['ch9', 'tsfarit'];
 
     const avgCheeseCal = Math.round(
       activeCheeseIds.reduce((s, id) => s + (TOAST_CHEESE[id]?.cal || 45), 0) / activeCheeseIds.length
