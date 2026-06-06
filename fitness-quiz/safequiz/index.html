@@ -2978,7 +2978,7 @@
         renderPlanHtml(plan, workout, calc, d);
       } catch(e) {
         console.error('Plan build error:', e.message, e.stack);
-        renderPlanError();
+        renderPlanError(e);
       }
     }, 300);
   }
@@ -3843,12 +3843,13 @@
     sendPlanEmail(userData, html).catch(() => {});
   }
 
-  function renderPlanError() {
+  function renderPlanError(err) {
     const loading = document.getElementById('plan-loading');
     const output  = document.getElementById('plan-output');
     if (loading) loading.style.display = 'none';
     if (!output) return;
-    output.innerHTML = `<p style="color:var(--muted);font-size:0.88rem;text-align:center">לא הצלחנו לטעון את התוכנית כרגע — היא תגיע במייל.</p>`;
+    const errMsg = err ? `<p style="color:#ef4444;font-size:0.75rem;padding:1rem;background:rgba(239,68,68,0.1);border-radius:8px;word-break:break-all">${err.message}</p>` : '';
+    output.innerHTML = `<p style="color:var(--muted);font-size:0.88rem;text-align:center">לא הצלחנו לטעון את התוכנית כרגע — היא תגיע במייל.</p>${errMsg}`;
     output.classList.remove('hidden');
   }
 
