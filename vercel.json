@@ -1,8 +1,11 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/quiz",      "destination": "/fitness-quiz/index.html" },
-    { "source": "/quiz/(.*)", "destination": "/fitness-quiz/$1" },
-    { "source": "/(.*)",      "destination": "/darnaorlanding/$1" }
+    { "source": "/freeprogram",      "destination": "/fitness-quiz/safequiz/index.html" },
+    { "source": "/freeprogram/(.*)", "destination": "/fitness-quiz/safequiz/$1" },
+    { "source": "/api/(.*)",         "destination": "/api/$1" },
+    { "source": "/quiz",             "destination": "/fitness-quiz/index.html" },
+    { "source": "/quiz/(.*)",        "destination": "/fitness-quiz/$1" },
+    { "source": "/(.*)",             "destination": "/darnaorlanding/$1" }
   ]
 }
