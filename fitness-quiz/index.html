@@ -223,6 +223,19 @@
     /* Collapsed meal summary */
     .meal-summary { display:none; flex-wrap:wrap; gap:0.2rem; margin-top:0.25rem; }
     .meal-item.checked:not(.expanded) .meal-summary { display:flex; }
+
+    /* ── CALORIE CONFIRMATION MODE ── */
+    .meals-unlocked-content.confirm-mode .meal-item { opacity:0.35; pointer-events:none; }
+    .meals-unlocked-content.confirm-mode .meal-item .weight-inline { opacity:1; pointer-events:auto; }
+    .meals-unlocked-content.confirm-mode .meal-check-row { opacity:1; pointer-events:none; }
+    /* Glow border around calorie buttons */
+    .meals-unlocked-content.confirm-mode .weight-inline {
+      border:2px solid var(--accent2);
+      box-shadow:0 0 16px rgba(91,212,255,0.25), inset 0 0 8px rgba(91,212,255,0.1);
+      border-radius:8px;
+      padding:0.4rem 0.6rem;
+      margin:0 -0.4rem;
+    }
     .summ-chip { font-size:0.68rem; color:var(--accent2); background:rgba(8,127,163,0.1); border-radius:10px; padding:0.1rem 0.4rem; }
     /* Horizontal meal type chips — equal width, fill row */
     .mtype-chip { flex:1; padding:0.38rem 0.3rem; background:var(--bg); border:1.5px solid var(--border); border-radius:10px; color:var(--muted); font-family:'Assistant',sans-serif; font-size:0.79rem; font-weight:600; cursor:pointer; transition:all 0.18s; text-align:center; }
@@ -778,7 +791,7 @@
     <div class="meal-list" id="meal-list"></div>
     <div class="err-msg" id="err-5"></div>
     </div><!-- end meals-unlocked-content -->
-    <div class="nav-row"><button type="button" class="btn-back" onclick="goStep(8)">← חזרה</button><button type="button" class="btn-primary" id="s5-continue-btn" onclick="s5next()">המשך ←</button></div>
+    <div class="nav-row"><button type="button" class="btn-back" id="s5-back-btn" onclick="s5back()">← חזרה</button><button type="button" class="btn-primary" id="s5-continue-btn" onclick="s5next()">המשך ←</button></div>
   </div>
 
   <!-- SCREEN 6: PREFERENCES -->
@@ -2789,6 +2802,8 @@
   }
   window.s4bnext=s4bnext;
 
+  let inCalorieConfirmMode = false;
+
   // מעדכן כפתור המשך — disabled + כיתוב עם אחוז נוכחי כשלא 100%
   function updateS5Btn() {
     const btn = document.getElementById('s5-continue-btn');
@@ -2797,14 +2812,46 @@
     const total = MEAL_TIMES.reduce((s,mt) => s + (d.meals[mt.id]?.checked ? d.meals[mt.id].weight : 0), 0);
     const any   = MEAL_TIMES.some(mt => d.meals[mt.id]?.checked);
     const ready = any && total === targetCal;
-    btn.disabled = !ready;
-    btn.textContent = ready ? 'המשך ←' : `חלק את הקצבה שלך (${total} / ${targetCal} קל)`;
+
+    if (inCalorieConfirmMode) {
+      btn.disabled = false;
+      btn.textContent = 'אנא וודא שאת/ה מרוצה מחולקת הקלוריות לארוחות';
+    } else {
+      btn.disabled = !ready;
+      btn.textContent = ready ? 'המשך ←' : `חלק את הקצבה שלך (${total} / ${targetCal} קל)`;
+    }
   }
   window.updateS5Btn = updateS5Btn;
+
+  function exitCalorieConfirmMode() {
+    inCalorieConfirmMode = false;
+    const content = document.getElementById('meals-unlocked-content');
+    if (content) content.classList.remove('confirm-mode');
+    updateS5Btn();
+  }
+  window.exitCalorieConfirmMode = exitCalorieConfirmMode;
+
+  function s5back() {
+    if (inCalorieConfirmMode) {
+      exitCalorieConfirmMode();
+    } else {
+      goStep(8);
+    }
+  }
+  window.s5back = s5back;
+
+  function enterCalorieConfirmMode() {
+    inCalorieConfirmMode = true;
+    const content = document.getElementById('meals-unlocked-content');
+    if (content) content.classList.add('confirm-mode');
+    updateS5Btn();
+  }
+  window.enterCalorieConfirmMode = enterCalorieConfirmMode;
 
   function s5next() {
     const any = MEAL_TIMES.some(mt => d.meals[mt.id]?.checked);
     if (!any) return showErr('err-5', 'נא לבחור לפחות ארוחה אחת');
+
     // ולידציית סכום קלוריות
     const targetCal = getMealTargetCal();
     const total = MEAL_TIMES.reduce((s,mt) => s + (d.meals[mt.id]?.checked ? d.meals[mt.id].weight : 0), 0);
@@ -2813,6 +2860,7 @@
       document.getElementById('meal-list')?.scrollIntoView({ behavior:'smooth' });
       return;
     }
+
     // בדיקה שכל ארוחה שסומנה קיבלה לפחות סוג אחד של מאכל
     for (const mt of MEAL_TIMES) {
       const m = d.meals[mt.id];
@@ -2821,14 +2869,15 @@
         return;
       }
     }
-    // Show confirmation that this is how they want to split calories
-    const summary = MEAL_TIMES.filter(mt => d.meals[mt.id]?.checked)
-      .map(mt => `${mt.label}: ${d.meals[mt.id].weight} קל`)
-      .join(' • ');
-    const msg = `בטוח שככה תרצה לחלק את הקלוריות?\n\n${summary}`;
-    if (confirm(msg)) {
+
+    // אם כבר בmodeח אישור — קדם לצעד הבא
+    if (inCalorieConfirmMode) {
       goStep(6);
+      return;
     }
+
+    // הכנס למצב אישור קלוריות
+    enterCalorieConfirmMode();
   }
   window.s5next=s5next;
 
@@ -3824,24 +3873,17 @@ ${planHtml}
   // All values = calories per serving unit listed.
   // Per-100g noted in comments for reference.
 
-  // Bread — cal per slice/unit, with weight in grams
-  // unit: 'פרוסה' for sliced bread, 'יחידה' for pita/roll
-  const BREAD_CAL = {
-    'לחם קל':45,        // פרוסה ~25ג (180 קל/100ג)
-    'פיתה 99':99,       // יחידה ~50ג (198 קל/100ג)
-    'לחם מלא':73,       // פרוסה ~32ג (230 קל/100ג)
-    'לחם לבן':70,       // פרוסה ~28ג (250 קל/100ג)
-    'פיתה לבנה':250,    // יחידה שלמה ~100ג (250 קל/100ג)
-    'לחמניה':140,       // יחידה ~70ג (200 קל/100ג)
-    'טורטיה 99':99      // יחידה ~45ג (220 קל/100ג)
+  // Unified bread data: cal per unit, grams per unit, unit name
+  const BREAD_DATA = {
+    'לחם קל':     { cal:45,  unitG:25,  unit:'פרוסה' },   // 180 קל/100ג
+    'פיתה 99':    { cal:99,  unitG:50,  unit:'יחידה' },   // 198 קל/100ג
+    'לחם מלא':    { cal:73,  unitG:32,  unit:'פרוסה' },   // 230 קל/100ג
+    'לחם לבן':    { cal:70,  unitG:28,  unit:'פרוסה' },   // 250 קל/100ג
+    'פיתה לבנה':  { cal:250, unitG:100, unit:'יחידה' },   // 250 קל/100ג
+    'לחמניה':     { cal:140, unitG:70,  unit:'יחידה' },   // 200 קל/100ג
+    'טורטיה 99':  { cal:99,  unitG:45,  unit:'יחידה' }    // 220 קל/100ג
   };
   const DEFAULT_BREAD = 'לחם מלא';
-  // For pita/roll use 'יחידות', for sliced bread use 'פרוסות'
-  const BREAD_UNIT = {
-    'לחם קל':'פרוסות', 'פיתה 99':'יחידות',
-    'לחם מלא':'פרוסות', 'לחם לבן':'פרוסות',
-    'פיתה לבנה':'יחידות', 'לחמניה':'יחידות', 'טורטיה 99':'יחידות'
-  };
 
   // גבינות לטוסט — keyed by COMP option id
   // TOAST_CHEESE: cal = קלוריות לפרוסה (unitG גרם), prot = חלבון לפרוסה
