@@ -4710,11 +4710,10 @@ ${planHtml}
     const lines = activeNames.map(name => {
       const calPer = FRUIT_CAL[name] || 80;
       const grams = Math.round(cal / calPer * 100 / 5) * 5;
-      const portionDesc = FRUIT_PORTION[name] || (grams + 'ג');
       // Calculate units for display
       const unitCalc = calcFruitUnits(name, cal);
       const units = unitCalc.units > 0 ? unitCalc.units : '—';
-      return name + '||' + units + ' יחידות||' + portionDesc + '||' + grams + 'ג||g';
+      return name + '||' + units + ' יחידות||' + grams + 'ג||g';
     });
     return { lines, prot: 1 };
   }
