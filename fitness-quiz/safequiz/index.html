@@ -4717,15 +4717,18 @@ ${planHtml}
     lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + scoops + ' סקופ||—');
     if (extraCal > 0) {
       const shakeFruitIds = getComp(meal, 'shake', 'fruit') || [];
-      const shakeFruitNames = shakeFruitIds.length > 0
-        ? shakeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean)
-        : ['בננה', 'אוכמניות']; // ברירת מחדל לשייק
-      const fruitOpts = shakeFruitNames.map(fn => {
-        const g = Math.round(extraCal / (FRUIT_CAL[fn] || 80) * 100 / 5) * 5;
-        const unitCalc = calcFruitUnits(fn, extraCal);
-        const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
-        return fn + '||' + g + '||' + unitDisplay;
-      }).join(' / ');
+      const defaultShakeFruitIds = ['banana', 'blueberries'];
+      const activeFruitIds = shakeFruitIds.length > 0 ? shakeFruitIds : defaultShakeFruitIds;
+      const fruitOpts = activeFruitIds
+        .map(id => {
+          const food = FOOD_DB[id];
+          if (!food) return null;
+          const formatted = formatFoodItem(id, extraCal);
+          const fruitName = FRUIT_ID_MAP[id] || id;
+          return fruitName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        })
+        .filter(Boolean)
+        .join(' / ');
       lines.push('פרי (' + extraCal + ' קל): ' + fruitOpts);
     }
     return { lines, prot: powderProt + milkProt };
