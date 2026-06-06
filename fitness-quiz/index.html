@@ -2954,7 +2954,6 @@
         const workout = buildWorkoutPlan(d);
         renderPlanHtml(plan, workout, calc, d);
       } catch(e) {
-        console.error('Plan render error:', e.message, e.stack);
         renderPlanError();
       }
     }, 300);
@@ -6007,6 +6006,25 @@ ${planHtml}
 
     // ── buildWorkoutPlan — הפונקציה הראשית ──
     window.buildWorkoutPlan = function(u) {
+      // ── קביעת רמת אימון (0/1/2) ──
+      function classifyLevel(u) {
+        const tl = u.trainingLevel || 0;
+        let selfScore = tl <= 2 ? 0 : tl <= 4 ? 1 : 2;
+        const isFemale = u.gender === 'אישה';
+        const capOk = isFemale
+          ? (u.canPushup === 'כן')
+          : (u.canPullup === 'כן' || u.canDips === 'כן');
+        const base = Math.max(0, selfScore + (capOk ? 0 : -1));
+        const squat = u.workingWeights?.squat;
+        const bench = u.workingWeights?.bench || u.workingWeights?.hip_thrust;
+        const perfScores = [];
+        if (squat && squat !== -1 && squat > 0) perfScores.push(squat < 60 ? 0 : squat < 100 ? 1 : 2);
+        if (bench && bench !== -1 && bench > 0) perfScores.push(bench < 40 ? 0 : bench < 70 ? 1 : 2);
+        if (perfScores.length === 0) return base;
+        const perfScore = Math.round(perfScores.reduce((a,b)=>a+b,0) / perfScores.length);
+        return Math.max(0, Math.min(2, Math.round((base + perfScore) / 2)));
+      }
+
       const isMale = u.gender === 'גבר';
       const avoid  = buildAvoidSet(u.injuries || []);
       const equipAllowed = buildEquipAllowed(u);
