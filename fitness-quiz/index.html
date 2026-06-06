@@ -137,11 +137,12 @@
     /* Panel title */
     .bfq-title { font-size:0.78rem; font-weight:800; color:var(--muted); text-align:center; margin-bottom:0.3rem; }
 
-    /* Photo: fixed height so it never jumps regardless of content below */
+    /* Photo: clipped from eyes area, uniform across all images */
     .bfq-photo {
       width:100%;
       object-fit:cover;
-      object-position:center 43%;
+      object-position:center center;
+      clip-path:inset(8% 0 55% 0);
       border-radius:8px; border:1.5px solid var(--border);
       display:block; background:var(--bg2);
     }
