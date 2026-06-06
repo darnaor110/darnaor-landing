@@ -222,6 +222,12 @@
     .wadj-sm { width:20px; height:20px; border-radius:50%; border:1.5px solid var(--accent2); background:transparent; color:var(--accent); font-size:1rem; cursor:pointer; font-family:'Assistant',sans-serif; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; padding:0; line-height:1; }
     .wadj-sm:hover { background:rgba(8,127,163,0.2); }
     .weight-sm { font-size:0.82rem; font-weight:700; color:var(--accent); min-width:52px; text-align:center; white-space:nowrap; background:rgba(8,127,163,0.12); border-radius:6px; padding:2px 8px; }
+    .weight-sm.below-min { color:#ef4444; background:rgba(239,68,68,0.15); }
+    .meal-min-info { display:inline-flex; align-items:center; gap:3px; margin-right:4px; cursor:help; }
+    .meal-min-icon { width:16px; height:16px; border-radius:50%; background:rgba(239,68,68,0.2); color:#ef4444; font-size:0.7rem; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .meal-min-tooltip { position:relative; display:inline-block; }
+    .meal-min-tooltip .tooltip-text { visibility:hidden; background:#1a1a1a; color:#e2edf2; text-align:center; border-radius:6px; padding:6px 10px; position:absolute; z-index:1000; bottom:125%; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:0.72rem; border:1px solid rgba(8,127,163,0.3); }
+    .meal-min-tooltip:hover .tooltip-text { visibility:visible; }
     /* Collapsed meal summary */
     .meal-summary { display:none; flex-wrap:wrap; gap:0.2rem; margin-top:0.25rem; }
     .meal-item.checked:not(.expanded) .meal-summary { display:flex; }
@@ -1292,7 +1298,12 @@
         {id:'minced',     lbl:'בקר טחון 10%',       kcal:220, prot:22, tier:'y'},
         {id:'tofu',       lbl:'טופו',               kcal:200, prot:18, tier:'g'},
         {id:'meat_sub',   lbl:'תחליפי בשר',         kcal:200, prot:20, tier:'g'},
-        {id:'liver',      lbl:'כבד עוף',            kcal:165, prot:27, tier:'y'}
+        {id:'liver',      lbl:'כבד עוף',            kcal:165, prot:27, tier:'y'},
+        {id:'shrimp',       lbl:'שרימפס',             kcal:36, prot:7, tier:'g'},
+        {id:'schnitzel_baked', lbl:'שניצל אפוי',     kcal:308, prot:28, tier:'y'},
+        {id:'wings',        lbl:'כנפיים (ללא עור)',  kcal:91, prot:14, tier:'g'},
+        {id:'sausage_turkey', lbl:'נקניק הודו',      kcal:29, prot:4, tier:'y'},
+        {id:'roast_beef',   lbl:'רוסטביף',           kcal:26, prot:4, tier:'g'}
       ]},
       { key:'carb', lbl:'פחמימה', multi:true, opts:[
         {id:'sweet_p',  lbl:'בטטה',                  kcal:90,  prot:2, tier:'g'},
@@ -1305,7 +1316,10 @@
         {id:'quinoa',   lbl:'קינואה',                kcal:120, prot:4, tier:'g'},
         {id:'buckwheat',lbl:'כוסמת',                 kcal:92,  prot:3, tier:'g'},
         {id:'lentils',  lbl:'עדשים',                 kcal:116, prot:9, tier:'g'},
-        {id:'beans',    lbl:'שעועית לבנה',           kcal:127, prot:9, tier:'g'}
+        {id:'beans',    lbl:'שעועית לבנה',           kcal:127, prot:9, tier:'g'},
+        {id:'bulgur',       lbl:'בורגול',             kcal:29, prot:1, tier:'y'},
+        {id:'noodles_egg',  lbl:'אטריות ביצים',      kcal:48, prot:2, tier:'y'},
+        {id:'noodles_rice', lbl:'אטריות אורז',       kcal:38, prot:1, tier:'y'}
       ]},
       { key:'veg', lbl:'ירקות', multi:true, exclusive:['small','large'], opts:[
         {id:'small',     lbl:'סלט קטן', tier:'g'},
@@ -1320,7 +1334,9 @@
         {id:'chicken',  lbl:'חזה עוף פרוס', kcal:110, prot:22, tier:'g'},
         {id:'tuna_o',   lbl:'טונה בשמן',    kcal:120, prot:15, tier:'y'},
         {id:'cottage',  lbl:"קוטג' 5%",     kcal:70,  prot:9,  tier:'y'},
-        {id:'egg',      lbl:'ביצה קשה',     kcal:75,  prot:6,  tier:'y'}
+        {id:'egg',      lbl:'ביצה קשה',     kcal:75,  prot:6,  tier:'y'},
+        {id:'shrimp',       lbl:'שרימפס',             kcal:36, prot:7, tier:'g'},
+        {id:'roast_beef',   lbl:'רוסטביף',           kcal:26, prot:4, tier:'g'}
       ]},
       { key:'cheese', lbl:'גבינה', multi:true, opts:[
         {id:'tsfarit',  lbl:'צפתית',             kcal:110, prot:16, tier:'g'},
@@ -1360,7 +1376,11 @@
         {id:'smoked_s',lbl:'סלמון מעושן',     kcal:80,  prot:10, tier:'y'},
         {id:'cheese9', lbl:'גבינה צהובה 9%',  kcal:45,  prot:6,  tier:'y'},
         {id:'cottage', lbl:"קוטג' 5%",        kcal:70,  prot:9,  tier:'y'},
-        {id:'egg',     lbl:'ביצה',             kcal:100, prot:8,  tier:'y'}
+        {id:'egg',     lbl:'ביצה',             kcal:100, prot:8,  tier:'y'},
+        {id:'schnitzel_baked', lbl:'שניצל אפוי',     kcal:308, prot:28, tier:'y'},
+        {id:'shrimp',       lbl:'שרימפס',             kcal:36, prot:7, tier:'g'},
+        {id:'sausage_turkey', lbl:'נקניק הודו',      kcal:29, prot:4, tier:'y'},
+        {id:'roast_beef',   lbl:'רוסטביף',           kcal:26, prot:4, tier:'g'}
       ]},
       { key:'veg', lbl:'ירקות', multi:false, opts:[
         {id:'small',  lbl:'סלט קטן',      kcal:100, prot:3, tier:'g'},
@@ -1375,7 +1395,9 @@
         {id:'balsamic',lbl:'חומץ בלסמי',       kcal:15, prot:0, tier:'g'},
         {id:'jam',     lbl:'ריבה לייט (כף=15ג)',         kcal:25, prot:0, tier:'y'},
         {id:'tehina',  lbl:'טחינה',            kcal:90, prot:3, tier:'r'},
-        {id:'mayo',    lbl:'מיוקל',            kcal:45, prot:0, tier:'r'}
+        {id:'mayo',    lbl:'מיוקל',            kcal:45, prot:0, tier:'r'},
+        {id:'tomato_paste', lbl:'רסק עגבניות',      kcal:12, prot:1, tier:'g'},
+        {id:'hummus',       lbl:'חומוס',            kcal:74, prot:3, tier:'g'}
       ]}
     ],
     shake: [
@@ -1396,12 +1418,16 @@
         {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
         {id:'frozen',  lbl:'פירות קפואים',kcal:50,  prot:1, tier:'g'},
         {id:'mango',   lbl:'מנגו',         kcal:100, prot:1, tier:'y'},
-        {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'}
+        {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'},
+        {id:'pineapple',    lbl:'אננס',             kcal:75, prot:1, tier:'y'},
+        {id:'cherries',     lbl:'דובדבנים',        kcal:5, prot:0, tier:'g'},
+        {id:'clementine',   lbl:'קלמנטינה',        kcal:48, prot:1, tier:'y'}
       ]},
       { key:'extras', lbl:'תוספות', multi:true, opts:[
         {id:'oats',     lbl:'שיבולת שועל', kcal:70, prot:3, tier:'y'},
         {id:'cinnamon', lbl:'קינמון',     kcal:5,  prot:0, tier:'g'},
-        {id:'honey',    lbl:'דבש',        kcal:60, prot:0, tier:'y'}
+        {id:'honey',    lbl:'דבש טהור',   kcal:67, prot:0, tier:'r'},
+        {id:'date_syrup', lbl:'דבש תמרים', kcal:55, prot:0, tier:'r'}
       ]}
     ],
     fruit: [
@@ -1413,7 +1439,10 @@
         {id:'banana',  lbl:'בננה',        kcal:90,  prot:1, tier:'g'},
         {id:'grapes',  lbl:'ענבים',       kcal:100, prot:1, tier:'g'},
         {id:'melon',   lbl:'מלון',        kcal:70,  prot:1, tier:'g'},
-        {id:'mango',   lbl:'מנגו',          kcal:100, prot:1, tier:'y'}
+        {id:'mango',   lbl:'מנגו',        kcal:100, prot:1, tier:'y'},
+        {id:'pineapple', lbl:'אננס',      kcal:75,  prot:1, tier:'y'},
+        {id:'cherries', lbl:'דובדבנים',   kcal:5,   prot:0, tier:'g'},
+        {id:'clementine', lbl:'קלמנטינה', kcal:48,  prot:1, tier:'y'}
       ]}
     ],
     bar: [
@@ -1441,7 +1470,8 @@
         {id:'tsfarit',  lbl:'צפתית',          kcal:110,  prot:16, tier:'g'},
         {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'},
         {id:'cottage',  lbl:"קוטג' 5%",    kcal:140, prot:18, tier:'g'},
-        {id:'chicken',  lbl:'חזה עוף צלוי',kcal:100, prot:20, tier:'g'}
+        {id:'chicken',  lbl:'חזה עוף צלוי',kcal:100, prot:20, tier:'g'},
+        {id:'roast_beef', lbl:'רוסטביף',    kcal:26,  prot:4, tier:'g'}
       ]}
     ],
     snack: [
@@ -1455,7 +1485,9 @@
         {id:'marshmallow', lbl:'מרשמלו',            kcal:100, prot:1,  tier:'y'},
         {id:'lollipop',    lbl:'סוכריות על מקל',     kcal:90,  prot:0,  tier:'y'},
         {id:'pesek',       lbl:'פסק זמן קטן',                kcal:100, prot:4,  tier:'y'},
-        {id:'slim',        lbl:'סלים דליס',                  kcal:95,  prot:2,  tier:'y'}
+        {id:'slim',        lbl:'סלים דליס',                  kcal:95,  prot:2,  tier:'y'},
+        {id:'almonds',     lbl:'שקד בודד',         kcal:12,  prot:0,  tier:'g'},
+        {id:'cashews',     lbl:'קשיו בודד',        kcal:12,  prot:0,  tier:'g'}
       ]}
     ]
   };
@@ -2238,11 +2270,29 @@
   }
 
   function updateAllWeightUIs() {
+    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500) };
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
       if (!numEl) return;
-      numEl.textContent = d.meals[mt.id].weight + ' קל׳';
+      const weight = d.meals[mt.id].weight;
+      const minForMeal = SLOT_MIN[mt.id];
+      const isBelowMin = minForMeal && weight < minForMeal;
+      numEl.textContent = weight + ' קל׳';
+      numEl.classList.toggle('below-min', isBelowMin);
+      if (isBelowMin) {
+        const parentSpan = numEl.parentElement;
+        let infoEl = parentSpan.querySelector('.meal-min-info');
+        if (!infoEl) {
+          infoEl = document.createElement('span');
+          infoEl.className = 'meal-min-info meal-min-tooltip';
+          infoEl.innerHTML = `<span class="meal-min-icon">?</span><span class="tooltip-text">מינימום מומלץ: ${minForMeal} קל׳</span>`;
+          parentSpan.insertBefore(infoEl, numEl);
+        }
+      } else {
+        const infoEl = numEl.parentElement.querySelector('.meal-min-info');
+        if (infoEl) infoEl.remove();
+      }
     });
     updateLunchUI();
     updateS5Btn();
@@ -5040,19 +5090,11 @@ ${planHtml}
       mealCals[id] = userData.meals[id].weight || 0;
     });
 
-    // Enforce minimums per meal slot (breakfast 200, lunch/dinner 500f/600m)
+    // Suggested minimums per meal (educational, not enforced)
     const isMale = userData.gender === 'גבר';
     const mainMealMin = isMale ? 600 : 500;
     const SLOT_MIN = { 'בוקר': 200, 'צהריים': mainMealMin, 'ערב': mainMealMin };
-    Object.entries(SLOT_MIN).forEach(([slot, minC]) => {
-      if (checkedMeals.includes(slot) && mealCals[slot] < minC) {
-        const gap   = minC - mealCals[slot];
-        mealCals[slot] = minC;
-        // Deduct gap from the first other meal that has enough room
-        const donor = checkedMeals.find(id => id !== slot && mealCals[id] > minC + 50);
-        if (donor) mealCals[donor] = Math.max(200, mealCals[donor] - gap);
-      }
-    });
+    // No longer force minimums — let users proceed even if below recommended
 
     // ספייר מחלב — כי חלב לא בכפולת 50, השארית הולכת לארוחה האחרונה
     const milkCalRaw   = (userData.milkMl || 0) * 50 / 100;
