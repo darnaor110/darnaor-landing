@@ -2387,7 +2387,7 @@
   }
 
   function updateAllWeightUIs() {
-    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500), 'לילה': 100 };
+    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500) };
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
@@ -5234,10 +5234,10 @@ ${planHtml}
       mealCals[id] = userData.meals[id].weight || 0;
     });
 
-    // Enforce minimums per meal slot (breakfast 200, lunch/dinner 500f/600m, night 100)
+    // Enforce minimums per meal slot (breakfast 200, lunch/dinner 500f/600m)
     const isMale = userData.gender === 'גבר';
     const mainMealMin = isMale ? 600 : 500;
-    const SLOT_MIN = { 'בוקר': 200, 'צהריים': mainMealMin, 'ערב': mainMealMin, 'לילה': 100 };
+    const SLOT_MIN = { 'בוקר': 200, 'צהריים': mainMealMin, 'ערב': mainMealMin };
     Object.entries(SLOT_MIN).forEach(([slot, minC]) => {
       if (checkedMeals.includes(slot) && mealCals[slot] < minC) {
         const gap   = minC - mealCals[slot];
