@@ -4454,7 +4454,7 @@ ${planHtml}
         else if (id === 'sausage_turkey') foodName = 'נקניק הודו';
         else if (id === 'roast_beef') foodName = 'רוסטביף';
         else foodName = COMP.hot.find(c => c.key==='protein').opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        return foodName + '||—||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + protParts.join(' / '));
@@ -4470,7 +4470,7 @@ ${planHtml}
         if (!food) return null;
         const formatted = formatFoodItem(id, carbCal);
         let foodName = COMP.hot.find(c => c.key==='carb').opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        return foodName + '||—||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('פחמימה (' + carbCal + ' קל): ' + carbParts.join(' / '));
@@ -5052,16 +5052,7 @@ ${planHtml}
         if (!food) return null;
         const formatted = formatFoodItem(id, protCal);
         let foodName = COMP.salad.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
-        // Cap tuna at 2 units
-        let qtyStr = formatted.qty;
-        if (id.includes('tuna') && formatted.qty !== '—') {
-          const parts = formatted.qty.split(' ');
-          const numUnits = parseFloat(parts[0]);
-          if (numUnits > 2) {
-            qtyStr = '2 ' + food.unit_name + ' (~' + Math.round(2 * food.unit_weight_g * food.kcal_per_100g / 100) + 'ג)';
-          }
-        }
-        return foodName + '||' + qtyStr + '||' + formatted.grams + 'ג';
+        return foodName + '||—||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + saladProtLines.join(' / '));

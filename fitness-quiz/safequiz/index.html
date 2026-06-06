@@ -4290,7 +4290,7 @@ ${planHtml}
         else if (id === 'shwarma') foodName = 'שוק עוף';
         else if (id === 'meat_sub') foodName = 'תחליפי בשר';
         else foodName = COMP.hot.find(c => c.key==='protein').opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        return foodName + '||—||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + protParts.join(' / '));
@@ -4304,7 +4304,7 @@ ${planHtml}
         if (!food) return null;
         const formatted = formatFoodItem(id, carbCal);
         let foodName = COMP.hot.find(c => c.key==='carb').opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+        return foodName + '||—||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('פחמימה (' + carbCal + ' קל): ' + carbParts.join(' / '));
