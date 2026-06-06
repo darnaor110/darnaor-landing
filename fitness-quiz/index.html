@@ -4394,6 +4394,33 @@ ${planHtml}
     return Math.round(cal / calPer100 * 100 / 5) * 5;
   }
 
+  // Unified food display formatter - works from FOOD_DB
+  // Returns { qty: string, grams: number, display: "X unit_name (Yg)" or "Xg" }
+  function formatFoodItem(foodId, calories) {
+    const food = FOOD_DB[foodId];
+    if (!food) return { qty: '?', grams: 0, display: '?' };
+
+    const grams = Math.round(calories * 100 / food.kcal_per_100g);
+
+    if (food.unit_weight_g > 0) {
+      // Has units - use quarters for precision
+      const units = grams / food.unit_weight_g;
+      const displayUnits = Math.round(units * 4) / 4;
+      return {
+        qty: displayUnits + ' ' + food.unit_name,
+        grams: grams,
+        display: displayUnits + ' ' + food.unit_name + ' (' + grams + 'ג)'
+      };
+    } else {
+      // Grams only
+      return {
+        qty: '—',
+        grams: grams,
+        display: grams + 'ג'
+      };
+    }
+  }
+
   // ── per-type builders — return array of line strings ───
 
   function buildHot(meal, cal) {
@@ -4403,69 +4430,51 @@ ${planHtml}
     const vegCal   = vegId ? getVegCalories(vegId) : 0;
     const vegSize  = vegCal > 0 ? calcVeggieCount(vegCal) : null;
     const budgetForProandCarb = cal - vegCal;
-    // חלוקה מדויקת: 60% חלבון, 40% פחמימה, מעוגלת ל50 קלוריות
     const protCal  = Math.round(budgetForProandCarb * 0.6 / 50) * 50;
     const carbCal  = budgetForProandCarb - protCal;
-    const protCalF = protCal;
     const lines    = [];
 
-    // Map COMP protein ids → HOT_PROTEINS Hebrew keys
-    const PROT_ID_MAP = {
-      'chicken':'חזה עוף', 'thigh':'פרגית', 'turkey':'הודו טחון',
-      'beef':'סטייק / אנטריקוט', 'minced':'בקר טחון 10%',
-      'salmon':'סלמון', 'shwarma':'שוק עוף (ללא עור)',
-      'white_fish':'דגים לבנים', 'tuna':'טונה במים',
-      'tofu':'טופו', 'meat_sub':'תחליפי בשר', 'liver':'כבד עוף',
-      'shrimp':'שרימפס', 'schnitzel_baked':'שניצל אפוי', 'wings':'כנפיים (ללא עור)',
-      'sausage_turkey':'נקניק הודו', 'roast_beef':'רוסטביף'
-    };
     const selectedProtIds = getComp(meal, 'hot', 'protein') || [];
-    // Filter HOT_PROTEINS to user selection, or take first 3 as default
-    const allEntries = Object.entries(HOT_PROTEINS);
-    const protEntries = selectedProtIds.length > 0
-      ? allEntries.filter(([name]) => selectedProtIds.some(id => PROT_ID_MAP[id] === name))
-      : allEntries.slice(0, 3);
+    // Use first 3 default proteins from FOOD_DB if none selected
+    const protIds = selectedProtIds.length > 0
+      ? selectedProtIds
+      : ['chicken', 'turkey', 'beef'];
 
-    // Protein alternatives on one line, separated by " / "
-    // Format: "שם Xג Y יחידה" — clean for table parsing (no dashes/parens in name)
-    const protParts = protEntries.map(([name, v]) => {
-      const g = calToGrams(protCalF, v.cal100);
-      const cleanName = name.replace(/\s*\([^)]*\)/g, '').trim();
-      let qty;
-      if (!v.unitDesc) {
-        // גרמים בלבד — ללא ספירת יחידות
-        qty = '—';
-      } else if (v.unitDesc.includes('כף')) {
-        qty = Math.max(1, roundQuarter(g / 40)) + ' כפות';
-      } else {
-        const cnt = Math.max(0.25, roundQuarter(g / v.unitG));
-        qty = cnt + ' ' + v.unitDesc;
-      }
-      return cleanName + '||' + qty + '||' + g + 'ג';
-    });
-    lines.push('חלבון (' + protCalF + ' קל): ' + protParts.join(' / '));
+    const protParts = protIds
+      .map(id => {
+        const food = FOOD_DB[id];
+        if (!food) return null;
+        const formatted = formatFoodItem(id, protCal);
+        // Clean food name (remove parenthetical notes)
+        let foodName = '';
+        if (id === 'white_fish') foodName = 'דגים לבנים';
+        else if (id === 'shwarma') foodName = 'שוק עוף';
+        else if (id === 'meat_sub') foodName = 'תחליפי בשר';
+        else if (id === 'schnitzel_baked') foodName = 'שניצל אפוי';
+        else if (id === 'sausage_turkey') foodName = 'נקניק הודו';
+        else if (id === 'roast_beef') foodName = 'רוסטביף';
+        else foodName = COMP.hot.find(c => c.key==='protein').opts.find(o => o.id===id)?.lbl || id;
+        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+      })
+      .filter(Boolean);
+    lines.push('חלבון (' + protCal + ' קל): ' + protParts.join(' / '));
 
     const selectedCarbIds = getComp(meal, 'hot', 'carb') || [];
-    const carbEntries = selectedCarbIds.length > 0
-      ? Object.entries(HOT_CARBS).filter(([id]) => selectedCarbIds.includes(id))
-      : Object.entries(HOT_CARBS).slice(0, 3);
-    const carbParts = carbEntries.map(([id, v]) => {
-      const g = calToGrams(carbCal, v.cal100);
-      let qtyStr;
-      if (v.tbspG) {
-        const tbsp = Math.max(0.25, roundQuarter(g / v.tbspG));
-        qtyStr = tbsp + ' כפות';
-      } else if (v.unitG && v.unitDesc) {
-        const cnt = Math.max(0.25, roundQuarter(g / v.unitG));
-        qtyStr = cnt + ' ' + v.unitDesc;
-      } else {
-        qtyStr = g + 'ג';
-      }
-      return v.name + '||' + qtyStr + '||' + g + 'ג';
-    });
+    const carbIds = selectedCarbIds.length > 0
+      ? selectedCarbIds
+      : ['rice_w', 'pasta', 'sweet_p'];
+
+    const carbParts = carbIds
+      .map(id => {
+        const food = FOOD_DB[id];
+        if (!food) return null;
+        const formatted = formatFoodItem(id, carbCal);
+        let foodName = COMP.hot.find(c => c.key==='carb').opts.find(o => o.id===id)?.lbl || id;
+        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
+      })
+      .filter(Boolean);
     lines.push('פחמימה (' + carbCal + ' קל): ' + carbParts.join(' / '));
 
-    // 100 קל ירקות ≈ 300ג (33 קל/100ג בממוצע לרוב הירקות)
     if (vegCal) {
       const vegG = Math.round(vegCal / 33 * 100);
       lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + vegG + 'ג');
@@ -4473,8 +4482,13 @@ ${planHtml}
 
     // avg protein across selected protein options
     const avgProtG = Math.round(
-      protEntries.reduce((s, [, v]) => s + calToGrams(protCalF, v.cal100) * v.prot100 / 100, 0)
-      / Math.max(1, protEntries.length)
+      protIds.reduce((s, id) => {
+        const food = FOOD_DB[id];
+        if (!food) return s;
+        const grams = Math.round(protCal * 100 / food.kcal_per_100g);
+        return s + grams * food.prot_per_100g / 100;
+      }, 0)
+      / Math.max(1, protIds.length)
     );
     return { lines, prot: avgProtG };
   }
@@ -5015,37 +5029,37 @@ ${planHtml}
     if (cal <= 50) { vegCount = 1.5; vegCal = 50; }
     else if (cal <= 100) { vegCount = 3; vegCal = 100; }
     else if (cal <= 150) { vegCount = 4.5; vegCal = 150; }
-    else { vegCount = 6; vegCal = 200; } // מקסימום 6 ירקות
+    else { vegCount = 6; vegCal = 200; }
     const vegSize = vegCount + ' ירקות';
     const dressingIds = getComp(meal, 'salad', 'dressing') || [];
     const dressingCal = dressingIds.length > 0 ? 50 : 0;
     const cheeseIds   = getComp(meal, 'salad', 'cheese') || [];
     const cheeseCal   = cheeseIds.length > 0 ? 50 : 0;
-    // הגבל חלבון ל-65% מהארוחה — שאר הקלוריות לירקות, רוטב, גבינה
     const protCal = Math.min(R50(cal - vegCal - dressingCal - cheeseCal), R50(cal * 0.65));
 
     const protIds = getComp(meal, 'salad', 'protein') || [];
-    const activeProtNames = protIds.length > 0
-      ? protIds.map(id => SALAD_PROT_ID_MAP[id]).filter(Boolean)
-      : Object.keys(SALAD_PROTEIN_CAL).slice(0, 3);
+    const activeProtIds = protIds.length > 0 ? protIds : ['tuna_w', 'chicken', 'egg'];
 
     const lines = [];
     lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + '||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
-    const saladProtLines = activeProtNames.map(name => {
-      const protCalPer100 = SALAD_PROTEIN_CAL[name] || 110;
-      const protG = calToGrams(protCal, protCalPer100);
-      const uInfo = SALAD_PROTEIN_UNIT[name];
-      var qtyStr;
-      if (uInfo) {
-        // הגבל טונה ל-2 יחידות מקסימום
-        const rawCnt = Math.max(1, Math.round(protG / uInfo.unitG));
-        const cnt = name.includes('טונה') ? Math.min(2, rawCnt) : rawCnt;
-        qtyStr = cnt + ' ' + uInfo.unitDesc + ' (~' + protG + 'ג)';
-      } else {
-        qtyStr = protG + 'ג';
-      }
-      return name + '||' + qtyStr + '||' + (uInfo ? protG + 'ג' : '—');
-    });
+    const saladProtLines = activeProtIds
+      .map(id => {
+        const food = FOOD_DB[id];
+        if (!food) return null;
+        const formatted = formatFoodItem(id, protCal);
+        let foodName = COMP.salad.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
+        // Cap tuna at 2 units
+        let qtyStr = formatted.qty;
+        if (id.includes('tuna') && formatted.qty !== '—') {
+          const parts = formatted.qty.split(' ');
+          const numUnits = parseFloat(parts[0]);
+          if (numUnits > 2) {
+            qtyStr = '2 ' + food.unit_name + ' (~' + Math.round(2 * food.unit_weight_g * food.kcal_per_100g / 100) + 'ג)';
+          }
+        }
+        return foodName + '||' + qtyStr + '||' + formatted.grams + 'ג';
+      })
+      .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + saladProtLines.join(' / '));
     if (cheeseCal) {
       const cheeseNames = cheeseIds.map(id => SALAD_CHEESE_ID_MAP[id]).filter(Boolean);
@@ -5075,11 +5089,12 @@ ${planHtml}
     }
 
     const avgProt = Math.round(
-      activeProtNames.reduce((s, name) => {
-        const protCalPer100 = SALAD_PROTEIN_CAL[name] || 110;
-        const protG = calToGrams(protCal, protCalPer100);
-        return s + protG * (SALAD_PROTEIN_PROT[name] || 20) / 100;
-      }, 0) / Math.max(1, activeProtNames.length)
+      activeProtIds.reduce((s, id) => {
+        const food = FOOD_DB[id];
+        if (!food) return s;
+        const grams = Math.round(protCal * 100 / food.kcal_per_100g);
+        return s + grams * food.prot_per_100g / 100;
+      }, 0) / Math.max(1, activeProtIds.length)
     );
     return { lines, prot: avgProt };
   }
@@ -5098,15 +5113,13 @@ ${planHtml}
       ?.slice(0, 3)
       ?.map(f => f.id) || [];
     const activeFruitIds = fruitIds.length > 0 ? fruitIds : defaultFruitIds;
-    const activeNames = activeFruitIds.map(id => FRUIT_ID_MAP[id]).filter(Boolean);
-    const lines = activeNames.map(name => {
-      const calPer = FRUIT_CAL[name] || 80;
-      const grams = Math.round(cal / calPer * 100 / 5) * 5;
-      // Calculate units for display
-      const unitCalc = calcFruitUnits(name, cal);
-      const unitDisplay = unitCalc.units > 0 ? unitCalc.units + ' ' + unitCalc.data.unit_name : '—';
-      return name + '||' + grams + '||' + unitDisplay;
-    });
+    const lines = activeFruitIds.map(id => {
+      const food = FOOD_DB[id];
+      if (!food) return null;
+      const formatted = formatFoodItem(id, cal);
+      const fruitName = FRUIT_ID_MAP[id] || id;
+      return fruitName + '||' + formatted.grams + '||' + formatted.qty;
+    }).filter(Boolean);
     return { lines, prot: 1 };
   }
 
