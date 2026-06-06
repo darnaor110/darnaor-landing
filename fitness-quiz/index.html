@@ -4152,9 +4152,9 @@ ${planHtml}
         // גרמים בלבד — ללא ספירת יחידות
         qty = '—';
       } else if (v.unitDesc.includes('כף')) {
-        qty = Math.max(1, roundHalf(g / 40)) + ' כפות';
+        qty = Math.max(1, roundQuarter(g / 40)) + ' כפות';
       } else {
-        const cnt = Math.max(0.5, roundHalf(g / v.unitG));
+        const cnt = Math.max(0.25, roundQuarter(g / v.unitG));
         qty = cnt + ' ' + v.unitDesc;
       }
       return cleanName + '||' + qty + '||' + g + 'ג';
@@ -4169,10 +4169,10 @@ ${planHtml}
       const g = calToGrams(carbCal, v.cal100);
       let qtyStr;
       if (v.tbspG) {
-        const tbsp = Math.max(0.5, roundHalf(g / v.tbspG));
+        const tbsp = Math.max(0.25, roundQuarter(g / v.tbspG));
         qtyStr = tbsp + ' כפות';
       } else if (v.unitG && v.unitDesc) {
-        const cnt = Math.max(0.5, roundHalf(g / v.unitG));
+        const cnt = Math.max(0.25, roundQuarter(g / v.unitG));
         qtyStr = cnt + ' ' + v.unitDesc;
       } else {
         qtyStr = g + 'ג';
@@ -4197,6 +4197,8 @@ ${planHtml}
 
   // Round to nearest whole or half (0.5)
   function roundHalf(n) { return Math.round(n * 2) / 2; }
+  // Round to nearest quarter (0.25) — for protein portions in hot meals
+  function roundQuarter(n) { return Math.round(n * 4) / 4; }
 
   function buildSnack(meal, cal) {
     // Snack item id → { name, calUnit, unitDesc, prot, gramsPer100Cal }
@@ -4221,8 +4223,10 @@ ${planHtml}
       const item  = SNACK_LOOKUP[k];
       // Calculate grams: (calAllocated / 100) * gramsPer100Cal
       const grams = Math.round((cal / 100) * (item.gramsPer100Cal || 30));
-      const qtyStr = grams + 'ג';
-      return item.name + '||' + qtyStr + '||' + grams + 'ג||g';
+      // Calculate units: grams / gramsPer100Cal * (100 / calUnit)
+      const units = Math.max(0.5, (grams / (item.gramsPer100Cal || 30)) * (100 / item.calUnit));
+      const qtyStr = units < 2 ? Math.round(units * 2) / 2 + ' ' + item.unitDesc : Math.round(units) + ' ' + item.unitDesc;
+      return item.name + '||' + qtyStr + '||' + grams + 'ג';
     });
     const avgProt = Math.round(keys.reduce((s, k) => s + (SNACK_LOOKUP[k] ? SNACK_LOOKUP[k].prot : 1), 0) / Math.max(1, keys.length));
     return { lines: snackLines, prot: avgProt };
@@ -4685,7 +4689,7 @@ ${planHtml}
     'גבינה צפתית 5%':   { cal100:100, unitDesc:'פרוסה', unitG:50 },  // ~100 קל/100ג
     'גבינה צהובה 9%':   { cal100:225, unitDesc:'פרוסה', unitG:20 },  // ~225 קל/100ג, פרוסה=20ג=45קל
     'גבינה לבנה 5%':    { cal100:100, unitDesc:'כף',    unitG:25 },  // ~100 קל/100ג
-    'גבינה בולגרית 5%': { cal100:100, unitDesc:'קוביה', unitG:30 },  // ~100 קל/100ג
+    'גבינה בולגרית 5%': { cal100:100, unitDesc:'',      unitG:0 },  // גרמים בלבד
     'גבינה לבחירה':     { cal100:120, unitDesc:'מנה',   unitG:40 },
   };
   const SALAD_DRESSING_ID_MAP = {
@@ -4738,8 +4742,15 @@ ${planHtml}
       const cheeseOpts = cheeseNamesFinal.map(n => {
         const cd = SALAD_CHEESE_DATA[n] || SALAD_CHEESE_DATA['גבינה לבחירה'];
         const grams = Math.round(cheeseCal / cd.cal100 * 100 / 5) * 5;
-        const cnt   = Math.max(1, Math.round(grams / cd.unitG));
-        return n + '||' + cnt + ' ' + cd.unitDesc + '||' + grams + 'ג';
+        let qtyStr;
+        if (cd.unitG === 0 || !cd.unitDesc) {
+          // No units — grams only
+          qtyStr = grams + 'ג';
+        } else {
+          const cnt = Math.max(1, Math.round(grams / cd.unitG));
+          qtyStr = cnt + ' ' + cd.unitDesc;
+        }
+        return n + '||' + qtyStr + '||' + grams + 'ג';
       }).join(' / ');
       lines.push('גבינה (' + cheeseCal + ' קל): ' + cheeseOpts);
     }
