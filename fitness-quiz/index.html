@@ -222,6 +222,12 @@
     .wadj-sm { width:20px; height:20px; border-radius:50%; border:1.5px solid var(--accent2); background:transparent; color:var(--accent); font-size:1rem; cursor:pointer; font-family:'Assistant',sans-serif; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; padding:0; line-height:1; }
     .wadj-sm:hover { background:rgba(8,127,163,0.2); }
     .weight-sm { font-size:0.82rem; font-weight:700; color:var(--accent); min-width:52px; text-align:center; white-space:nowrap; background:rgba(8,127,163,0.12); border-radius:6px; padding:2px 8px; }
+    .weight-sm.below-min { color:#ef4444; background:rgba(239,68,68,0.15); }
+    .meal-min-info { display:inline-flex; align-items:center; gap:3px; margin-right:4px; cursor:help; }
+    .meal-min-icon { width:16px; height:16px; border-radius:50%; background:rgba(239,68,68,0.2); color:#ef4444; font-size:0.7rem; display:flex; align-items:center; justify-content:center; font-weight:700; }
+    .meal-min-tooltip { position:relative; display:inline-block; }
+    .meal-min-tooltip .tooltip-text { visibility:hidden; background:#1a1a1a; color:#e2edf2; text-align:center; border-radius:6px; padding:6px 10px; position:absolute; z-index:1000; bottom:125%; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:0.72rem; border:1px solid rgba(8,127,163,0.3); }
+    .meal-min-tooltip:hover .tooltip-text { visibility:visible; }
     /* Collapsed meal summary */
     .meal-summary { display:none; flex-wrap:wrap; gap:0.2rem; margin-top:0.25rem; }
     .meal-item.checked:not(.expanded) .meal-summary { display:flex; }
@@ -1272,7 +1278,12 @@
         {id:'minced',     lbl:'בקר טחון 10%',       kcal:220, prot:22, tier:'y'},
         {id:'tofu',       lbl:'טופו',               kcal:200, prot:18, tier:'g'},
         {id:'meat_sub',   lbl:'תחליפי בשר',         kcal:200, prot:20, tier:'g'},
-        {id:'liver',      lbl:'כבד עוף',            kcal:165, prot:27, tier:'y'}
+        {id:'liver',      lbl:'כבד עוף',            kcal:165, prot:27, tier:'y'},
+        {id:'shrimp',       lbl:'שרימפס',             kcal:36, prot:7, tier:'g'},
+        {id:'schnitzel_baked', lbl:'שניצל אפוי',     kcal:308, prot:28, tier:'y'},
+        {id:'wings',        lbl:'כנפיים (ללא עור)',  kcal:91, prot:14, tier:'g'},
+        {id:'sausage_turkey', lbl:'נקניק הודו',      kcal:29, prot:4, tier:'y'},
+        {id:'roast_beef',   lbl:'רוסטביף',           kcal:26, prot:4, tier:'g'}
       ]},
       { key:'carb', lbl:'פחמימה', multi:true, opts:[
         {id:'sweet_p',  lbl:'בטטה',                  kcal:90,  prot:2, tier:'g'},
@@ -1285,7 +1296,10 @@
         {id:'quinoa',   lbl:'קינואה',                kcal:120, prot:4, tier:'g'},
         {id:'buckwheat',lbl:'כוסמת',                 kcal:92,  prot:3, tier:'g'},
         {id:'lentils',  lbl:'עדשים',                 kcal:116, prot:9, tier:'g'},
-        {id:'beans',    lbl:'שעועית לבנה',           kcal:127, prot:9, tier:'g'}
+        {id:'beans',    lbl:'שעועית לבנה',           kcal:127, prot:9, tier:'g'},
+        {id:'bulgur',       lbl:'בורגול',             kcal:29, prot:1, tier:'y'},
+        {id:'noodles_egg',  lbl:'אטריות ביצים',      kcal:48, prot:2, tier:'y'},
+        {id:'noodles_rice', lbl:'אטריות אורז',       kcal:38, prot:1, tier:'y'}
       ]},
       { key:'veg', lbl:'ירקות', multi:true, exclusive:['small','large'], opts:[
         {id:'small',     lbl:'סלט קטן', tier:'g'},
@@ -1300,7 +1314,9 @@
         {id:'chicken',  lbl:'חזה עוף פרוס', kcal:110, prot:22, tier:'g'},
         {id:'tuna_o',   lbl:'טונה בשמן',    kcal:120, prot:15, tier:'y'},
         {id:'cottage',  lbl:"קוטג' 5%",     kcal:70,  prot:9,  tier:'y'},
-        {id:'egg',      lbl:'ביצה קשה',     kcal:75,  prot:6,  tier:'y'}
+        {id:'egg',      lbl:'ביצה קשה',     kcal:75,  prot:6,  tier:'y'},
+        {id:'shrimp',       lbl:'שרימפס',             kcal:36, prot:7, tier:'g'},
+        {id:'roast_beef',   lbl:'רוסטביף',           kcal:26, prot:4, tier:'g'}
       ]},
       { key:'cheese', lbl:'גבינה', multi:true, opts:[
         {id:'tsfarit',  lbl:'צפתית',             kcal:110, prot:16, tier:'g'},
@@ -1340,7 +1356,11 @@
         {id:'smoked_s',lbl:'סלמון מעושן',     kcal:80,  prot:10, tier:'y'},
         {id:'cheese9', lbl:'גבינה צהובה 9%',  kcal:45,  prot:6,  tier:'y'},
         {id:'cottage', lbl:"קוטג' 5%",        kcal:70,  prot:9,  tier:'y'},
-        {id:'egg',     lbl:'ביצה',             kcal:100, prot:8,  tier:'y'}
+        {id:'egg',     lbl:'ביצה',             kcal:100, prot:8,  tier:'y'},
+        {id:'schnitzel_baked', lbl:'שניצל אפוי',     kcal:308, prot:28, tier:'y'},
+        {id:'shrimp',       lbl:'שרימפס',             kcal:36, prot:7, tier:'g'},
+        {id:'sausage_turkey', lbl:'נקניק הודו',      kcal:29, prot:4, tier:'g'},
+        {id:'roast_beef',   lbl:'רוסטביף',           kcal:26, prot:4, tier:'g'}
       ]},
       { key:'veg', lbl:'ירקות', multi:false, opts:[
         {id:'small',  lbl:'סלט קטן',      kcal:100, prot:3, tier:'g'},
@@ -1355,7 +1375,9 @@
         {id:'balsamic',lbl:'חומץ בלסמי',       kcal:15, prot:0, tier:'g'},
         {id:'jam',     lbl:'ריבה לייט (כף=15ג)',         kcal:25, prot:0, tier:'y'},
         {id:'tehina',  lbl:'טחינה',            kcal:90, prot:3, tier:'r'},
-        {id:'mayo',    lbl:'מיוקל',            kcal:45, prot:0, tier:'r'}
+        {id:'mayo',    lbl:'מיוקל',            kcal:45, prot:0, tier:'r'},
+        {id:'tomato_paste', lbl:'רסק עגבניות',      kcal:12, prot:1, tier:'g'},
+        {id:'hummus',       lbl:'חומוס',            kcal:74, prot:3, tier:'g'}
       ]}
     ],
     shake: [
@@ -1376,12 +1398,16 @@
         {id:'apple',   lbl:'תפוח',        kcal:75,  prot:0, tier:'g'},
         {id:'frozen',  lbl:'פירות קפואים',kcal:50,  prot:1, tier:'g'},
         {id:'mango',   lbl:'מנגו',         kcal:100, prot:1, tier:'y'},
-        {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'}
+        {id:'orange',  lbl:'תפוז',        kcal:62,  prot:1, tier:'g'},
+        {id:'pineapple',    lbl:'אננס',             kcal:75, prot:1, tier:'y'},
+        {id:'cherries',     lbl:'דובדבנים',        kcal:5, prot:0, tier:'g'},
+        {id:'clementine',   lbl:'קלמנטינה',        kcal:48, prot:1, tier:'y'}
       ]},
       { key:'extras', lbl:'תוספות', multi:true, opts:[
         {id:'oats',     lbl:'שיבולת שועל', kcal:70, prot:3, tier:'y'},
         {id:'cinnamon', lbl:'קינמון',     kcal:5,  prot:0, tier:'g'},
-        {id:'honey',    lbl:'דבש',        kcal:60, prot:0, tier:'y'}
+        {id:'honey',    lbl:'דבש טהור',   kcal:67, prot:0, tier:'r'},
+        {id:'date_syrup', lbl:'דבש תמרים', kcal:55, prot:0, tier:'r'}
       ]}
     ],
     fruit: [
@@ -1393,7 +1419,10 @@
         {id:'banana',  lbl:'בננה',        kcal:90,  prot:1, tier:'g'},
         {id:'grapes',  lbl:'ענבים',       kcal:100, prot:1, tier:'g'},
         {id:'melon',   lbl:'מלון',        kcal:70,  prot:1, tier:'g'},
-        {id:'mango',   lbl:'מנגו',          kcal:100, prot:1, tier:'y'}
+        {id:'mango',   lbl:'מנגו',        kcal:100, prot:1, tier:'y'},
+        {id:'pineapple', lbl:'אננס',      kcal:75,  prot:1, tier:'y'},
+        {id:'cherries', lbl:'דובדבנים',   kcal:5,   prot:0, tier:'g'},
+        {id:'clementine', lbl:'קלמנטינה', kcal:48,  prot:1, tier:'y'}
       ]}
     ],
     bar: [
@@ -1421,7 +1450,8 @@
         {id:'tsfarit',  lbl:'צפתית',          kcal:110,  prot:16, tier:'g'},
         {id:'bulgarian', lbl:'גבינה בולגרית 5%', kcal:100, prot:13, tier:'g'},
         {id:'cottage',  lbl:"קוטג' 5%",    kcal:140, prot:18, tier:'g'},
-        {id:'chicken',  lbl:'חזה עוף צלוי',kcal:100, prot:20, tier:'g'}
+        {id:'chicken',  lbl:'חזה עוף צלוי',kcal:100, prot:20, tier:'g'},
+        {id:'roast_beef', lbl:'רוסטביף',    kcal:26,  prot:4, tier:'g'}
       ]}
     ],
     snack: [
@@ -1435,35 +1465,173 @@
         {id:'marshmallow', lbl:'מרשמלו',            kcal:100, prot:1,  tier:'y'},
         {id:'lollipop',    lbl:'סוכריות על מקל',     kcal:90,  prot:0,  tier:'y'},
         {id:'pesek',       lbl:'פסק זמן קטן',                kcal:100, prot:4,  tier:'y'},
-        {id:'slim',        lbl:'סלים דליס',                  kcal:95,  prot:2,  tier:'y'}
+        {id:'slim',        lbl:'סלים דליס',                  kcal:95,  prot:2,  tier:'y'},
+        {id:'almonds',     lbl:'שקד בודד',         kcal:12,  prot:0,  tier:'g'},
+        {id:'cashews',     lbl:'קשיו בודד',        kcal:12,  prot:0,  tier:'g'}
       ]}
     ]
   };
 
-  // ── UNIT DATA — per-100g calories and unit weight for portion calculations ──
-  const UNIT_DATA = {
-    'אוכמניות': { per100g_kcal: 57, unit_weight_g: 2, unit_name: 'אוכמנייה' },
-    'תותים': { per100g_kcal: 32, unit_weight_g: 10, unit_name: 'תות' },
-    'תפוח': { per100g_kcal: 80, unit_weight_g: 100, unit_name: 'יחידה' },
-    'תפוז': { per100g_kcal: 80, unit_weight_g: 100, unit_name: 'יחידה' },
-    'בננה': { per100g_kcal: 90, unit_weight_g: 100, unit_name: 'יחידה' },
-    'ענבים': { per100g_kcal: 70, unit_weight_g: 100, unit_name: 'יחידה' },
-    'אבטיח': { per100g_kcal: 30, unit_weight_g: 200, unit_name: 'פרוסה' },
-    'מלון': { per100g_kcal: 35, unit_weight_g: 150, unit_name: 'שמינית' },
-    'מנגו': { per100g_kcal: 60, unit_weight_g: 150, unit_name: 'חצי' },
-    'תמר': { per100g_kcal: 280, unit_weight_g: 30, unit_name: 'יחידה' },
-    'קורנפלקס חלבון': { per100g_kcal: 400, unit_weight_g: 35, unit_name: 'קערה' },
-    'גרנולה חלבון': { per100g_kcal: 450, unit_weight_g: 40, unit_name: 'קערה' },
-    'קורנפלקס פיטנס': { per100g_kcal: 400, unit_weight_g: 35, unit_name: 'קערה' },
-    'גרנולה קלאסית': { per100g_kcal: 440, unit_weight_g: 50, unit_name: 'קערה' },
-    'חמד': { per100g_kcal: 225, unit_weight_g: 20, unit_name: 'כף' },
-    'חמד / טל': { per100g_kcal: 225, unit_weight_g: 20, unit_name: 'כף' }
+  // ── UNIFIED FOOD DATABASE — all items with per-100g nutritional data ──
+  const FOOD_DB = {
+    // FRUITS
+    blueberries: { kcal_per_100g: 57, prot_per_100g: 1.5, unit_weight_g: 2, unit_name: 'אוכמנייה' },
+    strawberries: { kcal_per_100g: 32, prot_per_100g: 0.8, unit_weight_g: 15, unit_name: 'תות' },
+    apple: { kcal_per_100g: 80, prot_per_100g: 0.3, unit_weight_g: 100, unit_name: 'יחידה' },
+    orange: { kcal_per_100g: 80, prot_per_100g: 1, unit_weight_g: 100, unit_name: 'יחידה' },
+    banana: { kcal_per_100g: 90, prot_per_100g: 1.1, unit_weight_g: 100, unit_name: 'יחידה' },
+    grapes: { kcal_per_100g: 70, prot_per_100g: 0.7, unit_weight_g: 10, unit_name: 'יחידה' },
+    melon: { kcal_per_100g: 35, prot_per_100g: 0.8, unit_weight_g: 0, unit_name: 'גרמים' },
+    mango: { kcal_per_100g: 60, prot_per_100g: 0.8, unit_weight_g: 300, unit_name: 'מנגו שלם' },
+    date: { kcal_per_100g: 280, prot_per_100g: 1.7, unit_weight_g: 30, unit_name: 'יחידה' },
+    watermelon: { kcal_per_100g: 30, prot_per_100g: 0.6, unit_weight_g: 0, unit_name: 'גרמים' },
+
+    // CEREALS
+    prot_cer: { kcal_per_100g: 400, prot_per_100g: 13, unit_weight_g: 30, unit_name: 'כוס חד פעמית' },
+    gran_pro: { kcal_per_100g: 450, prot_per_100g: 12, unit_weight_g: 30, unit_name: 'כוס חד פעמית' },
+    fitness: { kcal_per_100g: 400, prot_per_100g: 10, unit_weight_g: 30, unit_name: 'כוס חד פעמית' },
+    classic: { kcal_per_100g: 440, prot_per_100g: 9, unit_weight_g: 30, unit_name: 'כוס חד פעמית' },
+    alufim: { kcal_per_100g: 400, prot_per_100g: 8, unit_weight_g: 30, unit_name: 'כוס חד פעמית' },
+    oats: { kcal_per_100g: 370, prot_per_100g: 11, unit_weight_g: 30, unit_name: 'כוס חד פעמית' },
+
+    // MILK
+    m1: { kcal_per_100g: 41, prot_per_100g: 3.5, unit_weight_g: 170, unit_name: 'כוס' },
+    m2: { kcal_per_100g: 53, prot_per_100g: 3.5, unit_weight_g: 170, unit_name: 'כוס' },
+    soy: { kcal_per_100g: 38, prot_per_100g: 2.4, unit_weight_g: 170, unit_name: 'כוס' },
+    oat: { kcal_per_100g: 35, prot_per_100g: 0.6, unit_weight_g: 170, unit_name: 'כוס' },
+    m3: { kcal_per_100g: 65, prot_per_100g: 3.5, unit_weight_g: 170, unit_name: 'כוס' },
+    whey: { kcal_per_100g: 400, prot_per_100g: 80, unit_weight_g: 25, unit_name: 'כף' },
+
+    // BREADS
+    light: { kcal_per_100g: 150, prot_per_100g: 13, unit_weight_g: 30, unit_name: 'פרוסה' },
+    pita99: { kcal_per_100g: 200, prot_per_100g: 8, unit_weight_g: 50, unit_name: 'יחידה' },
+    whole: { kcal_per_100g: 200, prot_per_100g: 9, unit_weight_g: 36, unit_name: 'פרוסה' },
+    white: { kcal_per_100g: 200, prot_per_100g: 7, unit_weight_g: 35, unit_name: 'פרוסה' },
+    pita_w: { kcal_per_100g: 250, prot_per_100g: 7, unit_weight_g: 100, unit_name: 'יחידה' },
+    roll: { kcal_per_100g: 275, prot_per_100g: 10, unit_weight_g: 100, unit_name: 'יחידה' },
+    tortilla: { kcal_per_100g: 200, prot_per_100g: 6, unit_weight_g: 50, unit_name: 'יחידה' },
+
+    // PROTEINS
+    chicken: { kcal_per_100g: 170, prot_per_100g: 31, unit_weight_g: 60, unit_name: 'יחידה' },
+    turkey: { kcal_per_100g: 160, prot_per_100g: 24, unit_weight_g: 0, unit_name: 'גרמים' },
+    thigh: { kcal_per_100g: 200, prot_per_100g: 27, unit_weight_g: 100, unit_name: 'גרם' },
+    shwarma: { kcal_per_100g: 200, prot_per_100g: 28, unit_weight_g: 80, unit_name: 'יחידה' },
+    tuna: { kcal_per_100g: 110, prot_per_100g: 25, unit_weight_g: 100, unit_name: 'גרם' },
+    white_fish: { kcal_per_100g: 150, prot_per_100g: 20, unit_weight_g: 150, unit_name: 'פילה' },
+    salmon: { kcal_per_100g: 220, prot_per_100g: 20, unit_weight_g: 150, unit_name: 'פילה' },
+    beef: { kcal_per_100g: 250, prot_per_100g: 26, unit_weight_g: 200, unit_name: 'מנת מסעדה' },
+    minced: { kcal_per_100g: 220, prot_per_100g: 22, unit_weight_g: 0, unit_name: 'גרמים' },
+    tofu: { kcal_per_100g: 200, prot_per_100g: 18, unit_weight_g: 300, unit_name: 'קופסא' },
+    liver: { kcal_per_100g: 165, prot_per_100g: 27, unit_weight_g: 0, unit_name: 'גרמים' },
+    tuna_o: { kcal_per_100g: 200, prot_per_100g: 23, unit_weight_g: 100, unit_name: 'גרם' },
+    pastrama: { kcal_per_100g: 100, prot_per_100g: 11, unit_weight_g: 20, unit_name: 'פרוסה' },
+    smoked_s: { kcal_per_100g: 160, prot_per_100g: 10, unit_weight_g: 100, unit_name: 'גרם' },
+    egg: { kcal_per_100g: 150, prot_per_100g: 12, unit_weight_g: 70, unit_name: 'ביצה L' },
+    cottage_salad: { kcal_per_100g: 110, prot_per_100g: 9, unit_weight_g: 250, unit_name: 'קופסא' },
+    cottage_sandwich: { kcal_per_100g: 110, prot_per_100g: 9, unit_weight_g: 250, unit_name: 'קופסא' },
+
+    // CHEESES
+    ch9: { kcal_per_100g: 150, prot_per_100g: 20, unit_weight_g: 30, unit_name: 'פרוסה' },
+    tsfarit: { kcal_per_100g: 220, prot_per_100g: 32, unit_weight_g: 0, unit_name: 'גרמים' },
+    ch15: { kcal_per_100g: 260, prot_per_100g: 28, unit_weight_g: 25, unit_name: 'פרוסה' },
+    ch22: { kcal_per_100g: 320, prot_per_100g: 25, unit_weight_g: 25, unit_name: 'פרוסה' },
+    bulgarian: { kcal_per_100g: 200, prot_per_100g: 26, unit_weight_g: 0, unit_name: 'גרמים' },
+    cheese9_salad: { kcal_per_100g: 150, prot_per_100g: 20, unit_weight_g: 30, unit_name: 'פרוסה' },
+
+    // CARBS
+    sweet_p: { kcal_per_100g: 90, prot_per_100g: 1.6, unit_weight_g: 0, unit_name: 'גרמים' },
+    rice_w: { kcal_per_100g: 130, prot_per_100g: 2.7, unit_weight_g: 35, unit_name: 'כף' },
+    potato: { kcal_per_100g: 80, prot_per_100g: 1.7, unit_weight_g: 0, unit_name: 'גרמים' },
+    rice_b: { kcal_per_100g: 110, prot_per_100g: 2.6, unit_weight_g: 35, unit_name: 'כף' },
+    pasta_w: { kcal_per_100g: 130, prot_per_100g: 5, unit_weight_g: 35, unit_name: 'כף' },
+    pasta: { kcal_per_100g: 160, prot_per_100g: 5.3, unit_weight_g: 35, unit_name: 'כף' },
+    cous: { kcal_per_100g: 112, prot_per_100g: 3.8, unit_weight_g: 35, unit_name: 'כף' },
+    quinoa: { kcal_per_100g: 120, prot_per_100g: 4.4, unit_weight_g: 35, unit_name: 'כף' },
+    buckwheat: { kcal_per_100g: 92, prot_per_100g: 3.4, unit_weight_g: 35, unit_name: 'כף' },
+    lentils: { kcal_per_100g: 116, prot_per_100g: 9, unit_weight_g: 35, unit_name: 'כף' },
+    beans: { kcal_per_100g: 127, prot_per_100g: 9, unit_weight_g: 35, unit_name: 'כף' },
+    beans_red: { kcal_per_100g: 127, prot_per_100g: 9, unit_weight_g: 35, unit_name: 'כף' },
+
+    // SAUCES
+    tomato: { kcal_per_100g: 17, prot_per_100g: 1, unit_weight_g: 15, unit_name: 'כף' },
+    chili: { kcal_per_100g: 40, prot_per_100g: 2, unit_weight_g: 15, unit_name: 'כף' },
+    mustard: { kcal_per_100g: 50, prot_per_100g: 1, unit_weight_g: 15, unit_name: 'כף' },
+    teriyaki: { kcal_per_100g: 75, prot_per_100g: 4, unit_weight_g: 15, unit_name: 'כף' },
+    ketchup: { kcal_per_100g: 100, prot_per_100g: 1.7, unit_weight_g: 15, unit_name: 'כף' },
+    pesto: { kcal_per_100g: 300, prot_per_100g: 7, unit_weight_g: 15, unit_name: 'כף' },
+    mayo: { kcal_per_100g: 680, prot_per_100g: 0, unit_weight_g: 15, unit_name: 'כף' },
+    tehina: { kcal_per_100g: 300, prot_per_100g: 9, unit_weight_g: 15, unit_name: 'כף' },
+    olive: { kcal_per_100g: 884, prot_per_100g: 0, unit_weight_g: 15, unit_name: 'כף' },
+    garlic: { kcal_per_100g: 50, prot_per_100g: 1, unit_weight_g: 15, unit_name: 'כף' },
+    balsamic: { kcal_per_100g: 30, prot_per_100g: 0, unit_weight_g: 15, unit_name: 'כף' },
+    soy: { kcal_per_100g: 20, prot_per_100g: 2, unit_weight_g: 15, unit_name: 'כף' },
+    jam: { kcal_per_100g: 100, prot_per_100g: 0, unit_weight_g: 15, unit_name: 'כף' },
+
+    // VEGETABLES
+    small: { kcal_per_100g: 30, prot_per_100g: 1, unit_weight_g: 300, unit_name: 'סלט קטן' },
+    large: { kcal_per_100g: 30, prot_per_100g: 1, unit_weight_g: 600, unit_name: 'סלט גדול' },
+    inside: { kcal_per_100g: 30, prot_per_100g: 1, unit_weight_g: 50, unit_name: 'גרם' },
+    antipasti: { kcal_per_100g: 60, prot_per_100g: 2, unit_weight_g: 0, unit_name: 'גרמים' },
+
+    // SNACKS
+    edamame: { kcal_per_100g: 120, prot_per_100g: 11, unit_weight_g: 0, unit_name: 'גרמים' },
+    popcorn: { kcal_per_100g: 320, prot_per_100g: 8, unit_weight_g: 85, unit_name: 'יחידה' },
+    kasta: { kcal_per_100g: 170, prot_per_100g: 1, unit_weight_g: 34, unit_name: 'יחידה' },
+    kartiv: { kcal_per_100g: 170, prot_per_100g: 1, unit_weight_g: 34, unit_name: 'יחידה' },
+    choc: { kcal_per_100g: 500, prot_per_100g: 4, unit_weight_g: 4, unit_name: 'קוביה' },
+    marshmallow: { kcal_per_100g: 320, prot_per_100g: 1, unit_weight_g: 3, unit_name: 'מרשמלו' },
+    lollipop: { kcal_per_100g: 300, prot_per_100g: 0, unit_weight_g: 10, unit_name: 'סוכריה על מקל' },
+    pesek: { kcal_per_100g: 550, prot_per_100g: 4, unit_weight_g: 20, unit_name: 'יחידה' },
+    myprotein: { kcal_per_100g: 362, prot_per_100g: 20, unit_weight_g: 60, unit_name: 'בר' },
+    today: { kcal_per_100g: 334, prot_per_100g: 20, unit_weight_g: 60, unit_name: 'בר' },
+    allin: { kcal_per_100g: 358, prot_per_100g: 20, unit_weight_g: 60, unit_name: 'בר' },
+
+    // COTTAGE SIDES
+    prot_chips: { kcal_per_100g: 550, prot_per_100g: 10, unit_weight_g: 0, unit_name: 'שקית' },
+    fit_cracks: { kcal_per_100g: 495, prot_per_100g: 5, unit_weight_g: 4, unit_name: 'יחידה' },
+    crackers: { kcal_per_100g: 400, prot_per_100g: 2, unit_weight_g: 6, unit_name: 'יחידה' },
+
+    // NEW ADDITIONS
+    shrimp: { kcal_per_100g: 119, prot_per_100g: 22, unit_weight_g: 30, unit_name: 'יחידה' },
+    schnitzel_baked: { kcal_per_100g: 280, prot_per_100g: 25, unit_weight_g: 110, unit_name: 'יחידה' },
+    wings: { kcal_per_100g: 181, prot_per_100g: 27, unit_weight_g: 50, unit_name: 'זוג' },
+    sausage_turkey: { kcal_per_100g: 133, prot_per_100g: 16, unit_weight_g: 22, unit_name: 'יחידה' },
+    roast_beef: { kcal_per_100g: 117, prot_per_100g: 17, unit_weight_g: 22, unit_name: 'פרוסה' },
+    bulgur: { kcal_per_100g: 83, prot_per_100g: 3.1, unit_weight_g: 35, unit_name: 'כף' },
+    noodles_egg: { kcal_per_100g: 138, prot_per_100g: 4.5, unit_weight_g: 35, unit_name: 'כף' },
+    noodles_rice: { kcal_per_100g: 108, prot_per_100g: 1.8, unit_weight_g: 35, unit_name: 'כף' },
+    pineapple: { kcal_per_100g: 50, prot_per_100g: 0.5, unit_weight_g: 150, unit_name: 'פרוסה' },
+    cherries: { kcal_per_100g: 63, prot_per_100g: 1, unit_weight_g: 8, unit_name: 'יחידה' },
+    clementine: { kcal_per_100g: 47, prot_per_100g: 0.8, unit_weight_g: 103, unit_name: 'יחידה' },
+    tomato_paste: { kcal_per_100g: 79, prot_per_100g: 3.5, unit_weight_g: 15, unit_name: 'כף' },
+    hummus: { kcal_per_100g: 186, prot_per_100g: 8.2, unit_weight_g: 40, unit_name: 'כף' },
+    date_syrup: { kcal_per_100g: 248, prot_per_100g: 1.3, unit_weight_g: 22, unit_name: 'כף' },
+    almonds: { kcal_per_100g: 575, prot_per_100g: 21, unit_weight_g: 2, unit_name: 'יחידה' },
+    cashews: { kcal_per_100g: 606, prot_per_100g: 15, unit_weight_g: 2, unit_name: 'יחידה' }
   };
 
-  function calcFruitUnits(itemName, allocatedCal) {
-    const data = UNIT_DATA[itemName] || { per100g_kcal: 50, unit_weight_g: 100, unit_name: 'יחידה' };
-    const units = (allocatedCal / data.per100g_kcal) * (100 / data.unit_weight_g);
-    return { units: Math.round(units * 2) / 2, data: data };
+  // Helper function to calculate serving kcal from food db
+  function getServingKcal(foodId) {
+    const food = FOOD_DB[foodId];
+    if (!food || food.unit_weight_g === 0) return 0; // 0 means no standard unit
+    return Math.round((food.kcal_per_100g * food.unit_weight_g) / 100);
+  }
+
+  // Helper to get food data for calculations
+  function getFoodData(foodId) {
+    return FOOD_DB[foodId] || { kcal_per_100g: 50, prot_per_100g: 1, unit_weight_g: 100, unit_name: 'יחידה' };
+  }
+
+  function calcFruitUnits(foodId, allocatedCal) {
+    const food = getFoodData(foodId);
+    if (food.unit_weight_g === 0) {
+      // No standard unit - return as grams
+      const grams = allocatedCal / (food.kcal_per_100g / 100);
+      return { units: Math.round(grams * 10) / 10, data: food, isGrams: true };
+    }
+    // Standard unit
+    const units = (allocatedCal / food.kcal_per_100g) * (100 / food.unit_weight_g);
+    return { units: Math.round(units * 2) / 2, data: food, isGrams: false };
   }
 
   function calcVeggieCount(calorieAmount) {
@@ -1472,9 +1640,10 @@
   }
 
   function getVegCalories(vegId) {
-    // Map vegetable option IDs to their calorie values
-    const vegCalsMap = { 'small': 100, 'large': 200, 'inside': 50 };
-    return vegCalsMap[vegId] || 0;
+    // Get calories from food item serving
+    const food = FOOD_DB[vegId];
+    if (!food || food.unit_weight_g === 0) return 0;
+    return Math.round((food.kcal_per_100g * food.unit_weight_g) / 100);
   }
 
   // ── MEAL WEIGHT CONFIG — weights stored as kcal (multiples of 50) ──
@@ -2218,11 +2387,29 @@
   }
 
   function updateAllWeightUIs() {
+    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500) };
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
       if (!numEl) return;
-      numEl.textContent = d.meals[mt.id].weight + ' קל׳';
+      const weight = d.meals[mt.id].weight;
+      const minForMeal = SLOT_MIN[mt.id];
+      const isBelowMin = minForMeal && weight < minForMeal;
+      numEl.textContent = weight + ' קל׳';
+      numEl.classList.toggle('below-min', isBelowMin);
+      if (isBelowMin) {
+        const parentSpan = numEl.parentElement;
+        let infoEl = parentSpan.querySelector('.meal-min-info');
+        if (!infoEl) {
+          infoEl = document.createElement('span');
+          infoEl.className = 'meal-min-info meal-min-tooltip';
+          infoEl.innerHTML = `<span class="meal-min-icon">?</span><span class="tooltip-text">מינימום מומלץ: ${minForMeal} קל׳</span>`;
+          parentSpan.insertBefore(infoEl, numEl);
+        }
+      } else {
+        const infoEl = numEl.parentElement.querySelector('.meal-min-info');
+        if (infoEl) infoEl.remove();
+      }
     });
     updateLunchUI();
     updateS5Btn();
