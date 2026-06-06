@@ -1083,7 +1083,8 @@
   function bodyImg(g, fatPct, muscleLevel) {
     // Use image mapping for female to show alternate images
     const displayFat = (g === 'f' && BF_IMAGE_MAP_FEMALE[fatPct]) ? BF_IMAGE_MAP_FEMALE[fatPct] : fatPct;
-    return `/fitness-quiz/images/${g}_${displayFat}_${muscleLevel}.png`;
+    // Serve through protected API endpoint
+    return `/api/image?id=${g}_${displayFat}_${muscleLevel}`;
   }
 
   // Clamp a slider index's fat% to the nearest available value in the array
