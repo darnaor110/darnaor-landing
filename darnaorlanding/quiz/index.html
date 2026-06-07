@@ -4670,7 +4670,7 @@ ${planHtml}
       return nm + '||' + cups + ' כוס||' + milkMl + ' מ"ל';
     }).join(' / ');
     lines.push('חלב (' + milkCalActual + ' קל): ' + milkOpts);
-    if (powderCal) lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + powderScoops + ' סקופ||—');
+    if (powderCal) lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + powderScoops + ' סקופ||' + (powderScoops * 25) + 'ג');
     lines.push('דגנים (' + cerealCal + ' קל): ' + cerealOpts);
     return { lines, prot: milkProt + powderProt + cerealProt };
   }
@@ -4794,7 +4794,7 @@ ${planHtml}
 
     const lines = [];
     // כל רכיב בפורמט header נפרד כדי להופיע כ-sub-card נפרד
-    lines.push('ביצים (' + eggsCal + ' קל): ביצים||' + eggsCount + ' ביצים L||—');
+    lines.push('ביצים (' + eggsCal + ' קל): ביצים||' + eggsCount + ' ביצים L||' + (eggsCount * 70) + 'ג');
     if (isBreadRequired || breadBudget > 0) {
       const breadOpts = allBreads.map(b => {
         const rawUnits = breadBudget / b.cal;
@@ -4839,8 +4839,8 @@ ${planHtml}
 
     const extraCal = Math.max(0, R50(cal - milkCalActual - powderCal));
     const lines = [];
-    lines.push('חלב (' + milkCalActual + ' קל): ' + milkName + '||' + milkMl + ' מ"ל||—');
-    lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + scoops + ' סקופ||—');
+    lines.push('חלב (' + milkCalActual + ' קל): ' + milkName + '||' + Math.round(milkMl / 140 * 4) / 4 + ' כוס||' + milkMl + ' מ"ל');
+    lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + scoops + ' סקופ||' + (scoops * 25) + 'ג');
     if (extraCal > 0) {
       const shakeFruitIds = getComp(meal, 'shake', 'fruit') || [];
       const defaultShakeFruitIds = ['banana', 'blueberries'];
@@ -5075,7 +5075,8 @@ ${planHtml}
       const b    = BAR_ID_MAP[id] || BAR_ID_MAP['myprotein'];
       const half = cal < 150;
       const qty  = (half ? '½' : '1') + ' יחידה';
-      return b.name + '||' + qty + '||—';
+      const grams = half ? 30 : 60;
+      return b.name + '||' + qty + '||' + grams + 'ג';
     });
     const half = cal < 150;
     return { lines, prot: half ? 10 : 20 };
