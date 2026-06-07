@@ -4395,29 +4395,21 @@ ${planHtml}
   }
 
   // Unified food display formatter - works from FOOD_DB
-  // Returns { qty: string, grams: number, display: "X unit_name (Yg)" or "Xg" }
+  // Returns { qty: string, grams: number }
+  // qty = unit description (e.g. "2 פילה", "3 כף") or "—" if grams-only food
+  const GRAMS_ONLY_UNITS = new Set(['גרם', 'גרמים', 'גרם ']);
   function formatFoodItem(foodId, calories) {
     const food = FOOD_DB[foodId];
-    if (!food) return { qty: '?', grams: 0, display: '?' };
+    if (!food) return { qty: '?', grams: 0 };
 
     const grams = Math.round(calories * 100 / food.kcal_per_100g);
 
-    if (food.unit_weight_g > 0) {
-      // Has units - use quarters for precision
+    if (food.unit_weight_g > 0 && !GRAMS_ONLY_UNITS.has(food.unit_name)) {
       const units = grams / food.unit_weight_g;
       const displayUnits = Math.round(units * 4) / 4;
-      return {
-        qty: displayUnits + ' ' + food.unit_name,
-        grams: grams,
-        display: displayUnits + ' ' + food.unit_name + ' (' + grams + 'ג)'
-      };
+      return { qty: displayUnits + ' ' + food.unit_name, grams };
     } else {
-      // Grams only
-      return {
-        qty: '—',
-        grams: grams,
-        display: grams + 'ג'
-      };
+      return { qty: '—', grams };
     }
   }
 
@@ -4454,7 +4446,7 @@ ${planHtml}
         else if (id === 'sausage_turkey') foodName = 'נקניק הודו';
         else if (id === 'roast_beef') foodName = 'רוסטביף';
         else foodName = COMP.hot.find(c => c.key==='protein').opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||—||' + formatted.grams + 'ג';
+        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + protParts.join(' / '));
@@ -4470,7 +4462,7 @@ ${planHtml}
         if (!food) return null;
         const formatted = formatFoodItem(id, carbCal);
         let foodName = COMP.hot.find(c => c.key==='carb').opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||—||' + formatted.grams + 'ג';
+        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('פחמימה (' + carbCal + ' קל): ' + carbParts.join(' / '));
