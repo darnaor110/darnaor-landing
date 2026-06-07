@@ -482,9 +482,9 @@
 
   <!-- SCREEN 0: WELCOME -->
   <div class="screen" id="screen-0">
-    <div class="badge">✦ מעכשיו, תוכלו להתחטב לפי השיטה שלי גם בחינם</div>
+    <div class="badge">✦ מעכשיו אפשר להתחטב לפי השיטה שלי — גם בחינם</div>
     <h1 class="welcome-title">התוכנית <span>החינמית</span> של חטובים לנצח</h1>
-    <p class="welcome-sub">מעל 300 אנשים השיגו יחד איתי את הגוף החטוב והבריא שהם רוצים. בלי פעולות משוגעות. בדרך שמבטיחה שהתוצאות ישארו. זאת ההזדמנות שלכם לקבל תוכנית מותאמת אישית ממני בחינם.</p>
+    <p class="welcome-sub">מעל 300 אנשים השיגו יחד איתי את הגוף החטוב והבריא שרצו — בלי דיאטות קיצון, ובדרך שגורמת לתוצאות להישאר. זאת ההזדמנות שלך לקבל ממני תוכנית אישית, בחינם.</p>
 
     <div id="ba-quiz-outer" dir="ltr">
       <div id="ba-quiz-viewport">
@@ -502,10 +502,10 @@
     </div>
 
     <ul class="benefit-list">
-      <li>תפריט שמדויק עד הפרטים הקטנים — עבורך.</li>
-      <li>כדי שיעזור לך להתמיד, לא לשבועיים.</li>
-      <li>תוכנית אימון שמתאימה לניסיון ולזמן שיש לך</li>
-      <li>הכל בעברית, נשלח למייל שלך — חינם</li>
+      <li>תפריט מותאם אישית — מדויק עד הפרט האחרון</li>
+      <li>בנוי להתמדה — לא לשבועיים</li>
+      <li>תוכנית אימון לפי הניסיון והזמן שלך</li>
+      <li>הכל בעברית, ישר למייל — בחינם</li>
     </ul>
     <div class="nav-row"><button class="btn-primary" onclick="goStep(1)">אני רוצה את התוכנית שלי ←</button></div>
   </div>
@@ -586,8 +586,8 @@
     </div>
     <!-- Bulk mode: Step 1 note -->
     <div id="bulk-step1-note" style="display:none;margin-bottom:2rem;padding:1.2rem;background:rgba(8,127,163,0.12);border:1.5px solid var(--border);border-radius:12px;text-align:center">
-      <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 1: בחר אחוזי שומן</div>
-      <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">תחילה בחר את אחוז השומן הנוכחי והרצוי שלך, בדיוק כמו בהורדת שומן</div>
+      <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 1: <span data-g="בחר|בחרי">בחר</span> אחוזי שומן</div>
+      <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">תחילה <span data-g="בחר|בחרי">בחר</span> את אחוז השומן הנוכחי והרצוי שלך, בדיוק כמו בהורדת שומן</div>
     </div>
     <!-- Body composition — 2 panels, each with photo + horizontal sliders below -->
     <div id="bf-section" class="hidden">
@@ -643,8 +643,8 @@
     <!-- Bulk mode: Step 2 note and muscle sliders -->
     <div id="bulk-step2-wrapper" style="display:none;margin-top:2.5rem">
       <div style="padding:1.2rem;background:rgba(8,127,163,0.12);border:1.5px solid var(--border);border-radius:12px;text-align:center;margin-bottom:2rem">
-        <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 2: בחר מסת שריר</div>
-        <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">עכשיו בחר את מסת השריר הנוכחית שלך, ואת מסת השריר שאתה מכוון אליה <br/><strong>(התעלם/י מאחוז השומן הנוכחי בתמונות)</strong></div>
+        <div style="font-size:1rem;font-weight:700;color:var(--accent);margin-bottom:0.4rem">שלב 2: <span data-g="בחר|בחרי">בחר</span> מסת שריר</div>
+        <div style="font-size:0.88rem;color:var(--muted);line-height:1.6">עכשיו <span data-g="בחר|בחרי">בחר</span> את מסת השריר הנוכחית שלך, ואת מסת השריר ש<span data-g="אתה מכוון|את מכוונת">אתה מכוון</span> אליה <br/><strong>(<span data-g="התעלם|התעלמי">התעלם</span> מאחוז השומן בתמונות)</strong></div>
       </div>
       <!-- Muscle selection panels -->
       <div class="bfq-row">
@@ -660,11 +660,11 @@
         </div>
         <div class="bfq-arrow">←</div>
         <div class="bfq-pane-left">
-          <div class="bfq-title">🎯 מסת השריר שאתה מכוון אליה</div>
+          <div class="bfq-title">🎯 מסת השריר ש<span data-g="אתה מכוון|את מכוונת">אתה מכוון</span> אליה</div>
           <img class="bfq-photo" id="photo-goal-muscle" src="" alt="מסת שריר יעד" />
           <div style="font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:0.6rem;font-weight:600" id="label-goal-muscle"></div>
           <div class="sl-row" id="col-goal-muscle-bulk-new">
-            <span class="sl-row-lbl">מטרה</span>
+            <span class="sl-row-lbl">שריר</span>
             <input type="range" id="sl-goal-muscle-bulk-new" min="0" max="1" step="1" value="0" />
             <span class="sl-row-badge" id="badge-goal-muscle-bulk-new">–</span>
           </div>
@@ -678,10 +678,10 @@
   <!-- SCREEN 4: TRAINING (merged with daily steps) -->
   <div class="screen hidden" id="screen-4">
     <h2 class="step-title">אימונים</h2>
-    <p class="step-sub">ספר לי על הרמה ועל הזמן שיש לך.</p>
+    <p class="step-sub"><span data-g="ספר|ספרי">ספר</span> לי על הרמה והזמן שיש לך.</p>
 
     <!-- Steps slider (merged from old screen 3) -->
-    <span class="section-label">כמה צעדים אתה עושה ביום בממוצע?</span>
+    <span class="section-label">כמה צעדים <span data-g="אתה עושה|את עושה">אתה עושה</span> ביום בממוצע?</span>
     <div class="slider-wrap">
       <div class="slider-val-row"><div class="slider-val" id="steps-display">5,000 <span>צעד/יום</span></div></div>
       <input type="range" id="steps-slider" min="0" max="20000" step="500" value="5000" oninput="updateSteps(this.value)" />
@@ -691,16 +691,16 @@
 
     <span class="section-label">ניסיון באימוני כוח</span>
     <div class="level-row" id="grp-tlevel">
-      <button type="button" class="level-pill" data-val="1" data-emoji="🌱" data-desc="לא לגמרי יודע איך להתאמן לבד" onclick="pickLevel(this)">חדש</button>
-      <button type="button" class="level-pill" data-val="2" data-emoji="💪" data-desc="מתאמן כבר כמה חודשים, אבל לא בטוח שעובד נכון" onclick="pickLevel(this)">מתחיל</button>
-      <button type="button" class="level-pill" data-val="3" data-emoji="🏋️" data-desc="העלתי משקלים והגוף השתפר, אך לא המון" onclick="pickLevel(this)">חצי שנה – שנה</button>
-      <button type="button" class="level-pill" data-val="4" data-emoji="🔥" data-desc="עובד עם תוכניות אימון, המשקלים עולים מחודש לחודש" onclick="pickLevel(this)">שנה +</button>
-      <button type="button" class="level-pill" data-val="5" data-emoji="🏆" data-desc="רואים שאני מתאמן, ואני די חזק ביחס לאחרים במכון" onclick="pickLevel(this)">שנתיים +</button>
+      <button type="button" class="level-pill" data-val="1" data-emoji="🌱" data-desc="לא לגמרי יודע איך להתאמן לבד" data-desc-f="לא לגמרי יודעת איך להתאמן לבד" onclick="pickLevel(this)">חדש</button>
+      <button type="button" class="level-pill" data-val="2" data-emoji="💪" data-desc="מתאמן כבר כמה חודשים, אבל לא בטוח שעובד נכון" data-desc-f="מתאמנת כבר כמה חודשים, אבל לא בטוחה שעובד נכון" onclick="pickLevel(this)"><span data-g="מתחיל|מתחילה">מתחיל</span></button>
+      <button type="button" class="level-pill" data-val="3" data-emoji="🏋️" data-desc="העליתי משקלים והגוף השתפר, אך לא המון" data-desc-f="העליתי משקלים והגוף השתפר, אך לא המון" onclick="pickLevel(this)">חצי שנה – שנה</button>
+      <button type="button" class="level-pill" data-val="4" data-emoji="🔥" data-desc="עובד עם תוכניות אימון, המשקלים עולים מחודש לחודש" data-desc-f="עובדת עם תוכניות אימון, המשקלים עולים מחודש לחודש" onclick="pickLevel(this)">שנה +</button>
+      <button type="button" class="level-pill" data-val="5" data-emoji="🏆" data-desc="רואים שאני מתאמן, ואני די חזק ביחס לאחרים במכון" data-desc-f="רואים שאני מתאמנת, ואני די חזקה ביחס לאחרים במכון" onclick="pickLevel(this)">שנתיים +</button>
     </div>
     <div class="level-desc-box" id="level-desc-box"></div>
     <div id="cardio-wrap">
-      <span class="section-label">האם אתה עושה קרדיו בנוסף?
-        <span class="tip-btn" onclick="openTip(this,event)">?<span class="tip-text">סמן רק במידה והקרדיו הזה לא נספר לך בצעדים היומיים</span></span>
+      <span class="section-label">האם <span data-g="אתה עושה|את עושה">אתה עושה</span> קרדיו בנוסף?
+        <span class="tip-btn" onclick="openTip(this,event)">?<span class="tip-text"><span data-g="סמן|סמני">סמן</span> רק אם הקרדיו הזה לא נספר לך בצעדים היומיים</span></span>
       </span>
       <div class="toggle-group" id="grp-cardio">
         <button class="toggle-btn selected" data-val="לא" onclick="pickCardio(this,'לא')">לא</button>
@@ -729,7 +729,7 @@
     </div>
 
     <!-- שאלת ציוד -->
-    <span class="section-label" style="margin-top:0.5rem">איפה אתה מתאמן?</span>
+    <span class="section-label" style="margin-top:0.5rem">איפה <span data-g="אתה מתאמן|את מתאמנת">אתה מתאמן</span>?</span>
     <div class="toggle-group" id="grp-gym-type">
       <button class="toggle-btn selected" data-val="full" onclick="pickGymType(this,'full')">מכון כושר סטנדרטי</button>
       <button class="toggle-btn" data-val="partial" onclick="pickGymType(this,'partial')">ציוד חלקי / ביתי</button>
@@ -755,8 +755,8 @@
     <span class="section-label">כמה ימי <strong>אימוני כוח</strong> בשבוע?</span>
     <div class="slider-wrap">
       <div class="slider-val-row"><div class="slider-val" id="tdays-display">3 <span>ימים</span></div></div>
-      <input type="range" id="tdays-slider" min="1" max="6" step="1" value="3" oninput="updateTdays(this.value)" />
-      <div class="slider-labels"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+      <input type="range" id="tdays-slider" min="2" max="6" step="1" value="3" oninput="updateTdays(this.value)" />
+      <div class="slider-labels"><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
     </div>
     <div id="training-extras"></div>
     <div id="training-priority"></div>
@@ -767,7 +767,7 @@
   <!-- SCREEN 5: MEALS -->
   <div class="screen hidden" id="screen-5">
     <h2 class="step-title">ארוחות</h2>
-    <p class="step-sub">סמן את הארוחות שאתה אוכל.</p>
+    <p class="step-sub"><span data-g="סמן את הארוחות שאתה אוכל|סמני את הארוחות שאת אוכלת">סמן את הארוחות שאתה אוכל</span>.</p>
 
     <!-- קפה עם חלב — חובה לענות לפני שמתחילים -->
     <div id="coffee-row" style="background:rgba(8,127,163,0.07);border:1.5px solid var(--border);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1.2rem">
@@ -877,7 +877,7 @@
   <!-- SCREEN 7: CONTACT (email only) -->
   <div class="screen hidden" id="screen-7">
     <h2 class="step-title">כמעט סיימנו! 🎯</h2>
-    <p class="step-sub">אנחנו בונים לך את התוכנית ונשלח אותה בהקדם — באיזה מייל תרצה לקבל אותה?</p>
+    <p class="step-sub">אנחנו בונים לך את התוכנית ונשלח אותה בהקדם — לאיזה מייל לשלוח אותה?</p>
 
     <div class="field">
       <label for="inp-email">כתובת מייל</label>
@@ -889,7 +889,7 @@
       <p style="font-size:0.84rem;color:var(--muted);line-height:1.6">4 פרקים מתוך הסדנה של <strong style="color:var(--accent)">חטובים לנצח</strong> שיעזרו לך להתחטב בצורה יעילה ואיכותית — ישירות למייל שלך.</p>
     </div>
 
-    <p style="font-size:0.76rem;color:var(--muted);margin-bottom:0.5rem">בלחיצה על הכפתור אני מסכים/ה לקבל תכנים ועדכונים מדר נאור. ניתן להסיר בכל עת.</p>
+    <p style="font-size:0.76rem;color:var(--muted);margin-bottom:0.5rem">בלחיצה על הכפתור אני <span data-g="מסכים|מסכימה">מסכים</span> לקבל תכנים ועדכונים מדר נאור. ניתן להסיר בכל עת.</p>
     <div class="err-msg" id="err-7">נא להזין כתובת מייל תקינה.</div>
     <div class="nav-row"><button class="btn-back" onclick="goStep(6)">← חזרה</button><button class="btn-primary" onclick="s7next()">המשך ←</button></div>
   </div>
@@ -903,7 +903,7 @@
         <div class="pace-ic">🐢</div>
         <div>
           <div class="pace-name">איטי</div>
-          <div class="pace-rate">~1–2 ק"ג לחודש</div>
+          <div class="pace-rate">~1.5 ק"ג לחודש</div>
           <div class="pace-req">הכי קל לשמור עליו לאורך זמן — מתאים לכל אחד</div>
         </div>
       </div>
@@ -911,7 +911,7 @@
         <div class="pace-ic">🚶</div>
         <div>
           <div class="pace-name">בינוני <span style="font-size:0.7rem;background:rgba(8,127,163,0.2);color:var(--accent);border-radius:6px;padding:1px 7px;margin-right:4px">מומלץ</span></div>
-          <div class="pace-rate">~2–3 ק"ג לחודש</div>
+          <div class="pace-rate">~2 ק"ג לחודש</div>
           <div class="pace-req">תפריט מדויק עם גמישות — דורש עקביות יום-יומית</div>
         </div>
       </div>
@@ -919,7 +919,7 @@
         <div class="pace-ic">🚀</div>
         <div>
           <div class="pace-name">מהיר</div>
-          <div class="pace-rate">~3–4 ק"ג לחודש</div>
+          <div class="pace-rate">~3 ק"ג לחודש</div>
           <div class="pace-req">תפריט מדויק מאוד — ידרוש ממך מחויבות גבוהה</div>
         </div>
       </div>
@@ -961,7 +961,7 @@
     <div class="success-icon">🎉</div>
     <h2 class="success-title">התוכנית שלך מוכנה!</h2>
     <div class="success-email-badge" id="success-email-badge">נשלח ל: ...</div>
-    <p class="success-sub">התוכנית נשלחה למייל שלך. כאן למטה תוכל/י לראות אותה כבר עכשיו.</p>
+    <p class="success-sub">התוכנית נשלחה למייל שלך, ו<span data-g="תוכל|תוכלי">תוכל</span> לראות אותה כאן למטה כבר עכשיו.</p>
 
     <!-- Plan loading state -->
     <div id="plan-loading" style="text-align:center;padding:2rem 0">
@@ -972,7 +972,7 @@
     <!-- Plan output — hidden until ready -->
     <div id="plan-output" class="hidden" style="margin-top:1rem"></div>
 
-    <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:2rem">לא קיבלת? בדוק/י בתיקיית ספאם. עדיין לא הגיע? <a href="mailto:darnaor110@gmail.com" style="color:var(--accent)">שלח/י לנו מייל</a></p>
+    <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:2rem">לא קיבלת? <span data-g="בדוק|בדקי">בדוק</span> בתיקיית הספאם. עדיין לא הגיע? <a href="mailto:darnaor110@gmail.com" style="color:var(--accent)"><span data-g="שלח|שלחי">שלח</span> לנו מייל</a></p>
   </div>
 
   <!-- ERROR -->
@@ -1001,7 +1001,7 @@
     currentBF:null, targetBF:null, currentMuscleLevel:null, targetMuscleLevel:null,
     goal:'',
     steps:5000, trainingLevel:0, trainingDays:3,
-    trainingDaysSpecific:[], sessionDuration:60, supersets:'',
+    trainingDaysSpecific:[], sessionDuration:60, supersets:'', workoutVariety:'fixed',
     canPullup:'', canDips:'', canPushup:'',
     workingWeights:{}, musclePriorities:{},
     trainingLocation:'', strengthExercises:[], trainingLimitations:'', injuries:[],
@@ -1066,8 +1066,9 @@
   const MUSCLE_LABELS_FEMALE = ['מאוד מאומנת', 'ספורטיבית', 'מאומנת', 'לא מאומנת'];
 
   // Bulk goal labels — ordered from least muscular (index 0, slider left) to most muscular (index max, slider right)
-  const BULK_GOAL_LABELS_MALE   = ['לא מתאמן', '2-3 חודשים', '4-6 חודשים', 'כ-10 חודשים', 'כשנה', 'שנה וחצי', 'שנתיים', '2-3 שנים', '3 שנים', 'שיא טבעי'];
-  const BULK_GOAL_LABELS_FEMALE = ['לא מתאמנת', 'מתחילה', 'פעילה', 'חטובה', 'מוגדרת', 'ספורטיבית מאוד', 'תחרותית'];
+  // תיאור מסת שריר (לא ותק אימונים) — אותו ציר לשני המינים
+  const BULK_GOAL_LABELS_MALE   = ['רזה', 'התחלתי', 'קל', 'בינוני', 'מפותח', 'אתלטי', 'שרירי', 'חטוב מאוד', 'מרשים', 'שיא טבעי'];
+  const BULK_GOAL_LABELS_FEMALE = ['רזה', 'התחלתי', 'חטובה', 'אתלטית', 'מוגדרת', 'שרירית מאוד', 'שיא טבעי'];
   // BF% used as proxy for goal photo in bulk mode (fixed, low body-fat = muscular look)
   const BULK_GOAL_BF_MALE   = 12;  // always show m_12_1-10 photos for bulk goal (muscle variations)
   const BULK_GOAL_BF_FEMALE = 21;  // always show f_21_1-7 photos for bulk goal (muscle variations)
@@ -1756,6 +1757,7 @@
     }
     // כשנכנסים למסך 4 — רנדר את שאלות היכולות ומשקלי העבודה
     if (n === 4 && typeof renderTrainingAdvancedInline === 'function') renderTrainingAdvancedInline();
+    updateGenderText(); // התאמת טקסטים למין בכל מעבר מסך
     currentStep = n; updateProgress();
     try { sessionStorage.setItem('qd', JSON.stringify(d)); sessionStorage.setItem('qs', String(n)); } catch(e) {}
   }
@@ -1764,6 +1766,7 @@
     hideAll();
     const el = document.getElementById(`screen-${name}`);
     if (el) { el.classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
+    updateGenderText();
     currentStep = -1; updateProgress();
   }
   // New order: 1→2→4→4b→8(pace)→5(meals)→6(prefs)→7(email+submit)
@@ -1787,26 +1790,19 @@
   window.pick = pick;
 
   // ── עדכון טקסטים בהתאם למין ──
-  function updateGenderText() {
-    const isFemale = d.gender === 'אישה';
-    const genderTexts = {
-      'מסת השריר שאתה מכוון אליה': { זכר: 'מסת השריר שאתה מכוון אליה', נקבה: 'מסת השריר שאת מכוונת אליה' },
-      'כמה צעדים אתה עושה ביום בממוצע?': { זכר: 'כמה צעדים אתה עושה ביום בממוצע?', נקבה: 'כמה צעדים את עושה ביום בממוצע?' },
-      'האם אתה עושה קרדיו בנוסף?': { זכר: 'האם אתה עושה קרדיו בנוסף?', נקבה: 'האם את עושה קרדיו בנוסף?' },
-      'איפה אתה מתאמן?': { זכר: 'איפה אתה מתאמן?', נקבה: 'איפה את מתאמנת?' },
-      'סמן את הארוחות שאתה אוכל': { זכר: 'סמן את הארוחות שאתה אוכל.', נקבה: 'סמני את הארוחות שאת אוכלת' }
-    };
-    document.querySelectorAll('.section-label, .step-sub, .bfq-title').forEach(el => {
-      const text = el.textContent.trim();
-      for (const [key, variants] of Object.entries(genderTexts)) {
-        if (text === variants.זכר || text === variants.נקבה) {
-          el.textContent = isFemale ? variants.נקבה : variants.זכר;
-          break;
-        }
-      }
+  // כל אלמנט עם data-g="צורת-זכר|צורת-נקבה" מקבל את הצורה הנכונה.
+  // לפני בחירת מין (d.gender ריק) הטקסט נשאר נטרלי — לא נוגעים בו.
+  function updateGenderText(root) {
+    if (!d.gender) return;
+    const fem = d.gender === 'אישה';
+    (root || document).querySelectorAll('[data-g]').forEach(el => {
+      const parts = el.getAttribute('data-g').split('|');
+      el.textContent = fem ? (parts[1] !== undefined ? parts[1] : parts[0]) : parts[0];
     });
   }
   window.updateGenderText = updateGenderText;
+  // עוזר לטקסט תלוי-מין שנבנה דינמית ב-JS
+  function gtext(m, f) { return d.gender === 'אישה' ? f : m; }
 
   function pickDuration(btn) {
     document.querySelectorAll('#grp-sdur .toggle-btn').forEach(b=>b.classList.remove('selected'));
@@ -1839,7 +1835,8 @@
     document.querySelectorAll('#grp-tlevel .level-pill').forEach(b=>b.classList.remove('selected'));
     btn.classList.add('selected'); d.trainingLevel=Number(btn.dataset.val);
     const box = document.getElementById('level-desc-box');
-    box.textContent = btn.dataset.emoji + ' ' + btn.dataset.desc;
+    const desc = (d.gender === 'אישה' && btn.dataset.descF) ? btn.dataset.descF : btn.dataset.desc;
+    box.textContent = btn.dataset.emoji + ' ' + desc;
     box.classList.add('show');
     // update working-weight section visibility based on new level
     renderTrainingAdvancedInline();
@@ -2044,8 +2041,8 @@
   }
   window.updateSteps = updateSteps;
   function updateTdays(v) {
-    d.trainingDays = Math.max(1, parseInt(v));
-    document.getElementById('tdays-display').innerHTML = `${d.trainingDays} <span>${d.trainingDays===1?'יום':'ימים'}</span>`;
+    d.trainingDays = Math.max(2, parseInt(v));
+    document.getElementById('tdays-display').innerHTML = `${d.trainingDays} <span>ימים</span>`;
   }
   window.updateTdays = updateTdays;
 
@@ -2065,7 +2062,7 @@
 
     // Goal panel label
     document.getElementById('title-goal-pane').textContent =
-      isBulk ? 'לאן אתה/את רוצה להגיע?' : 'ומה המטרה שלך';
+      gtext('לאן אתה רוצה להגיע', 'לאן את רוצה להגיע');
 
     // ── Default slider positions ──
     const initCurBFIdx  = Math.floor(bfLevels.length * 0.55);
@@ -2838,9 +2835,12 @@
     const superBtns = ['כן','לא'].map(v =>
       `<button type="button" class="toggle-btn${d.supersets===v?' selected':''}" data-val="${v}" onclick="pick('grp-super',this,'supersets')">${v==='כן'?'רעיון מעולה':'מעדיף שלא'}</button>`
     ).join('');
+    const varietyBtns = [['fixed','קבועים'],['varied','מגוונים']].map(([v,lbl]) =>
+      `<button type="button" class="toggle-btn${d.workoutVariety===v?' selected':''}" data-val="${v}" onclick="pick('grp-variety',this,'workoutVariety')">${lbl}</button>`
+    ).join('');
 
     document.getElementById('training-extras').innerHTML = `
-      <span class="section-label">באיזה ימים אתה מתאמן? <span style="font-weight:400;opacity:0.65">(רשות)</span></span>
+      <span class="section-label">באיזה ימים <span data-g="אתה מתאמן|את מתאמנת">אתה מתאמן</span>? <span style="font-weight:400;opacity:0.65">(רשות)</span></span>
       <div class="day-picker" id="day-picker">${dayBtns}</div>
       <span class="section-label">כמה זמן יש לך לכל אימון?</span>
       <div class="toggle-group" id="grp-sdur">${durBtns}</div>
@@ -2848,8 +2848,12 @@
         <span class="tip-btn" onclick="openTip(this,event)">?<span class="tip-text">במקום לעשות סט - מנוחה - סט - מנוחה, עושים סט מתרגיל א׳ - סט מתרגיל ב׳ כדי לחסוך זמן</span></span>
       </span>
       <div class="toggle-group" id="grp-super">${superBtns}</div>
+      <span class="section-label">אימונים קבועים או מגוונים?
+        <span class="tip-btn" onclick="openTip(this,event)">?<span class="tip-text">קבועים — אותם תרגילים בכל אימון (מומלץ, פחות מבלבל ומאפשר להתקדם במשקלים). מגוונים — התרגילים מתחלפים בין אימון לאימון.</span></span>
+      </span>
+      <div class="toggle-group" id="grp-variety">${varietyBtns}</div>
       <div id="super-auto-note" style="display:${d.sessionDuration===45?'block':'none'};font-size:0.78rem;color:#087fa3;background:rgba(8,127,163,0.08);border-radius:6px;padding:6px 10px;margin-top:4px">ב-45 דקות — כשנדרש הנפח, סופרסטים יופעלו אוטומטית כדי להכניס מספיק תרגילים.</div>
-      <span class="section-label">יש תרגיל כוח שתרצה לשפר? <span style="font-weight:400;opacity:0.65">(עד 2, רשות)</span></span>
+      <span class="section-label">יש תרגיל כוח ש<span data-g="תרצה|תרצי">תרצה</span> לשפר? <span style="font-weight:400;opacity:0.65">(עד 2, רשות)</span></span>
       <div class="check-grid" id="strength-ex-chips" style="grid-template-columns:1fr 1fr;margin-bottom:0.5rem">${[
         {id:'squat',lbl:'סקווט'},
         {id:'rdl',lbl:'דדליפט רומני'},
@@ -2897,9 +2901,10 @@
     }).join('');
 
     document.getElementById('training-priority').innerHTML = `
-      <span class="section-label">באיזה שרירים בא לכם להתמקד</span>
+      <span class="section-label">באילו שרירים בא לך להתמקד?</span>
       <div class="muscle-grid-wrap">${headerRow}${muscleHtml}</div>
     `;
+    updateGenderText(); // החל טקסט תלוי-מין על התוכן שזה עתה הוזרק
   }
 
   function toggleDay(day, btn) {
@@ -3041,7 +3046,7 @@
 
     if (inCalorieConfirmMode) {
       btn.disabled = false;
-      btn.textContent = 'אנא וודא שאת/ה מרוצה מחולקת הקלוריות לארוחות';
+      btn.textContent = gtext('ודא שאתה מרוצה מחלוקת הקלוריות — ואז אשר','ודאי שאת מרוצה מחלוקת הקלוריות — ואז אשרי');
     } else {
       btn.disabled = !ready;
       btn.textContent = ready ? 'המשך ←' : `חלק את הקצבה שלך (${total} / ${targetCal} קל)`;
@@ -3330,7 +3335,7 @@
         mealNotesHtml += '<div class="plan-meal-note-item">🍫 קלוריות חופשיות: <strong>' + plan.snackSpare + ' קל׳</strong> — לפינוק יומי לפי בחירה (שוקולד, ממתק, כל מה שרוצים)</div>';
       }
       // הערת ירקות — תמיד מופיעה
-      mealNotesHtml += '<div class="plan-meal-note-item" style="border-top:1px solid rgba(8,127,163,0.15);padding-top:6px;margin-top:2px">🥦 <strong>ירקות בתפריט:</strong> דמיינו סלט בגודל של מלפפון + עגבנייה + פלפל. כל סלט בגודל הזה, מכל ירק שרוצים, = כ-100 קל׳. סלט גדול פי 2 = 200 קל׳, חצי = 50 קל׳.</div>';
+      mealNotesHtml += '<div class="plan-meal-note-item" style="border-top:1px solid rgba(8,127,163,0.15);padding-top:6px;margin-top:2px">🥦 <strong>ירקות בתפריט:</strong> ' + gtext('דמיין','דמייני') + ' סלט בגודל של מלפפון + עגבנייה + פלפל. כל סלט בגודל הזה, מכל ירק ש' + gtext('תרצה','תרצי') + ', = כ-100 קל׳. סלט גדול פי 2 = 200 קל׳, חצי = 50 קל׳.</div>';
       mealsHtml += '<div class="plan-meal-notes-box">' + mealNotesHtml + '</div>';
 
       plan.meals.forEach(function(meal) {
@@ -3480,7 +3485,7 @@
           const dinnerCal = dinner ? dinner.cal + fridaySaved : fridaySaved;
           fridayHtml = '<div class="plan-weekend-day">'
             + '<div class="plan-weekend-day-title">🕯 יום שישי</div>'
-            + '<p class="plan-weekend-note">יש לך ארוחת ערב משפחתית — אז אוכלים פחות לאורך היום ו"חוסכים" את הקלוריות לארוחת הערב. <strong>כל מה שמחסירים ביום מתווסף לארוחת הערב.</strong><br>לדוגמה: ארוחת בוקר של 300 קל רגיל? ביום שישי תאכל 150 קל בוקר — וה-150 שחסכת הולכות לערב.</p>'
+            + '<p class="plan-weekend-note">יש לך ארוחת ערב משפחתית — אז ' + gtext('אתה אוכל','את אוכלת') + ' פחות לאורך היום, ו"' + gtext('חוסך','חוסכת') + '" את הקלוריות לארוחת הערב. <strong>כל מה שמחסירים ביום מתווסף לארוחת הערב.</strong><br>לדוגמה: ארוחת בוקר רגילה של 300 קל? ביום שישי ' + gtext('תאכל','תאכלי') + ' 150 קל בבוקר — וה-150 שחסכת הולכות לערב.</p>'
             + fridayRows
             + '<div class="plan-weekend-saved">🌅 ארוחת ערב שישי — ' + dinnerCal + ' קל׳ (כולל ' + fridaySaved + ' קל׳ שחסכנו)</div>'
             + '</div>';
@@ -3514,7 +3519,7 @@
           const lunchCal = lunch ? lunch.cal + satSaved : satSaved;
           saturdayHtml = '<div class="plan-weekend-day">'
             + '<div class="plan-weekend-day-title">🕍 יום שבת</div>'
-            + '<p class="plan-weekend-note">יש ארוחה משפחתית גדולה — ביום שבת פשוט לא אוכלים ארוחות מוקדמות בכלל, וכל הקלוריות שלהן מתחברות לארוחת הצהריים. מתעוררים, שותים קפה, ובאים לאכול. <strong>זה היום שבו אפשר לאכול הכי הרבה בארוחה אחת.</strong></p>'
+            + '<p class="plan-weekend-note">יש ארוחה משפחתית גדולה — ביום שבת פשוט ' + gtext('אתה מדלג','את מדלגת') + ' על הארוחות המוקדמות, וכל הקלוריות שלהן מתחברות לארוחת הצהריים. ' + gtext('קם','קמה') + ' בבוקר, ' + gtext('שותה','שותה') + ' קפה, ' + gtext('ומגיע','ומגיעה') + ' לאכול. <strong>זה היום שבו אפשר לאכול הכי הרבה בארוחה אחת.</strong></p>'
             + satRows
             + '<div class="plan-weekend-saved">🍽 ארוחת צהריים שבת — ' + lunchCal + ' קל׳ (כולל ' + satSaved + ' קל׳ שחסכנו)</div>'
             + '</div>';
@@ -3632,7 +3637,7 @@
     // ── Workout section ──
     var workoutHtml = '';
     if (workout && workout.days && workout.days.length > 0) {
-      const MUSCLE_HE = { chest:'חזה', back:'שרירי גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ירך קדמית', hamstring:'ירך אחורית', glute:'ישבן', calves:'תאומים', abs:'בטן' };
+      const MUSCLE_HE = { chest:'חזה', back:'גב', shoulders:'כתפיים', tricep:'יד אחורית', bicep:'יד קדמית', quad:'ירך קדמית', hamstring:'ירך אחורית', glute:'ישבן', calves:'תאומים', abs:'בטן' };
       const PRIO_CLASS = { 1:'prio-none', 2:'prio-3', 3:'prio-2', 4:'prio-1', 5:'prio-1' };
       const PRIO_LABEL = { 5:'5', 4:'4', 3:'3', 2:'2', 1:'1', 0:'' };
       const userTrainingLevel = userData.trainingLevel || 0;
@@ -3649,36 +3654,30 @@
         + '</div>'
         + '<div class="plan-divider"></div>';
 
-      // ── הנחיות לבניית התוכנית — מה המתאמן סימן ──
-      const LEVEL_LABELS = ['','חדש','מתחיל','חצי שנה – שנה','שנה +','שנתיים +'];
-      const SPLIT_LABELS = { fullbody:'פול בודי', ab_fb:'A/B/FB', ab4:'A/B (4 ימים)', ab5:'A/B (5 ימים)', ab6:'A/B (6 ימים)', ppl5:'PPL', upper_lower4:'עליון/תחתון ×2', upper_lower5:'עליון/תחתון ×2.5', upper_lower6:'עליון/תחתון ×3' };
-      const tl = userData.trainingLevel || 0;
+      // ── ההגדרות שבחר המתאמן — רק מה שרלוונטי לו ──
       const specificDaysStr = userData.trainingDaysSpecific && userData.trainingDaysSpecific.length > 0
         ? userData.trainingDaysSpecific.map(d => 'יום ' + d + '׳').join(', ')
         : (workout.suggestedDays || (userData.trainingDays + ' ימים'));
       workoutHtml += '<div class="plan-workout-notes" style="margin-bottom:10px">'
-        + '<strong>⚙️ הנחיות שבנו את התוכנית:</strong><br>'
+        + '<strong>⚙️ ההגדרות של התוכנית שלך:</strong><br>'
         + '<span style="display:inline-block;margin-top:6px;line-height:2">'
         + '📅 ימי אימון: <strong>' + specificDaysStr + '</strong> &nbsp;|&nbsp; '
         + '⏱ זמן לאימון: <strong>' + (workout.sessionDuration || 60) + ' דקות</strong> &nbsp;|&nbsp; '
-        + '🔗 סופרסטים: <strong>' + (workout.supersets ? 'כן' : 'לא') + '</strong><br>'
-        + '💪 ניסיון שדווח: <strong>' + (LEVEL_LABELS[tl] || 'לא צוין') + '</strong> &nbsp;|&nbsp; '
-        + '📊 רמה שחושבה: <strong>' + (workout.levelName || '') + '</strong> &nbsp;|&nbsp; '
-        + '🏋️ ספליט: <strong>' + (SPLIT_LABELS[workout.split] || workout.split || '') + '</strong>'
+        + '🔗 סופרסטים: <strong>' + (workout.supersets ? 'כן' : 'לא') + '</strong>'
         + '</span>'
         + '</div>'
         + '<div class="plan-divider"></div>';
 
       // ── מדריך כללים — מופיע תמיד לפני האימונים ──
       workoutHtml += '<div class="plan-beginner-guide">'
-        + '<div class="plan-beginner-guide-title">📋 כללים לאימון — קראו לפני שמתחילים</div>'
+        + '<div class="plan-beginner-guide-title">📋 כללים לאימון — ' + gtext('קרא','קראי') + ' לפני שמתחילים</div>'
         + '<ul class="plan-beginner-guide-list">'
         + '<li><strong>חימום לפני כל אימון:</strong> 5 דק׳ הליכה על הליכון, ואז 2 סטים קלים עם כ-50% וכ-75% ממשקל העבודה — לתרגיל הראשון בלבד. לא צריך לחמם כל תרגיל.</li>'
-        + '<li><strong>מנוחה בין סטים:</strong> 2–3 דקות. אל תמהרו — מנוחה מלאה חשובה לביצועים ולתוצאות.</li>'
-        + '<li><strong>קצב ביצוע:</strong> ירידה (אקצנטרי) 3 שניות, עלייה (קונצנטרי) 1 שנייה. התמקדו בתחושה, לא במהירות.</li>'
-        + '<li><strong>דרופסט:</strong> מוסמן בעמודת "דרופסט" ב-✓. מיד אחרי הסט האחרון של אותו תרגיל — הורידו משקל ב-20% ועשו עוד סט ללא מנוחה. אין מנוחה לפני הדרופסט.</li>'
-        + '<li><strong>סופרסט:</strong> שני תרגילים בקופסה מחוברת — מבצעים אחד אחרי השני בלי מנוחה ביניהם, ורק אז נחים 2–3 דק׳. חוסך זמן ומעלה את עצימות האימון.</li>'
-        + '<li><strong>איך מתקדמים — Double Progression:</strong> בכל אימון, נסו לבצע את מינימום החזרות בטווח (למשל 8 בטווח 8–10). כל פעם שמגיעים לחזרה המקסימלית ברוב הסטים (10 מתוך 10) — בפעם הבאה מעלים משקל ב-2.5–5 ק"ג. ככה מתקדמים בצורה מבוקרת.</li>'
+        + '<li><strong>מנוחה בין סטים:</strong> 2–3 דקות. ' + gtext('אל תמהר','אל תמהרי') + ' — מנוחה מלאה חשובה לביצועים ולתוצאות.</li>'
+        + '<li><strong>קצב ביצוע:</strong> ירידה (אקצנטרי) 3 שניות, עלייה (קונצנטרי) 1 שנייה. ' + gtext('התמקד','התמקדי') + ' בתחושה, לא במהירות.</li>'
+        + '<li><strong>דרופסט:</strong> מוסמן בעמודת "דרופסט" ב-✓. מיד אחרי הסט האחרון — ' + gtext('הורד','הורידי') + ' משקל ב-20% ו' + gtext('עשה','עשי') + ' עוד סט ללא מנוחה.</li>'
+        + '<li><strong>סופרסט:</strong> שני תרגילים בקופסה מחוברת — מבצעים אחד אחרי השני בלי מנוחה ביניהם, ורק אז נחים 2–3 דק׳.</li>'
+        + '<li><strong>איך מתקדמים — Double Progression:</strong> בכל אימון, ' + gtext('נסה','נסי') + ' לבצע את מינימום החזרות בטווח (למשל 8 בטווח 8–10). כשמגיעים לחזרה המקסימלית ברוב הסטים (10 מתוך 10) — בפעם הבאה מעלים משקל ב-2.5–5 ק"ג.</li>'
         + '</ul>'
         + '</div>'
         + '<div class="plan-divider"></div>';
@@ -6329,12 +6328,12 @@ ${planHtml}
         let vol = actualVolNow();
         byPrio.forEach(m => {
           days.forEach(day => day.exercises.forEach(e => {   // 3→4 סטים
-            if (vol[m] >= weeklyMin[m]) return;
-            if (e.muscleId === m && !e.pinned && e.sets === 3 && (vol[m] + 1) <= weeklyMax[m]) { e.sets = 4; vol = actualVolNow(); }
+            if ((vol[m] || 0) >= weeklyMin[m]) return;
+            if (e.muscleId === m && !e.pinned && e.sets === 3 && ((vol[m] || 0) + 1) <= weeklyMax[m]) { e.sets = 4; vol = actualVolNow(); }
           }));
           days.forEach(day => day.exercises.forEach(e => {   // דרופסטים
-            if (vol[m] >= weeklyMin[m]) return;
-            if (e.muscleId === m && !e.drop && canDrop(e.ex) && (vol[m] + 1) <= weeklyMax[m]) { e.drop = true; vol = actualVolNow(); }
+            if ((vol[m] || 0) >= weeklyMin[m]) return;
+            if (e.muscleId === m && !e.drop && canDrop(e.ex) && ((vol[m] || 0) + 1) <= weeklyMax[m]) { e.drop = true; vol = actualVolNow(); }
           }));
         });
       }
@@ -6345,7 +6344,7 @@ ${planHtml}
       let forcedSup = false;
       if (!wantsSup) {
         let vol = actualVolNow();
-        const stillShort = byPrio.some(m => prio[m] >= 2 && vol[m] < weeklyMin[m]);
+        const stillShort = byPrio.some(m => prio[m] >= 2 && (vol[m] || 0) < weeklyMin[m]);
         const noRoom = days.every(d => d.exCount >= timeBudget);
         if (stillShort && noRoom) {
           forcedSup = true;
@@ -6395,35 +6394,45 @@ ${planHtml}
         });
       })();
 
-      // ── שלב 6.5: השלמה "זולה" — אם שריר עדיין מתחת ליעד, מוסיפים תרגיל של סט יחיד + דרופסט ──
-      // זול בזמן (סט אחד); נספר כשורה אך מתאחד לסופרסט אם נדרש כדי לא לחרוג מהזמן.
+      // ── שלב 6.5: השלמה "זולה" (פינישרים) — שריר מתחת ליעד מקבל תרגיל של סט יחיד + דרופסט ──
+      // הפינישר זול בזמן, ולכן מותר לחרוג מעט מקיבולת התרגילים הרגילה (עד HARD_CAP).
+      // מטפלים קודם בשריר הכי חסר (חשוב במיוחד לשריר שיצא 0), ואז ביתר — בלי "להתפוצץ".
       (function freeFill() {
+        const HARD_CAP = timeBudget * 2 + 3;  // עד 3 פינישרים זולים מעבר לקיבולת הרגילה
         let vol = actualVolNow();
-        byPrio.forEach(m => {
-          let guard = 0;
-          while (vol[m] < weeklyMin[m] && guard++ < 4) {
+        let guard = 0, progress = true;
+        while (progress && guard++ < 40) {
+          progress = false;
+          // השריר הכי חסר קודם (גודל החוסר), ואז עדיפות גבוהה
+          const short = byPrio
+            .filter(m => (vol[m] || 0) < weeklyMin[m])
+            .sort((a, b) => (weeklyMin[b] - (vol[b] || 0)) - (weeklyMin[a] - (vol[a] || 0)) || prio[b] - prio[a]);
+          for (const m of short) {
             let added = false;
             for (const day of days) {
               if (!day.muscles.includes(m)) continue;
-              if (day.exercises.length >= timeBudget * 2) continue; // אל תחרוג מהמקסימום שמתאים לזמן (גם עם סופרסטים)
+              if (day.exercises.length >= HARD_CAP) continue;
               const used = new Set(day.exercises.filter(e => e.muscleId === m).map(e => e.ex.name));
               const cand = (pickList[m] || []).find(ex => !used.has(ex.name));
               if (!cand) continue;
+              // הוסף רק אם הפינישר באמת מקרב ליעד (לא מנפח) — חשוב כי בקבוע כל פינישר = תרומה×freq
+              const contribution = (1 + (canDrop(cand) ? 1 : 0)) * day.freq;
+              if ((weeklyMin[m] - (vol[m] || 0)) < contribution * 0.5) continue;
               day.exercises.push({ muscleId:m, ex:cand, sets:1, reps:repRange(cand.moveType, level),
-                                   drop: canDrop(cand), pinned:false, goalNote:'' });
+                                   drop: canDrop(cand), pinned:false, goalNote:'', finisher:true });
               vol = actualVolNow();
-              added = true; forcedSup = true; // שורה נוספת — מאפשרים סופרסט כדי לשמור על הזמן
+              added = true; progress = true; forcedSup = true; // שורה נוספת — מאפשרים סופרסט לשמירת זמן
               break;
             }
-            if (!added) break;
+            if (added) break;  // מעריכים מחדש מי הכי חסר
           }
-        });
+        }
       })();
 
       // ── שלב 6.7: איזון אורך אימונים — הפרש ≤6 סטים בין אימון לאימון (דרופסטים לא נספרים) ──
       // משתמשים בסלאק של טווח הנפח; אם לא מספיק, מותר לחרוג מעט מהטווח (עדיפות לאורך אחיד).
       (function balanceLength() {
-        const DRIFT = 4;  // כמה סטים שבועיים מותר לחרוג מהטווח כדי לאזן
+        const DRIFT = 2;  // כמה סטים שבועיים מותר לחרוג מהטווח כדי לאזן
         const wlen = s => s.exercises.reduce((a, e) => a + e.sets, 0); // אורך = סטים בלבד (לא דרופסטים)
         let vol = actualVolNow();
         let guard = 0;
@@ -6433,21 +6442,21 @@ ${planHtml}
           act.sort((a, b) => wlen(a) - wlen(b));
           const lo = act[0], hi = act[act.length - 1];
           if (wlen(hi) - wlen(lo) <= 6) break;
-          // הוסף סט לאימון הקצר (שריר עם הכי הרבה מרווח מתחת ל-max+DRIFT)
-          const addTo = s => {
-            const c = s.exercises
-              .filter(e => !e.pinned && e.sets < 5 && (vol[e.muscleId] || 0) < weeklyMax[e.muscleId] + DRIFT)
-              .sort((a, b) => ((vol[a.muscleId]||0) - weeklyMax[a.muscleId]) - ((vol[b.muscleId]||0) - weeklyMax[b.muscleId]))[0];
-            if (!c) return false; c.sets++; vol = actualVolNow(); return true;
-          };
-          // הורד סט מהאימון הארוך (שריר עם הכי הרבה מרווח מעל ל-min-DRIFT)
+          // קודם מורידים סט מהאימון הארוך (מקרב לטווח, לא מנפח) — שריר עם הכי הרבה מרווח מעל min
           const cutFrom = s => {
             const c = s.exercises
               .filter(e => !e.pinned && e.sets > 1 && (vol[e.muscleId] || 0) > weeklyMin[e.muscleId] - DRIFT)
               .sort((a, b) => (weeklyMin[a.muscleId] - (vol[a.muscleId]||0)) - (weeklyMin[b.muscleId] - (vol[b.muscleId]||0)))[0];
             if (!c) return false; c.sets--; vol = actualVolNow(); return true;
           };
-          if (!(addTo(lo) || cutFrom(hi))) break;
+          // ורק אם אי אפשר לקצץ — מוסיפים סט לאימון הקצר (שריר עם הכי הרבה מרווח מתחת max)
+          const addTo = s => {
+            const c = s.exercises
+              .filter(e => !e.pinned && e.sets < 5 && (vol[e.muscleId] || 0) < weeklyMax[e.muscleId] + DRIFT)
+              .sort((a, b) => ((vol[a.muscleId]||0) - weeklyMax[a.muscleId]) - ((vol[b.muscleId]||0) - weeklyMax[b.muscleId]))[0];
+            if (!c) return false; c.sets++; vol = actualVolNow(); return true;
+          };
+          if (!(cutFrom(hi) || addTo(lo))) break;
         }
       })();
 
