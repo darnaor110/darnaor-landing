@@ -571,7 +571,7 @@
 
   <!-- SCREEN 2: GOAL + BF% -->
   <div class="screen hidden" id="screen-2">
-    <h2 class="step-title">מה המטרה שלך?</h2>
+    <h2 class="step-title"><span data-g="בחר|בחרי">בחרי</span> איזה אחוז שומן מייצג אותך, ואת המטרה שלך</h2>
     <div class="goal-cards">
       <div class="goal-card" onclick="pickGoal('lean',this)">
         <div class="gc-icon">🔥</div>
@@ -2001,6 +2001,8 @@
     const ml = parseInt(val);
     d.milkMl = ml;
     document.getElementById('milk-display').textContent = ml + ' מ"ל';
+    // עדכן את הצגת הקלוריות בכל הארוחות — חלב מפחית מהתקציב הכולל
+    updateAllWeightUIs();
     // כל כוס = 140 מ"ל
     const CUP = 140;
     const fullCups = Math.floor(ml / CUP);
@@ -2117,8 +2119,8 @@
       d.targetMuscleLevel = sliderToMuscleLevel(+slGoalMBulkNew.value, bulkGoalLabels);
       document.getElementById('badge-cur-muscle-bulk').textContent = bulkGoalLabels[+slCurMBulk.value];
       document.getElementById('badge-goal-muscle-bulk-new').textContent = bulkGoalLabels[+slGoalMBulkNew.value];
-      document.getElementById('label-cur-muscle').textContent = pronounFemale + ' תמונה המייצגת את מסת השריר הנוכחית שלך';
-      document.getElementById('label-goal-muscle').textContent = pronounFemale + ' את מסת השריר אליה תרצה/י להגיע';
+      document.getElementById('label-cur-muscle').textContent = '';
+      document.getElementById('label-goal-muscle').textContent = '';
       // Load initial muscle images
       document.getElementById('photo-cur-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.currentMuscleLevel);
       document.getElementById('photo-goal-muscle').src = bodyImg(g, isFemale ? BULK_GOAL_BF_FEMALE : BULK_GOAL_BF_MALE, d.targetMuscleLevel);
@@ -4969,8 +4971,11 @@ ${planHtml}
     if (vegSize)   lines.push('ירקות (' + vegCal + ' קל): סלט ' + vegSize + ' ירקות||לבחירה||~' + Math.round(vegCal/33*100) + 'ג');
     if (sauceCal) {
       const sauceNames = activeSandwichSauceIds.map(id => SANDWICH_SAUCE_ID_MAP[id]).filter(Boolean);
-      const sauceOpts = sauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join(' / ');
-      lines.push('רוטב (' + sauceCal + ' קל): ' + sauceOpts);
+      const sauceRows = sauceNames.length > 0
+        ? sauceNames.map(n => n + '||' + sauceSpoons(sauceCal) + '||—').join('\n')
+        : 'רוטב לבחירה||' + sauceSpoons(sauceCal) + '||—';
+      lines.push('GROUP:רוטב|' + sauceCal);
+      sauceRows.split('\n').forEach(r => lines.push(r));
     }
 
     const avgProt = Math.round(
