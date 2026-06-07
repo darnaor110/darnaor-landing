@@ -4925,9 +4925,9 @@ ${planHtml}
         const dbId = SAND_PROT_TO_DB[id] || id;
         const food = FOOD_DB[dbId];
         if (!food) return null;
-        const grams = Math.round(finalProtCal * 100 / food.kcal_per_100g);
+        const formatted = formatFoodItem(dbId, finalProtCal);
         const lbl = COMP.sandwich.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
-        return lbl + '||—||' + grams + 'ג';
+        return lbl + '||' + formatted.qty + '||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
 
@@ -5000,7 +5000,7 @@ ${planHtml}
         if (!food) return null;
         const formatted = formatFoodItem(id, protCal);
         let foodName = COMP.salad.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
-        return foodName + '||—||' + formatted.grams + 'ג';
+        return foodName + '||' + formatted.qty + '||' + formatted.grams + 'ג';
       })
       .filter(Boolean);
     lines.push('חלבון (' + protCal + ' קל): ' + saladProtLines.join(' / '));
@@ -5110,9 +5110,9 @@ ${planHtml}
         const dbId = SNACK_SALAD_DB_MAP[id] || id;
         const food = FOOD_DB[dbId];
         if (!food) return null;
-        const grams = Math.round(protCal * 100 / food.kcal_per_100g);
+        const formatted = formatFoodItem(dbId, protCal);
         const lbl = COMP.salad_snack?.find(c => c.key==='protein')?.opts.find(o => o.id===id)?.lbl || id;
-        return lbl + '||—||' + grams + 'ג';
+        return lbl + '||' + formatted.qty + '||' + formatted.grams + 'ג';
       }).filter(Boolean);
       if (protLines.length) lines.push('חלבון (' + protCal + ' קל): ' + protLines.join(' / '));
       const avgProt = Math.round(activeProtIds.reduce((s, id) => {
