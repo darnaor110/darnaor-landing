@@ -5983,14 +5983,92 @@ ${planHtml}
         }
       }
 
-      // בחר תרגילים בהתאם לtime budget וראיות
+      // בחר תרגילים בהתאם לtime budget — הקצאה הוגנת (round-robin) לפי עדיפות
+      // ממוין לפי עדיפות (גבוה→נמוך) כדי שבמקרה של מחסור במקום, שריר חשוב יותר יקבל קודם
       const musclesWithNeed = Object.keys(muscleNeedData).sort((a, b) => (muscleNeedData[b].prio || 0) - (muscleNeedData[a].prio || 0));
+
+      // אתחול כל שריר ל-0
+      for (const mId of musclesWithNeed) muscleExCount[mId] = 0;
+
+      // מעבר 1 — מינימום מובטח: כל שריר עם need מקבל תרגיל אחד קודם (לפי עדיפות)
+      // כך שריר בעדיפות נמוכה לא נמחק לגמרי כשהזמן מתמלא משרירים בעדיפות גבוהה
       for (const mId of musclesWithNeed) {
+        if (totalExercisesPlanned >= maxNonPinnedExercises) break;
         const { need, min } = muscleNeedData[mId];
-        // קח עד `need` תרגילים, אבל מוגבל לtime budget הנותר
-        const take = Math.min(need, Math.max(min, maxNonPinnedExercises - totalExercisesPlanned));
-        muscleExCount[mId] = take;
-        totalExercisesPlanned += take;
+        const base = Math.max(min, need > 0 ? 1 : 0); // לפחות 1 אם בכלל צריך
+        if (base > 0) { muscleExCount[mId] = 1; totalExercisesPlanned += 1; }
+      }
+
+      // מעבר 2 — חלוקת מקום פנוי שנותר: סיבוב אחר סיבוב, תרגיל אחד בכל פעם,
+      // לפי עדיפות, עד שכל שריר מגיע ל-need שלו או שהזמן נגמר.
+      // round-robin (ולא greedy מלא) שומר על איזון נפח ישיר בין השרירים —
+      // שריר עיקרי לא "בולע" את כל המקום ומשאיר משניים בלי תרגיל שני.
+      let added = true;
+      while (totalExercisesPlanned < maxNonPinnedExercises && added) {
+        added = false;
+        for (const mId of musclesWithNeed) {
+          if (totalExercisesPlanned >= maxNonPinnedExercises) break;
+          const { need } = muscleNeedData[mId];
+          if (muscleExCount[mId] < need) {
+            muscleExCount[mId] += 1;
+            totalExercisesPlanned += 1;
+            added = true;
+          }
+        }
+      }
+
+      // ── מעבר 3 — צמצום מודע לנפח משני ──
+      // שריר משני (כמו יד אחורית/קדמית) מקבל נפח "חינם" מתרגילים מורכבים
+      // (לחיצות חזה/כתפיים → יד אחורית). אם שריר כבר מגיע ל-dayVolMin שלו
+      // דרך הסטים הישירים + הנפח המשני הצפוי, אין טעם לתת לו תרגיל ישיר נוסף —
+      // משחררים את המקום לשריר בעדיפות גבוהה יותר שעדיין חסר.
+      const projectedSec = () => {
+        // חישוב נפח משני צפוי לכל שריר מכל התרגילים שהוקצו (כולל מוצמדים)
+        const sec = {};
+        for (const e of exercises) { // מוצמדים
+          for (const sm of (e.ex.secondary || [])) sec[sm] = (sec[sm] || 0) + e.sets * 0.5;
+        }
+        for (const mId of Object.keys(muscleExCount)) {
+          const pool = EXERCISE_POOLS[mId] || [];
+          const exC  = muscleExCount[mId] || 0;
+          for (let ei = 0; ei < Math.min(exC, pool.length); ei++) {
+            for (const sm of (pool[ei].secondary || [])) sec[sm] = (sec[sm] || 0) + 3 * 0.5;
+          }
+        }
+        return sec;
+      };
+
+      // צמצם תרגילים מיותרים אצל שרירים שכבר מכוסים ע"י נפח משני
+      // (רק מעל המינימום של תרגיל אחד — לא מאפסים שריר)
+      for (const mId of musclesWithNeed) {
+        const { min } = muscleNeedData[mId];
+        const floor = Math.max(1, min); // תמיד משאירים לפחות תרגיל אחד ישיר
+        while (muscleExCount[mId] > floor) {
+          const sec = projectedSec();
+          const directIfReduced = (muscleExCount[mId] - 1) * 3; // 3 סטים לתרגיל
+          const projected = directIfReduced + (sec[mId] || 0) + (pinnedSetCount[mId] || 0);
+          if (projected >= (dayVolMin[mId] || 0)) {
+            muscleExCount[mId] -= 1;
+            totalExercisesPlanned -= 1;
+          } else break;
+        }
+      }
+
+      // הקצה מחדש מקום פנוי שהשתחרר — לשריר בעדיפות גבוהה שעדיין חסר
+      let reAdded = true;
+      while (totalExercisesPlanned < maxNonPinnedExercises && reAdded) {
+        reAdded = false;
+        for (const mId of musclesWithNeed) {
+          if (totalExercisesPlanned >= maxNonPinnedExercises) break;
+          const sec = projectedSec();
+          const projected = (muscleExCount[mId] * 3) + (sec[mId] || 0) + (pinnedSetCount[mId] || 0);
+          // הוסף רק אם השריר עדיין מתחת ל-dayVolMin ולא חרג מ-need
+          if (muscleExCount[mId] < muscleNeedData[mId].need && projected < (dayVolMin[mId] || 0)) {
+            muscleExCount[mId] += 1;
+            totalExercisesPlanned += 1;
+            reAdded = true;
+          }
+        }
       }
 
       // עדכן secondary accum
@@ -6005,7 +6083,10 @@ ${planHtml}
       }
 
       // ── שלב 3: בחר תרגילים עד לlimit של time budget ──
-      for (const mId of muscles) {
+      // חשוב: עוברים לפי סדר עדיפות (musclesWithNeed) ולא לפי סדר התבנית,
+      // כדי שההקצאה משלב 2 תכובד — אחרת שריר שמופיע מאוחר בתבנית עלול
+      // להישאר ללא תרגילים כשהזמן מתמלא משרירים שמופיעים מוקדם יותר
+      for (const mId of musclesWithNeed) {
         const count = muscleExCount[mId] || 0;
         if (count === 0) continue;
         // בדוק אם יש עדיין מקום בtime budget
@@ -6240,7 +6321,7 @@ ${planHtml}
         return wMin > 0 && actual < wMin;
       });
 
-      if (stillShortVolume && sups === 'כן') {
+      if (stillShortVolume && sups) {  // sups כבר בוליאני (u.supersets === 'כן')
         // חשב כמה supersets צריכים כדי להגיע לvolume
         let totalShort = 0;
         Object.keys(EXERCISE_POOLS).forEach(mId => {
@@ -6251,7 +6332,7 @@ ${planHtml}
           }
         });
         supersetsNeeded = Math.max(0, totalShort);
-      } else if (sups === 'כן') {
+      } else if (sups) {
         // user רוצה supersets וvolume יש — בשביל זמן/compactness
         useSupersetsForTime = true;
       }
