@@ -4580,7 +4580,8 @@ ${planHtml}
       const cerealOpts = selCereals.map(n => {
         const cal100 = YOGURT_CEREAL_CAL100[n] || 380;
         const g = Math.round(cerealCal / cal100 * 100 / 5) * 5;
-        return n + '||' + g + 'ג||' + g + 'ג';
+        const cups = Math.round(g / 30 * 4) / 4;
+        return n + '||' + cups + ' כוס||' + g + 'ג';
       }).join(' / ');
       // חייב להשתמש בפורמט header עם (קל) כדי שכל אופציה תופיע בשורה נפרדת
       lines.push('תוספת (' + cerealCal + ' קל): ' + cerealOpts);
@@ -4807,7 +4808,7 @@ ${planHtml}
         const rawUnits = breadBudget / b.cal;
         const bUnits = Math.max(0.5, Math.round(rawUnits * 2) / 2);
         const gramsTotal = bUnits * b.unitG;
-        return b.name + '||' + bUnits + ' ' + b.unit + ' (' + gramsTotal + 'ג)' + '||—';
+        return b.name + '||' + bUnits + ' ' + b.unit + '||' + Math.round(gramsTotal) + 'ג';
       }).join(' / ');
       const breadCal = Math.max(100, Math.floor(breadBudget / 50) * 50);
       lines.push('לחם (' + breadCal + ' קל): ' + breadOpts);
@@ -4817,11 +4818,11 @@ ${planHtml}
       const cheeseOpts = cheeseIds.map(id => {
         const ch = EGGS_CHEESE[id] || EGGS_CHEESE['ch9'];
         const cnt = Math.max(1, Math.round(cheeseCal / ch.cal));
-        const gramsTotal = cnt * ch.unitG;
+        const gramsTotal = Math.round(cnt * ch.unitG);
         if (ch.unit === null) {
-          return ch.name + '||' + gramsTotal + 'ג||—';
+          return ch.name + '||—||' + gramsTotal + 'ג';
         } else {
-          return ch.name + '||' + cnt + ' ' + ch.unit + ' (' + gramsTotal + 'ג)' + '||—';
+          return ch.name + '||' + cnt + ' ' + ch.unit + '||' + gramsTotal + 'ג';
         }
       }).join(' / ');
       lines.push('גבינה (' + cheeseCal + ' קל): ' + cheeseOpts);
