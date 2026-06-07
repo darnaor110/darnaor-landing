@@ -4661,9 +4661,11 @@ ${planHtml}
     const cerealNames = cerealTypeIds.length > 0
       ? cerealTypeIds.map(id => CEREAL_ID_MAP[id]).filter(Boolean)
       : ['קורנפלקס חלבון', 'קורנפלקס אלופים', 'שיבולת שועל'];
+    const CEREAL_UNIT_G = { 'קורנפלקס חלבון':30, 'פיטנס חלבון':30, 'קורנפלקס אלופים':30, 'שיבולת שועל':30 };
     const cerealOpts = cerealNames.map(n => {
       const g = calToGrams(cerealCal, CEREAL_CAL100[n] || 380);
-      return n + '||' + g + 'ג||' + g + 'ג';
+      const cups = Math.round(g / (CEREAL_UNIT_G[n] || 30) * 4) / 4;
+      return n + '||' + cups + ' כוס||' + g + 'ג';
     }).join(' / ');
     const cerealG = calToGrams(cerealCal, 380);
     const cerealProt = Math.round(cerealG * 7 / 100);
@@ -4671,7 +4673,8 @@ ${planHtml}
     const lines = [];
     const milkOpts = activeMilkIds.map(id => {
       const nm = MILK_ID_MAP[id] || 'חלב';
-      return nm + '||' + milkMl + ' מ"ל||—';
+      const cups = Math.round(milkMl / 140 * 4) / 4;
+      return nm + '||' + cups + ' כוס||' + milkMl + ' מ"ל';
     }).join(' / ');
     lines.push('חלב (' + milkCalActual + ' קל): ' + milkOpts);
     if (powderCal) lines.push('אבקת חלבון (' + powderCal + ' קל): אבקת חלבון||' + powderScoops + ' סקופ||—');
@@ -4725,23 +4728,21 @@ ${planHtml}
     const allBreads = pickAllBreads(meal, 'toast');
     const lines = [];
 
-    // לחם - תומך יחידות חצי (0.5, 1, 1.5...) עם גרמים
     const breadLines = allBreads.map(b => {
       const rawUnits = breadCalBudget / b.cal;
       const bUnits = Math.max(0.5, Math.round(rawUnits * 2) / 2);
-      const gramsTotal = bUnits * b.unitG;
-      return b.name + '||' + bUnits + ' ' + b.unit + ' (' + gramsTotal + 'ג)' + '||—';
+      const gramsTotal = Math.round(bUnits * b.unitG);
+      return b.name + '||' + bUnits + ' ' + b.unit + '||' + gramsTotal + 'ג';
     });
     lines.push('לחם (' + breadCalBudget + ' קל): ' + breadLines.join(' / '));
 
-    // גבינה - מטפלת unit: null (Bulgarian = גרמים בלבד)
     const cheeseLines = activeCheeseIds.map(id => {
       const ch = TOAST_CHEESE[id] || TOAST_CHEESE['ch9'];
-      const gramsTotal = units * ch.unitG;
+      const gramsTotal = Math.round(units * ch.unitG);
       if (ch.unit === null) {
-        return ch.name + '||' + gramsTotal + 'ג||—';
+        return ch.name + '||—||' + gramsTotal + 'ג';
       } else {
-        return ch.name + '||' + units + ' ' + ch.unit + ' (' + gramsTotal + 'ג)' + '||—';
+        return ch.name + '||' + units + ' ' + ch.unit + '||' + gramsTotal + 'ג';
       }
     });
     lines.push('גבינה (' + (units * avgCheeseCal) + ' קל): ' + cheeseLines.join(' / '));
