@@ -243,6 +243,13 @@
       border-radius:8px;
       padding:0.4rem 0.6rem;
       margin:0 -0.4rem;
+      /* פעימה עדינה כשנכנסים למצב אישור — מושכת את העין לאזור הקלוריות, ואז נחה */
+      animation: calPulse 1.3s ease-in-out 3;
+    }
+    /* פועם בין הזוהר הרגיל לזוהר חזק יותר; הקצוות (0/100%) זהים למצב הנח כדי שיתייצב חלק */
+    @keyframes calPulse {
+      0%, 100% { box-shadow:0 0 16px rgba(91,212,255,0.25), inset 0 0 8px rgba(91,212,255,0.1); border-color:var(--accent2); }
+      50%      { box-shadow:0 0 24px rgba(91,212,255,0.6),  inset 0 0 12px rgba(91,212,255,0.25); border-color:var(--accent); }
     }
     .summ-chip { font-size:0.68rem; color:var(--accent2); background:rgba(8,127,163,0.1); border-radius:10px; padding:0.1rem 0.4rem; }
     /* Horizontal meal type chips — equal width, fill row */
@@ -1054,9 +1061,6 @@
   const BF_LEVELS_MALE   = [6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51];
   const BF_LEVELS_FEMALE = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57];
 
-  // Image display mapping: which image to show for each BF% value (female)
-  const BF_IMAGE_MAP_FEMALE = { 15: 15, 18: 18, 21: 21, 24: 24, 27: 27, 30: 30, 33: 36, 36: 42, 39: 45, 42: 39, 45: 45, 48: 48, 51: 51, 54: 54, 57: 57 };
-
   // Labels ordered index-0 = MOST muscular; uniform lengths prevent badge width jump
   const MUSCLE_LABELS_MALE   = ['מתקדם', 'מאוד מאומן', 'מאומן', 'מתחיל', 'עובד עליו', 'לא מאומן'];
   const MUSCLE_LABELS_FEMALE = ['מאוד מאומנת', 'ספורטיבית', 'מאומנת', 'לא מאומנת'];
@@ -1066,18 +1070,11 @@
   const BULK_GOAL_LABELS_FEMALE = ['לא מתאמנת', 'מתחילה', 'פעילה', 'חטובה', 'מוגדרת', 'ספורטיבית מאוד', 'תחרותית'];
   // BF% used as proxy for goal photo in bulk mode (fixed, low body-fat = muscular look)
   const BULK_GOAL_BF_MALE   = 12;  // always show m_12_1-10 photos for bulk goal (muscle variations)
-  const BULK_GOAL_BF_FEMALE = 24;  // always show f_24_1-7 photos for bulk goal (muscle variations)
+  const BULK_GOAL_BF_FEMALE = 21;  // always show f_21_1-7 photos for bulk goal (muscle variations)
 
-  // Returns path to the sliced cell image
+  // Returns path to the body-composition image: images/<g>_<bf%>_<muscleLevel>.png
   function bodyImg(g, fatPct, muscleLevel) {
-    // Female images only exist at muscle level 0; map muscle level to a lower BF% image as visual proxy
-    if (g === 'f' && muscleLevel > 0) {
-      const fatProxies = [36, 33, 30, 27, 24, 21, 18]; // levels 1–7: least to most muscular
-      const proxyFat = fatProxies[Math.min(muscleLevel - 1, fatProxies.length - 1)];
-      return `images/f_${proxyFat}_0.png`;
-    }
-    const displayFat = (g === 'f' && BF_IMAGE_MAP_FEMALE[fatPct]) ? BF_IMAGE_MAP_FEMALE[fatPct] : fatPct;
-    return `images/${g}_${displayFat}_${muscleLevel}.png`;
+    return `images/${g}_${fatPct}_${muscleLevel}.png`;
   }
 
   // Clamp a slider index's fat% to the nearest available value in the array
@@ -1519,16 +1516,16 @@
     // PROTEINS
     chicken: { kcal_per_100g: 170, prot_per_100g: 31, unit_weight_g: 60, unit_name: 'יחידה' },
     turkey: { kcal_per_100g: 160, prot_per_100g: 24, unit_weight_g: 0, unit_name: 'גרמים' },
-    thigh: { kcal_per_100g: 200, prot_per_100g: 27, unit_weight_g: 100, unit_name: 'גרם' },
+    thigh: { kcal_per_100g: 200, prot_per_100g: 27, unit_weight_g: 110, unit_name: 'יחידה' },
     shwarma: { kcal_per_100g: 200, prot_per_100g: 28, unit_weight_g: 80, unit_name: 'יחידה' },
-    tuna: { kcal_per_100g: 110, prot_per_100g: 25, unit_weight_g: 100, unit_name: 'גרם' },
+    tuna: { kcal_per_100g: 110, prot_per_100g: 25, unit_weight_g: 110, unit_name: 'קופסה' },
     white_fish: { kcal_per_100g: 150, prot_per_100g: 20, unit_weight_g: 150, unit_name: 'פילה' },
     salmon: { kcal_per_100g: 220, prot_per_100g: 20, unit_weight_g: 150, unit_name: 'פילה' },
     beef: { kcal_per_100g: 250, prot_per_100g: 26, unit_weight_g: 200, unit_name: 'מנת מסעדה' },
     minced: { kcal_per_100g: 220, prot_per_100g: 22, unit_weight_g: 0, unit_name: 'גרמים' },
     tofu: { kcal_per_100g: 200, prot_per_100g: 18, unit_weight_g: 300, unit_name: 'קופסא' },
     liver: { kcal_per_100g: 165, prot_per_100g: 27, unit_weight_g: 0, unit_name: 'גרמים' },
-    tuna_o: { kcal_per_100g: 200, prot_per_100g: 23, unit_weight_g: 100, unit_name: 'גרם' },
+    tuna_o: { kcal_per_100g: 200, prot_per_100g: 23, unit_weight_g: 110, unit_name: 'קופסה' },
     pastrama: { kcal_per_100g: 100, prot_per_100g: 11, unit_weight_g: 20, unit_name: 'פרוסה' },
     smoked_s: { kcal_per_100g: 160, prot_per_100g: 10, unit_weight_g: 100, unit_name: 'גרם' },
     egg: { kcal_per_100g: 150, prot_per_100g: 12, unit_weight_g: 70, unit_name: 'ביצה L' },
@@ -2392,14 +2389,24 @@
   }
 
   function updateAllWeightUIs() {
-    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500) };
+    // מינימום קלוריות לכל ארוחה — מתחת לזה מספר הקלוריות נצבע אדום (אזהרה, לא חסימה)
+    // כל הארוחות כולל הקטנות חייבות ערך כדי ש-toggle יקבל boolean אמיתי (אחרת הוא מתהפך בכל לחיצה)
+    const SLOT_MIN = {
+      'בוקר': 200,
+      'בין_בוקר_לצהריים': 100,
+      'צהריים': (d.gender === 'גבר' ? 600 : 500),
+      'בין_צהריים_לערב': 100,
+      'ערב': (d.gender === 'גבר' ? 600 : 500),
+      'לילה': 100
+    };
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
       if (!numEl) return;
       const weight = d.meals[mt.id].weight;
       const minForMeal = SLOT_MIN[mt.id];
-      const isBelowMin = minForMeal && weight < minForMeal;
+      // !! מבטיח boolean אמיתי — classList.toggle עם undefined מתהפך במקום לכבות
+      const isBelowMin = !!(minForMeal && weight < minForMeal);
       numEl.textContent = weight + ' קל׳';
       numEl.classList.toggle('below-min', isBelowMin);
       if (isBelowMin) {
@@ -3064,6 +3071,8 @@
     const content = document.getElementById('meals-unlocked-content');
     if (content) content.classList.add('confirm-mode');
     updateS5Btn();
+    // גלילה עדינה לרשימת הארוחות כדי שהפוקוס יעבור לאזור הקלוריות שעכשיו פועם
+    document.getElementById('meal-list')?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
   window.enterCalorieConfirmMode = enterCalorieConfirmMode;
 
@@ -3160,6 +3169,16 @@
   //   "ירקות טריים (100 קל)"      → name=ירקות טריים, qty=—,           g=—
   //   "1.5 כפות (~270ג)"           → name=אורז לבן,  qty=1.5 כפות,    g=270ג
   // Builders emit "name||qty||grams" — split by || for clean table columns
+
+  // מעגל את מספר הגרמים במחרוזת כלפי מטה לכפולה של 10 (282ג → 280ג) למספרים נקיים.
+  // שומר על תחיליות כמו ~ ועל ערכים בלי מספר (—); ערכים מתחת ל-10 נשארים כמו שהם.
+  function roundGramsStr(s) {
+    return s.replace(/\d+/, m => {
+      const n = parseInt(m, 10);
+      return n >= 10 ? String(Math.floor(n / 10) * 10) : m;
+    });
+  }
+
   function parseItemToRow(line) {
     // Handle multiple items separated by ' / ' (e.g., multiple sauces)
     // Each item could be: name||qty||grams or name||units||qty||grams||tier
@@ -3189,6 +3208,7 @@
           };
         }
       }
+      row.g = roundGramsStr(row.g); // עיגול גרמים כלפי מטה לכפולות של 10
       rows.push(row);
     });
 
@@ -3703,7 +3723,7 @@
                 + (isLast  ? ' plan-ss-last'  : '');
               tableRows += '<tr class="plan-ss-row">'
                 + '<td class="' + numCellClass + '">' + num + '</td>'
-                + '<td class="plan-ex-name">' + escHtml(e.ex.name) + '</td>'
+                + '<td class="plan-ex-name">' + escHtml(e.ex.name) + (e.goalNote ? '<span class="plan-ex-goal">🎯 לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
                 + '<td class="plan-ex-sets">' + e.sets + '</td>'
                 + '<td class="plan-ex-reps">' + escHtml(e.reps) + '</td>'
                 + '<td class="plan-ex-drop">' + (e.drop ? '<span class="plan-drop-tick">✓</span>' : '') + '</td>'
@@ -3715,7 +3735,7 @@
             group.forEach(function(e) {
               tableRows += '<tr>'
                 + '<td class="plan-ex-num">' + num + '</td>'
-                + '<td class="plan-ex-name">' + escHtml(e.ex.name) + '</td>'
+                + '<td class="plan-ex-name">' + escHtml(e.ex.name) + (e.goalNote ? '<span class="plan-ex-goal">🎯 לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
                 + '<td class="plan-ex-sets">' + e.sets + '</td>'
                 + '<td class="plan-ex-reps">' + escHtml(e.reps) + '</td>'
                 + '<td class="plan-ex-drop">' + (e.drop ? '<span class="plan-drop-tick">✓</span>' : '') + '</td>'
@@ -3766,6 +3786,15 @@
         });
 
         workoutHtml += '</tbody></table>';
+
+        // הערה כנה: אם מספר הימים/הזמן לא אפשרו להגיע לנפח האידיאלי לכל השרירים
+        if (workout.volumeShortfall) {
+          workoutHtml += '<div class="plan-workout-notes" style="margin-top:10px">'
+            + '💡 <strong>שווה לדעת:</strong> במספר הימים והזמן שבחרת לא ניתן להגיע לנפח האידיאלי לכל קבוצות השריר — '
+            + 'בנינו את התוכנית לפי סדר העדיפויות שלך והוצאנו ממנה את המקסימום. '
+            + 'הוספת יום אימון או הארכת האימון יאפשרו תוצאות טובות יותר.'
+            + '</div>';
+        }
       }
     }
 
@@ -3893,6 +3922,7 @@
         '.plan-ex-table tr:last-child td{border-bottom:0}',
         '.plan-ex-num{width:26px;text-align:center!important}',
         '.plan-ex-name{color:#e2edf2;text-align:right}',
+        '.plan-ex-goal{display:block;font-size:0.62rem;color:#5bd4ff;font-weight:600;margin-top:1px}',
         '.plan-ex-sets{width:44px;text-align:center!important}',
         '.plan-ex-reps{width:54px;text-align:center!important}',
         '.plan-ex-drop{width:32px;text-align:center!important;font-size:0.68rem;color:#8aa4af}',
@@ -5651,17 +5681,18 @@ ${planHtml}
       return { key, name: nameHe, muscles, isForcedFB: !!isForcedFB };
     }
 
-    // מוסיפים ביום push_legs גם ארבע ראשי; ביום pull_hinge גם המסטרינג + תאומים + בטן
+    // כל יום מפרט את כל השרירים שמותר לאמן בו (לא רק את העיקריים) —
+    // המקצה הגלובלי בוחר מתוכם לפי עדיפות וקיבולת זמן. ימי FB מורחבים לכל השרירים בזמן ריצה.
     const DAYS = {
-      push_legs:    makeDay('push_legs',   'פוש + רגליים', ['chest','shoulders','tricep','quad']),
-      pull_hinge:   makeDay('pull_hinge',  'פול + הינג',   ['back','bicep','hamstring','calves','abs']),
-      fb_male:      makeDay('fb_male',     'Full Body',     ['chest','back','quad','hamstring','glute'], true),
-      fb_female:    makeDay('fb_female',   'Full Body',     ['glute','quad','hamstring','back','chest','abs'], true),
-      upper_f:      makeDay('upper_f',     'עליון',         ['back','chest','shoulders','tricep','abs']),
-      lower_f:      makeDay('lower_f',     'תחתון',         ['glute','hamstring','quad','calves','abs']),
+      push_legs:    makeDay('push_legs',   'פוש + רגליים', ['chest','shoulders','quad','glute','tricep']),
+      pull_hinge:   makeDay('pull_hinge',  'פול + הינג',   ['back','hamstring','glute','bicep','calves','abs']),
+      fb_male:      makeDay('fb_male',     'Full Body',     ['chest','back','shoulders','quad','hamstring','glute','tricep','bicep','calves','abs'], true),
+      fb_female:    makeDay('fb_female',   'Full Body',     ['glute','quad','hamstring','back','chest','shoulders','abs','tricep','bicep','calves'], true),
+      upper_f:      makeDay('upper_f',     'עליון',         ['chest','back','shoulders','tricep','bicep','abs']),
+      lower_f:      makeDay('lower_f',     'תחתון',         ['glute','quad','hamstring','calves','abs']),
       ppl_push:     makeDay('ppl_push',    'פוש',           ['chest','shoulders','tricep']),
       ppl_pull:     makeDay('ppl_pull',    'פול',           ['back','bicep','abs']),
-      ppl_legs:     makeDay('ppl_legs',    'רגליים',        ['quad','hamstring','calves']),
+      ppl_legs:     makeDay('ppl_legs',    'רגליים',        ['quad','hamstring','glute','calves']),
     };
 
     // ── נפח שבועי לפי עדיפות ורמה ──
@@ -5690,12 +5721,13 @@ ${planHtml}
         : (u.canPullup === 'כן' || u.canDips === 'כן');
       const base = Math.max(0, selfScore + (capOk ? 0 : -1));
 
-      // perfScore: משקלי עבודה — יכול גם להעלות וגם להוריד
+      // perfScore: משקלי עבודה — סף מותאם מין (נשים ~65% מהגברים)
+      const f = isFemale ? 0.65 : 1;
       const squat = u.workingWeights?.squat;
       const bench = u.workingWeights?.bench || u.workingWeights?.hip_thrust;
       const perfScores = [];
-      if (squat && squat !== -1 && squat > 0) perfScores.push(squat < 60 ? 0 : squat < 100 ? 1 : 2);
-      if (bench && bench !== -1 && bench > 0) perfScores.push(bench < 40 ? 0 : bench < 70 ? 1 : 2);
+      if (squat && squat !== -1 && squat > 0) perfScores.push(squat < 60 * f ? 0 : squat < 100 * f ? 1 : 2);
+      if (bench && bench !== -1 && bench > 0) perfScores.push(bench < 40 * f ? 0 : bench < 70 * f ? 1 : 2);
       if (perfScores.length === 0) return base;
 
       const perfScore = Math.round(perfScores.reduce((a,b)=>a+b,0) / perfScores.length);
@@ -5743,9 +5775,16 @@ ${planHtml}
 
     // ── בניית רצף הימים ──
     // מחזיר מערך של dayTemplate objects בסדר לפי הימים שנבחרו
-    function buildDaySequence(split, u) {
+    function buildDaySequence(split, u, prio) {
       const isMale = u.gender === 'גבר';
       const days   = Math.max(1, u.trainingDays || 3);
+      prio = prio || {};
+      // איזה חצי גוף בעדיפות גבוהה יותר — קובע לאיזה חצי הולך היום ה"עודף" בספליט אי-זוגי.
+      // שוקלים לפי ריבוע העדיפות כדי ששריר "פוקוס" (5) ימשוך חזק יותר מכמה שרירים סטנדרטיים.
+      const sq = v => (v || 0) * (v || 0);
+      const lowerSum = sq(prio.glute)+sq(prio.quad)+sq(prio.hamstring)+sq(prio.calves);
+      const upperSum = sq(prio.chest)+sq(prio.back)+sq(prio.shoulders)+sq(prio.tricep)+sq(prio.bicep);
+      const lowerHeavy = lowerSum > upperSum;
 
       // ימי האימון שנבחרו ממוינים לפי יום בשבוע
       const specificDays = (u.trainingDaysSpecific || [])
@@ -5801,7 +5840,10 @@ ${planHtml}
       }
 
       if (split === 'upper_lower5') {
-        const seq = [DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f, DAYS.upper_f];
+        // היום העודף (5 ימים = 3+2) הולך לחצי המועדף: תחתון-כבד → 3 תחתון, אחרת → 3 עליון
+        const seq = lowerHeavy
+          ? [DAYS.lower_f, DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f]
+          : [DAYS.upper_f, DAYS.lower_f, DAYS.upper_f, DAYS.lower_f, DAYS.upper_f];
         return seq.map((t,i) => ({ ...t, name: nm(i,t, hasSpecific ? specificDays[i] : undefined) }));
       }
 
@@ -5813,29 +5855,6 @@ ${planHtml}
       // fallback
       const t = isMale ? DAYS.fb_male : DAYS.fb_female;
       return [{ ...t, name: nm(0,t) }];
-    }
-
-    // ── מספר הופעות שבועיות של כל שריר לפי ספליט ──
-    // עבור ab5 — כל שריר מופיע בממוצע 2.5× (שבוע A: 3/2, שבוע B: 2/3)
-    function calcAppearances(split, dayTmpls) {
-      const app = {};
-      if (split === 'ab5') {
-        // טיפול מיוחד: 2.5 הופעות לכל שריר
-        Object.keys(EXERCISE_POOLS).forEach(mId => { app[mId] = 2.5; });
-        // אבל שרירים שמופיעים רק בA או רק בB צריכים עדיין לחשב נכון
-        const inA = new Set(DAYS.push_legs.muscles);
-        const inB = new Set(DAYS.pull_hinge.muscles);
-        Object.keys(EXERCISE_POOLS).forEach(mId => {
-          if (inA.has(mId) && !inB.has(mId)) app[mId] = 3; // A מופיע 3× ב-5 ימים
-          else if (!inA.has(mId) && inB.has(mId)) app[mId] = 2; // B מופיע 2× ב-5 ימים
-          else app[mId] = 2.5;
-        });
-        return app;
-      }
-      dayTmpls.forEach(day => {
-        day.muscles.forEach(m => { app[m] = (app[m] || 0) + 1; });
-      });
-      return app;
     }
 
     // ── מגבלת תרגילים לפי זמן אימון ──
@@ -6029,13 +6048,21 @@ ${planHtml}
                      canField:'canPushup' },
     };
 
+    // תווית קריאה לכל תרגיל-יעד — מוצגת ליד התרגיל ("לשיפור ה...")
+    const GOAL_LABELS = {
+      squat:'סקווט', rdl:'דדליפט רומני', deadlift:'דדליפט', bench:'לחיצת חזה במוט',
+      ohp:'לחיצת כתפיים', hip_machine:'היפ טראסט במכונה', hip_bar:'היפ טראסט עם מוט',
+      pullup:'מתח', dips:'מקבילים', pushup:'שכיבות סמיכה'
+    };
+
     function buildStrengthGoalExercises(u, avoid, equipAllowed) {
       const goals = (u.strengthExercises || []).slice(0, 2);
-      const pinned = []; // { muscleId, ex, isHelper }
+      const pinned = []; // { muscleId, ex, isHelper, goalLabel }
 
       for (const goalId of goals) {
         const cfg = STRENGTH_GOAL_MAP[goalId];
         if (!cfg) continue;
+        const goalLabel = GOAL_LABELS[goalId] || '';
 
         const canDo = !cfg.canFail || u[cfg.canField] === 'כן';
         const exName = canDo ? cfg.mainEx : cfg.progressEx;
@@ -6057,459 +6084,419 @@ ${planHtml}
         const mainObj = findEx(exName);
         const helpObj = findEx(hlpName);
 
-        if (mainObj) pinned.push({ muscleId: cfg.muscle, ex: mainObj, isHelper: false });
-        if (helpObj) pinned.push({ muscleId: helpObj.muscle, ex: helpObj, isHelper: true });
+        if (mainObj) pinned.push({ muscleId: cfg.muscle, ex: mainObj, isHelper: false, goalLabel });
+        if (helpObj) pinned.push({ muscleId: helpObj.muscle, ex: helpObj, isHelper: true, goalLabel });
       }
       return pinned;
     }
 
-    // ── בניית יום אימון ──
-    function buildDay(dayTmpl, prio, dayVolMin, avoid, equipAllowed, level, sups, timeBudget, pinnedForDay) {
-      const muscles = dayTmpl.muscles.filter(m => EXERCISE_POOLS[m] && (prio[m] || 0) > 0);
+    // ── מקסימום תרגילים לשריר ביום בודד (מונע "הצפת" יום בשריר אחד) ──
+    function maxPerDayMuscle(p) { return p >= 4 ? 3 : 2; }
 
-      // ── שלב 1: תרגילי יעד מוצמדים (strength goals) ──
-      let exercises = [];
-      const pinnedMusclesUsed = new Set();
-      for (const p of pinnedForDay) {
-        exercises.push({ muscleId: p.muscleId, ex: p.ex, sets: 3, reps: repRange(p.ex.moveType, level), drop: false, pinned: true });
-        pinnedMusclesUsed.add(p.muscleId);
-      }
-
-      // ── שלב 2: חשב כמה תרגילים נדרשים לכל שריר (מוגבל לtime budget) ──
-      const secVolAccum = {};
-      // קרדיט משני מהתרגילים המוצמדים
-      for (const e of exercises) {
-        for (const sm of (e.ex.secondary || [])) {
-          secVolAccum[sm] = (secVolAccum[sm] || 0) + e.sets * 0.5;
-        }
-      }
-      // כמה סטים כבר יש לשרירים המוצמדים
-      const pinnedSetCount = {};
-      for (const e of exercises) {
-        pinnedSetCount[e.muscleId] = (pinnedSetCount[e.muscleId] || 0) + e.sets;
-      }
-
-      // חשב כמה time blocks זמינים לתרגילים לא-מוצמדים
-      const maxNonPinnedExercises = Math.max(0, timeBudget - exercises.length);
-
-      const muscleExCount = {};
-      let totalExercisesPlanned = 0;
-
-      // תחילה, חשב כמה כל שריר צריך
-      const muscleNeedData = {};
-      for (const mId of muscles) {
-        const needed   = dayVolMin[mId] || 0;
-        const p        = prio[mId] || 0;
-        if (needed === 0) { muscleExCount[mId] = 0; continue; }
-        const secAlready   = secVolAccum[mId] || 0;
-        const pinnedAlready = pinnedSetCount[mId] || 0;
-        const totalAlready  = secAlready + pinnedAlready;
-        if (p <= 2 && totalAlready >= needed) {
-          muscleExCount[mId] = 0;
-        } else {
-          const remaining = Math.max(0, needed - totalAlready);
-          const minEx = pinnedMusclesUsed.has(mId) ? 0 : 1;
-          const maxEx = Math.ceil(remaining / 3);
-          muscleNeedData[mId] = { need: maxEx, min: minEx, prio: p };
-        }
-      }
-
-      // בחר תרגילים בהתאם לtime budget — הקצאה הוגנת (round-robin) לפי עדיפות
-      // ממוין לפי עדיפות (גבוה→נמוך) כדי שבמקרה של מחסור במקום, שריר חשוב יותר יקבל קודם
-      const musclesWithNeed = Object.keys(muscleNeedData).sort((a, b) => (muscleNeedData[b].prio || 0) - (muscleNeedData[a].prio || 0));
-
-      // אתחול כל שריר ל-0
-      for (const mId of musclesWithNeed) muscleExCount[mId] = 0;
-
-      // מעבר 1 — מינימום מובטח: כל שריר עם need מקבל תרגיל אחד קודם (לפי עדיפות)
-      // כך שריר בעדיפות נמוכה לא נמחק לגמרי כשהזמן מתמלא משרירים בעדיפות גבוהה
-      for (const mId of musclesWithNeed) {
-        if (totalExercisesPlanned >= maxNonPinnedExercises) break;
-        const { need, min } = muscleNeedData[mId];
-        const base = Math.max(min, need > 0 ? 1 : 0); // לפחות 1 אם בכלל צריך
-        if (base > 0) { muscleExCount[mId] = 1; totalExercisesPlanned += 1; }
-      }
-
-      // מעבר 2 — חלוקת מקום פנוי שנותר: סיבוב אחר סיבוב, תרגיל אחד בכל פעם,
-      // לפי עדיפות, עד שכל שריר מגיע ל-need שלו או שהזמן נגמר.
-      // round-robin (ולא greedy מלא) שומר על איזון נפח ישיר בין השרירים —
-      // שריר עיקרי לא "בולע" את כל המקום ומשאיר משניים בלי תרגיל שני.
-      let added = true;
-      while (totalExercisesPlanned < maxNonPinnedExercises && added) {
-        added = false;
-        for (const mId of musclesWithNeed) {
-          if (totalExercisesPlanned >= maxNonPinnedExercises) break;
-          const { need } = muscleNeedData[mId];
-          if (muscleExCount[mId] < need) {
-            muscleExCount[mId] += 1;
-            totalExercisesPlanned += 1;
-            added = true;
-          }
-        }
-      }
-
-      // ── מעבר 3 — צמצום מודע לנפח משני ──
-      // שריר משני (כמו יד אחורית/קדמית) מקבל נפח "חינם" מתרגילים מורכבים
-      // (לחיצות חזה/כתפיים → יד אחורית). אם שריר כבר מגיע ל-dayVolMin שלו
-      // דרך הסטים הישירים + הנפח המשני הצפוי, אין טעם לתת לו תרגיל ישיר נוסף —
-      // משחררים את המקום לשריר בעדיפות גבוהה יותר שעדיין חסר.
-      const projectedSec = () => {
-        // חישוב נפח משני צפוי לכל שריר מכל התרגילים שהוקצו (כולל מוצמדים)
-        const sec = {};
-        for (const e of exercises) { // מוצמדים
-          for (const sm of (e.ex.secondary || [])) sec[sm] = (sec[sm] || 0) + e.sets * 0.5;
-        }
-        for (const mId of Object.keys(muscleExCount)) {
-          const pool = EXERCISE_POOLS[mId] || [];
-          const exC  = muscleExCount[mId] || 0;
-          for (let ei = 0; ei < Math.min(exC, pool.length); ei++) {
-            for (const sm of (pool[ei].secondary || [])) sec[sm] = (sec[sm] || 0) + 3 * 0.5;
-          }
-        }
-        return sec;
-      };
-
-      // צמצם תרגילים מיותרים אצל שרירים שכבר מכוסים ע"י נפח משני
-      // (רק מעל המינימום של תרגיל אחד — לא מאפסים שריר)
-      for (const mId of musclesWithNeed) {
-        const { min } = muscleNeedData[mId];
-        const floor = Math.max(1, min); // תמיד משאירים לפחות תרגיל אחד ישיר
-        while (muscleExCount[mId] > floor) {
-          const sec = projectedSec();
-          const directIfReduced = (muscleExCount[mId] - 1) * 3; // 3 סטים לתרגיל
-          const projected = directIfReduced + (sec[mId] || 0) + (pinnedSetCount[mId] || 0);
-          if (projected >= (dayVolMin[mId] || 0)) {
-            muscleExCount[mId] -= 1;
-            totalExercisesPlanned -= 1;
-          } else break;
-        }
-      }
-
-      // הקצה מחדש מקום פנוי שהשתחרר — לשריר בעדיפות גבוהה שעדיין חסר
-      let reAdded = true;
-      while (totalExercisesPlanned < maxNonPinnedExercises && reAdded) {
-        reAdded = false;
-        for (const mId of musclesWithNeed) {
-          if (totalExercisesPlanned >= maxNonPinnedExercises) break;
-          const sec = projectedSec();
-          const projected = (muscleExCount[mId] * 3) + (sec[mId] || 0) + (pinnedSetCount[mId] || 0);
-          // הוסף רק אם השריר עדיין מתחת ל-dayVolMin ולא חרג מ-need
-          if (muscleExCount[mId] < muscleNeedData[mId].need && projected < (dayVolMin[mId] || 0)) {
-            muscleExCount[mId] += 1;
-            totalExercisesPlanned += 1;
-            reAdded = true;
-          }
-        }
-      }
-
-      // עדכן secondary accum
-      for (const mId of Object.keys(muscleExCount)) {
-        const pool = EXERCISE_POOLS[mId] || [];
-        const exC  = muscleExCount[mId] || 0;
-        for (let ei = 0; ei < Math.min(exC, pool.length); ei++) {
-          for (const sm of (pool[ei].secondary || [])) {
-            secVolAccum[sm] = (secVolAccum[sm] || 0) + 3 * 0.5;
-          }
-        }
-      }
-
-      // ── שלב 3: בחר תרגילים עד לlimit של time budget ──
-      // חשוב: עוברים לפי סדר עדיפות (musclesWithNeed) ולא לפי סדר התבנית,
-      // כדי שההקצאה משלב 2 תכובד — אחרת שריר שמופיע מאוחר בתבנית עלול
-      // להישאר ללא תרגילים כשהזמן מתמלא משרירים שמופיעים מוקדם יותר
-      for (const mId of musclesWithNeed) {
-        const count = muscleExCount[mId] || 0;
-        if (count === 0) continue;
-        // בדוק אם יש עדיין מקום בtime budget
-        if (exercises.length >= timeBudget) break;
-        const picked = pickExercisesForMuscle(mId, avoid, count, equipAllowed, false);
-        for (const ex of picked) {
-          // בדוק שוב לפני כל הוספה
-          if (exercises.length >= timeBudget) break;
-          // אל תכפיל תרגיל מוצמד
-          if (exercises.some(e => e.ex.name === ex.name)) continue;
-          exercises.push({ muscleId: mId, ex, sets: 3, reps: repRange(ex.moveType, level), drop: false });
-        }
-      }
-
-      // ── שלב 4: חיתוך לפי זמן (עם הרשאה ל-+1 overflow אם צריך לvolume) ──
-      // תרגיל סופרסט = חצי בלוק. כדי לחסוך X בלוקים צריך X סופרסטים.
-      const effectiveCount = (exList, forcedPairs) => exList.length - forcedPairs;
-
-      let forcedPairs = 0;
-
-      if (exercises.length > timeBudget + 1) {  // Allow +1 exercise if needed for volume
-        const excess = exercises.length - (timeBudget + 1);
-        // ניסיון 1: האם סופרסטים יספיקו (כל סופרסט חוסך בלוק אחד)
-        if (excess <= Math.floor(exercises.length / 2)) {
-          // מספיק סופרסטים — לא מוחקים, רק כופים
-          forcedPairs = excess;
-        } else {
-          // צריך גם למחוק תרגילים (אבל בעיון לא להפר volume targets)
-          // מחק לפי עדיפות עולה (פחות חשוב קודם), ולא מוצמד
-          const sortedByPrioAsc = [...muscles].sort((a,b) => (prio[a]||0) - (prio[b]||0));
-          for (const mId of sortedByPrioAsc) {
-            if (exercises.length <= timeBudget + 1) break;  // Stop if within allowance (+1 buffer)
-            const mExs = exercises.filter(e => e.muscleId === mId && !e.pinned);
-            const p = prio[mId] || 0;
-
-            if (p <= 1) {
-              // Low priority muscle — try to eliminate entirely
-              const volBeforeCut = exercises
-                .filter(e => e.muscleId === mId)
-                .reduce((sum, e) => sum + e.sets + (e.drop ? 1 : 0), 0);
-
-              // Only cut if it doesn't break volume (or prio=0, so no min required)
-              if (p === 0 || volBeforeCut >= (dayVolMin[mId] || 0)) {
-                const lastNonPinned = exercises.filter(e => e.muscleId !== mId && !e.pinned).pop();
-                if (lastNonPinned && canDrop(lastNonPinned.ex)) lastNonPinned.drop = true;
-                exercises = exercises.filter(e => !(e.muscleId === mId && !e.pinned));
-              }
-            } else if (mExs.length > 1) {
-              // Multiple exercises — try to remove last one
-              const exToRemove = mExs[mExs.length - 1];
-              const volBeforeCut = exercises
-                .filter(e => e.muscleId === mId)
-                .reduce((sum, e) => sum + e.sets + (e.drop ? 1 : 0), 0);
-              const volAfterCut = volBeforeCut - (exToRemove.sets + (exToRemove.drop ? 1 : 0));
-
-              // Only cut if it leaves volume >= target
-              if (volAfterCut >= (dayVolMin[mId] || 0)) {
-                exercises = exercises.filter(e => e !== exToRemove);
-              }
-              // If cutting would break volume, keep the exercise (use the +1 allowance)
-            }
-          }
-          // אחרי המחיקות, אם עדיין חורג — כפה סופרסטים
-          if (exercises.length > timeBudget + 1) {
-            forcedPairs = exercises.length - timeBudget - 1;
-          }
-        }
-      } else if (exercises.length > timeBudget) {
-        // Still within +1 allowance, just use supersets if needed
-        forcedPairs = exercises.length - timeBudget;
-      }
-
-      // ── FullBody: בימי FB תמיד מאפשרים כפיית סופרסטים ──
-      const dayForcesSups = dayTmpl.isForcedFB;
-
-      // ── שלב 5: תרגילי ישבן ב-upper_f — כ"זנב סופרסט" בלבד ──
-      if (dayTmpl.key === 'upper_f' && (prio['glute'] || 0) > 0) {
-        const gluteIso = pickExercisesForMuscle('glute', avoid, 1, equipAllowed, true);
-        if (gluteIso.length > 0 && exercises.length < timeBudget * 2) {
-          exercises.push({ muscleId:'glute', ex: gluteIso[0], sets:3, reps:'12–15', drop:false, isoTail:true });
-        }
-      }
-
-      // ── שלב 6: prio=1 → הפוך לדרופסט ──
-      exercises = exercises.filter(e => {
-        if ((prio[e.muscleId] || 0) === 1 && !e.pinned) {
-          const idx = exercises.indexOf(e);
-          if (idx > 0 && canDrop(exercises[idx-1].ex)) exercises[idx-1].drop = true;
-          return false;
-        }
-        return true;
-      });
-
-      // ── שלב 7: הקצאת מספרים סדרתי (עדיין בלי supersets) ──
-      // supersets יוחלטו בbuildWorkoutPlan לפי volume/time הממשי
-      const exWithNum = exercises.map((e, idx) => ({ ...e, num: idx + 1, paired: false }));
-
-      return { name: dayTmpl.name, exercises: exWithNum, timeConstrained: exercises.length > timeBudget };
+    // ── מיון תרגילי היום: מוצמדים → מורכבים לפי סדר התבנית → בטן/תאומים בסוף ──
+    function orderDayExercises(exs, tmplMuscles) {
+      const tIdx = m => { const i = tmplMuscles.indexOf(m); return i === -1 ? 90 : i; };
+      const isTail = m => (m === 'abs' || m === 'calves');
+      return exs.map((e, i) => ({ e, i })).sort((a, b) => {
+        if (!!b.e.pinned !== !!a.e.pinned) return a.e.pinned ? -1 : 1;   // מוצמדים ראשונים
+        const ta = isTail(a.e.muscleId) ? 1 : 0, tb = isTail(b.e.muscleId) ? 1 : 0;
+        if (ta !== tb) return ta - tb;                                   // בטן/תאומים אחרונים
+        const ma = tIdx(a.e.muscleId), mb = tIdx(b.e.muscleId);
+        if (ma !== mb) return ma - mb;                                   // סדר התבנית
+        return a.i - b.i;                                                // יציב: סדר הבחירה מהפול
+      }).map(o => o.e);
     }
 
-    // ── buildWorkoutPlan — הפונקציה הראשית ──
+    // ══════════════════════════════════════════════════════
+    // buildWorkoutPlan — מקצה נפח גלובלי מודע-לקיבולת
+    // הרעיון: יעד נפח שבועי לכל שריר (עדיפות×רמה) → פיזור תרגילים על כל ימי
+    // האימון לפי עדיפות → התאמת סטים (4 סטים → דרופסט → סופרסט) עד שעומדים ביעד.
+    // ══════════════════════════════════════════════════════
     window.buildWorkoutPlan = function(u) {
-      // ── קביעת רמת אימון (0/1/2) ──
-      function classifyLevel(u) {
-        const tl = u.trainingLevel || 0;
-        let selfScore = tl <= 2 ? 0 : tl <= 4 ? 1 : 2;
-        const isFemale = u.gender === 'אישה';
-        const capOk = isFemale
-          ? (u.canPushup === 'כן')
-          : (u.canPullup === 'כן' || u.canDips === 'כן');
-        const base = Math.max(0, selfScore + (capOk ? 0 : -1));
-        const squat = u.workingWeights?.squat;
-        const bench = u.workingWeights?.bench || u.workingWeights?.hip_thrust;
-        const perfScores = [];
-        if (squat && squat !== -1 && squat > 0) perfScores.push(squat < 60 ? 0 : squat < 100 ? 1 : 2);
-        if (bench && bench !== -1 && bench > 0) perfScores.push(bench < 40 ? 0 : bench < 70 ? 1 : 2);
-        if (perfScores.length === 0) return base;
-        const perfScore = Math.round(perfScores.reduce((a,b)=>a+b,0) / perfScores.length);
-        return Math.max(0, Math.min(2, Math.round((base + perfScore) / 2)));
-      }
-
-      const isMale = u.gender === 'גבר';
-      const avoid  = buildAvoidSet(u.injuries || []);
+      const isMale   = u.gender === 'גבר';
+      const isFemale = u.gender === 'אישה';
+      const avoid    = buildAvoidSet(u.injuries || []);
       const equipAllowed = buildEquipAllowed(u);
 
-      // עדיפות — ברירת מחדל לפי מין, מוחלפת בבחירת המשתמש
+      // עדיפות — ברירת מחדל לפי מין, מוחלפת בבחירת המשתמש (ה-UI שולח תמיד 10 שרירים)
       const defaultPrio = isMale
-        ? { chest:4, back:4, shoulders:3, tricep:3, bicep:3, quad:3, hamstring:3, glute:1, calves:2, abs:2 }
-        : { chest:2, back:3, shoulders:2, tricep:2, bicep:2, quad:4, hamstring:4, glute:5, calves:2, abs:3 };
+        ? { chest:3, back:3, shoulders:4, tricep:4, bicep:4, quad:3, hamstring:3, glute:0, calves:3, abs:3 }
+        : { chest:2, back:4, shoulders:2, tricep:2, bicep:2, quad:3, hamstring:3, glute:5, calves:0, abs:4 };
       const prio = (u.musclePriorities && Object.keys(u.musclePriorities).length > 0)
         ? { ...defaultPrio, ...u.musclePriorities } : defaultPrio;
 
       const level    = classifyLevel(u);
       const split    = getSplit(u, level, prio);
-      const dayTmpls = buildDaySequence(split, u);
-      const sups     = u.supersets === 'כן';
+      const dayTmpls = buildDaySequence(split, u, prio);
+      const wantsSup = u.supersets === 'כן';
 
-      // ── נפח שבועי ──
-      const appearances = calcAppearances(split, dayTmpls);
-      const weeklyMin = {};
-      const dayVolMin = {};
+      // ── סינון תרגילים מתקדמים / משקל-גוף שלא כל אחד מסוגל לבצע ──
+      // ניתנים רק למתאמן מתקדם (level≥1) עם אחוז שומן ≤30%. מתח/מקבילים דורשים גם אישור יכולת.
+      // מי שלא עומד בתנאים מקבל חלופת מכונה/כבל מהפול (התרגיל פשוט מסונן מה-avoid).
+      // הערה: תרגילי יעד (strength goals) מטופלים בנפרד ולא מושפעים מסינון זה.
+      (function gateAdvancedExercises() {
+        const leanAdvanced = (u.currentBF || 0) <= 30 && level >= 1;
+        if (!(leanAdvanced && u.canPullup === 'כן')) { avoid.add('מתח אחיזה רחבה'); avoid.add('מתח שלילי'); }
+        if (!(leanAdvanced && u.canDips === 'כן'))   { avoid.add('מקבילים'); avoid.add('ג׳קסונס'); }
+        if (!leanAdvanced) {
+          ['סיסי סקווט','כפיפות נורדיות','הרמות רגליים על מקבילים','הרמות רגליים על מתח']
+            .forEach(n => avoid.add(n));
+        }
+      })();
+
+      // ── יעד נפח שבועי לכל שריר ──
+      const weeklyMin = {}, weeklyMax = {};
       Object.keys(EXERCISE_POOLS).forEach(mId => {
-        weeklyMin[mId] = volumeRange(prio[mId] || 0, level)[0];
-        const app = appearances[mId] || 1;
-        dayVolMin[mId] = Math.ceil(weeklyMin[mId] / app);
+        const r = volumeRange(prio[mId] || 0, level);
+        weeklyMin[mId] = r[0]; weeklyMax[mId] = r[1];
       });
 
       const sessionMins = Math.max(45, u.sessionDuration || 60);
-      const timeBudget  = maxBlocks(sessionMins);
+      const timeBudget  = maxBlocks(sessionMins);   // בלוקים (תרגילים) ליום ללא סופרסט
 
-      // ── תרגילי יעד ──
+      // ── תרגילי יעד (strength goals) — נצמדים, מתעלמים מפציעה (המשתמש בחר במפורש) ──
       const pinnedAll = buildStrengthGoalExercises(u, avoid, equipAllowed);
 
-      // ── בנה כל יום ──
-      const builtDays = dayTmpls.map(dayTmpl => {
-        // תרגילים מוצמדים שמתאימים ליום זה
-        const pinnedForDay = pinnedAll.filter(p => dayTmpl.muscles.includes(p.muscleId));
-        return buildDay(dayTmpl, prio, dayVolMin, avoid, equipAllowed, level, sups, timeBudget, pinnedForDay);
+      // ── מבנה אימונים (sessions) ──
+      // קבוע (ברירת מחדל): כל סוג אימון נבנה פעם אחת ומשוכפל לכל הימים שלו (freq).
+      // מגוון: כל יום נבנה בנפרד (freq=1) עם בחירת תרגילים משלו.
+      // נפח שבועי = נפח הסשן × freq. אורך אימון נמדד פר-סשן (לא מוכפל).
+      const fixedWorkouts = u.workoutVariety !== 'varied';
+      const mkSession = (tmpl, dayIndices) => ({
+        tmpl,
+        muscles: (tmpl.isForcedFB ? Object.keys(EXERCISE_POOLS) : tmpl.muscles)
+                   .filter(m => (prio[m] || 0) > 0 && EXERCISE_POOLS[m]),
+        freq: dayIndices.length, dayIndices,
+        picks: {}, exByMuscle: {}, exCount: 0,
+      });
+      const days = [];                 // "sessions": בקבוע = סוג ייחודי, במגוון = יום בודד
+      const sessionByDayIndex = [];    // מיפוי אינדקס-יום-אמיתי → סשן
+      if (fixedWorkouts) {
+        const byKey = {};
+        dayTmpls.forEach((t, i) => { (byKey[t.key] = byKey[t.key] || []).push(i); });
+        Object.values(byKey).forEach(idxs => {
+          const sess = mkSession(dayTmpls[idxs[0]], idxs);
+          days.push(sess);
+          idxs.forEach(i => { sessionByDayIndex[i] = sess; });
+        });
+      } else {
+        dayTmpls.forEach((t, i) => {
+          const sess = mkSession(t, [i]);
+          days.push(sess);
+          sessionByDayIndex[i] = sess;
+        });
+      }
+
+      // מאגר מועמדים מסודר לכל שריר (מסונן לפי ציוד+פציעה)
+      const pickList = {}, pickPtr = {};
+      Object.keys(EXERCISE_POOLS).forEach(mId => {
+        pickList[mId] = pickExercisesForMuscle(mId, avoid, EXERCISE_POOLS[mId].length, equipAllowed, false);
+        pickPtr[mId] = 0;
       });
 
-      // ── נפח בפועל — חישוב ראשוני ──
-      function computeActualVol(days) {
-        const vol = {};
+      // ── מאזן נפח רץ ──
+      const directSets = {}, secSets = {};
+      Object.keys(EXERCISE_POOLS).forEach(mId => { directSets[mId] = 0; secSets[mId] = 0; });
+      const addSec = (ex, n) => { for (const sm of (ex.secondary || [])) secSets[sm] = (secSets[sm] || 0) + n * 0.5; };
+
+      // התרגיל הבא לשריר ליום נתון (לא חוזר על תרגיל באותו יום), או null אם הפול מוצה ליום
+      function nextExerciseFor(m, day) {
+        const list = pickList[m] || [];
+        if (!list.length) return null;
+        const usedInDay = new Set((day.picks[m] || []).map(e => e.name));
+        for (let tries = 0; tries < list.length; tries++) {
+          const ex = list[pickPtr[m] % list.length];
+          pickPtr[m]++;
+          if (!usedInDay.has(ex.name)) return ex;
+        }
+        return null;
+      }
+
+      // משבץ תרגיל אחד לשריר m ביום הטוב ביותר; capPerDay = מקס' תרגילים ליום. true אם הצליח.
+      function assignOne(m, capPerDay) {
+        const elig = days
+          .filter(d => d.muscles.includes(m)
+                    && d.exCount < capPerDay
+                    && (d.exByMuscle[m] || 0) < maxPerDayMuscle(prio[m] || 0))
+          .sort((a, b) => (a.exByMuscle[m] || 0) - (b.exByMuscle[m] || 0) || a.exCount - b.exCount);
+        for (const day of elig) {
+          const ex = nextExerciseFor(m, day);
+          if (!ex) continue;
+          (day.picks[m] = day.picks[m] || []).push(ex);
+          day.exByMuscle[m] = (day.exByMuscle[m] || 0) + 1;
+          day.exCount++;
+          directSets[m] += 3 * day.freq;
+          addSec(ex, 3 * day.freq);
+          return true;
+        }
+        return false;
+      }
+
+      // ── שלב 0: השמת תרגילי יעד מוצמדים — הראשי עד 3 ימים (תדירות בונה כוח), העזר פעם אחת ──
+      const pinnedNames = new Set();
+      const pinnedGoal  = {};   // שם תרגיל -> תווית היעד ("לשיפור ה...")
+      pinnedAll.forEach(p => {
+        let appearances = 0;
+        const maxApp = p.isHelper ? 1 : 3;   // הראשי עד 3 הופעות/שבוע, העזר אחת
+        // עזר: עדיף סשן בתדירות נמוכה כדי לא לנפח (בקבוע סשן מופיע freq פעמים)
+        const order = days.filter(d => d.muscles.includes(p.muscleId)).sort((a, b) => a.freq - b.freq);
+        for (const day of order) {
+          if (appearances >= maxApp) break;
+          if ((day.picks[p.muscleId] || []).some(e => e.name === p.ex.name)) continue;
+          (day.picks[p.muscleId] = day.picks[p.muscleId] || []).push(p.ex);
+          day.exByMuscle[p.muscleId] = (day.exByMuscle[p.muscleId] || 0) + 1;
+          day.exCount++;
+          directSets[p.muscleId] += 3 * day.freq;
+          addSec(p.ex, 3 * day.freq);
+          pinnedNames.add(p.ex.name);
+          if (p.goalLabel) pinnedGoal[p.ex.name] = p.goalLabel;
+          appearances += day.freq;
+        }
+      });
+
+      // ── ידיים נהנות מהרבה נפח משני (דחיפות→יד אחורית, משיכות→יד קדמית) ──
+      // לכן משבצים אותן אחרונות: רק אחרי שכל המורכבים שובצו והנפח המשני ידוע,
+      // משלימים להן נפח ישיר רק כדי לכסות את החסר — ולא יותר (מונע עודף מיותר).
+      const ARM_FED = ['tricep', 'bicep'];
+      const isArm   = m => ARM_FED.includes(m);
+      const notArm  = m => !ARM_FED.includes(m);
+      const baseCap = wantsSup ? timeBudget * 2 : timeBudget;
+
+      // כיסוי — תרגיל ראשון מובטח לשרירי prio≥3 (פוקוס/חשובים), לפי עדיפות.
+      // שרירי prio 1-2 יקבלו תרגיל ראשון רק אחר כך (ב-fillToward), אחרי ש-3-5 קיבלו 1+2.
+      function coveragePass(cap, filter) {
+        Object.keys(EXERCISE_POOLS)
+          .filter(m => (prio[m] || 0) >= 3 && directSets[m] === 0 && filter(m))
+          .sort((a, b) => prio[b] - prio[a])
+          .forEach(m => { assignOne(m, cap); });
+      }
+
+      // מילוי חמדני לכיוון יעד — לפי עדיפות ואז גודל החוסר
+      function fillToward(targetOf, capPerDay, filter) {
+        const ok = filter || (() => true);
+        let progress = true;
+        while (progress) {
+          progress = false;
+          const cands = Object.keys(EXERCISE_POOLS)
+            .filter(m => (prio[m] || 0) > 0 && ok(m) && (targetOf(m) - directSets[m] - secSets[m]) > 0)
+            .sort((a, b) => (prio[b] - prio[a]) ||
+                  ((targetOf(b) - directSets[b] - secSets[b]) - (targetOf(a) - directSets[a] - secSets[a])));
+          for (const m of cands) {
+            if (assignOne(m, capPerDay)) { progress = true; break; } // החוסר השתנה — מיין מחדש
+          }
+        }
+      }
+
+      // ── שלב 1+2: קודם המורכבים (לא ידיים) — כיסוי, מילוי ליעד, ודחיפת פוקוס ──
+      coveragePass(baseCap, notArm);
+      fillToward(m => weeklyMin[m], baseCap, notArm);
+      fillToward(m => (prio[m] >= 4 ? weeklyMax[m] : 0), baseCap, notArm);
+
+      // ── שלב 3: ידיים — הנפח המשני כבר נספר, אז משלימים רק את החסר (לרוב מעט/כלום) ──
+      fillToward(m => weeklyMin[m], baseCap, isArm);
+      fillToward(m => (prio[m] >= 4 ? weeklyMax[m] : 0), baseCap, isArm);
+
+      // ── מימוש: בניית רשימת התרגילים בפועל לכל יום (3 סטים בסיס) ──
+      function realize() {
         days.forEach(day => {
-          day.exercises.forEach(e => {
-            vol[e.muscleId] = (vol[e.muscleId] || 0) + e.sets + (e.drop ? 1 : 0);
+          const exs = [];
+          Object.keys(day.picks).forEach(m => {
+            day.picks[m].forEach(ex => {
+              exs.push({ muscleId: m, ex, sets: 3, reps: repRange(ex.moveType, level),
+                         drop: false, pinned: pinnedNames.has(ex.name), goalNote: pinnedGoal[ex.name] || '' });
+            });
           });
-          const sec = calcSecondaryVolume(day.exercises);
-          Object.entries(sec).forEach(([m,v]) => { vol[m] = (vol[m]||0) + v; });
+          day.exercises = orderDayExercises(exs, day.tmpl.muscles);
+        });
+      }
+      realize();
+
+      // נפח בפועל (ישיר + דרופסט + משני)
+      function actualVolNow() {
+        const vol = {};
+        days.forEach(session => {
+          const f = session.freq;
+          session.exercises.forEach(e => { vol[e.muscleId] = (vol[e.muscleId] || 0) + (e.sets + (e.drop ? 1 : 0)) * f; });
+          const sec = calcSecondaryVolume(session.exercises);
+          Object.entries(sec).forEach(([m, v]) => { vol[m] = (vol[m] || 0) + v * f; });
         });
         return vol;
       }
 
-      // ── התאמת נפח — רק כשיש חסר לעומת weeklyMin ──
-      // כלל: נסה קודם 4 סטים, רק אם עדיין חסר — הוסף דרופסט (לתרגיל מתאים)
-      // לא להוסיף מעבר ל-weeklyMax
-      // עדיפות: שרירים בעדיפות גבוהה מקבלים drops/upgrades קודם
-      const musclesByPriority = Object.keys(EXERCISE_POOLS)
-        .filter(mId => (prio[mId] || 0) > 0 && (weeklyMin[mId] || 0) > 0)
-        .sort((a, b) => (prio[b] || 0) - (prio[a] || 0));  // High to low priority
-
-      musclesByPriority.forEach(mId => {
-        const p = prio[mId] || 0;
-        const wMin = weeklyMin[mId] || 0;
-        const wMax = volumeRange(p, level)[1];
-
-        // שלב ב (ראשון): הוסף דרופסט אם חסר נפח - שרירים בעדיפות גבוהה קודם
-        let vol = computeActualVol(builtDays)[mId] || 0;
-        if (vol < wMin) {
-          builtDays.forEach(day => {
-            if ((computeActualVol([day])[mId] || 0) > 0) { // יש תרגיל לשריר ביום זה
-              const cands = day.exercises.filter(e => e.muscleId === mId && !e.drop && canDrop(e.ex));
-              if (cands.length > 0 && vol + 1 <= wMax) {
-                cands[0].drop = true;
-                vol += 1;
-              }
-            }
-          });
-          vol = computeActualVol(builtDays)[mId] || 0;
-        }
-
-        // שלב א (שני): שדרג ל-4 סטים רק אם דרופסט לא הספיק
-        if (vol < wMin) {
-          builtDays.forEach(day => {
-            day.exercises.forEach(e => {
-              if (e.muscleId === mId && !e.pinned && e.sets === 3) {
-                const volIfUpgrade = vol + (appearances[mId] || 1) * 1; // +1 סט לכל הופעה
-                if (volIfUpgrade <= wMax) {
-                  e.sets = 4;
-                  vol += appearances[mId];
-                }
-              }
-            });
-          });
-          vol = computeActualVol(builtDays)[mId] || 0;
-        }
-      });
-
-      let actualVol = computeActualVol(builtDays);
-
-      // ── שלב 3: החלט על supersets בהתאם לneed ────────────────────────────
-      let supersetsNeeded = 0, useSupersetsForTime = false;
-      const stillShortVolume = Object.keys(EXERCISE_POOLS).some(mId => (weeklyMin[mId] || 0) > 0 && (actualVol[mId] || 0) < (weeklyMin[mId] || 0));
-      if (stillShortVolume && sups) {  // sups כבר בוליאני (u.supersets === 'כן')
-        let totalShort = 0;
-        Object.keys(EXERCISE_POOLS).forEach(mId => {
-          const wMin = weeklyMin[mId] || 0, actual = actualVol[mId] || 0;
-          if (wMin > 0 && actual < wMin) totalShort += Math.ceil((wMin - actual) / 2);
+      // ── שלב 4: התאמת סטים לעמידה ביעד — לפי סדר ההסלמה: קודם 3→4, אחר כך דרופסט ──
+      const byPrio = Object.keys(EXERCISE_POOLS).filter(m => (prio[m] || 0) > 0).sort((a, b) => prio[b] - prio[a]);
+      function reconcileSets() {
+        let vol = actualVolNow();
+        byPrio.forEach(m => {
+          days.forEach(day => day.exercises.forEach(e => {   // 3→4 סטים
+            if (vol[m] >= weeklyMin[m]) return;
+            if (e.muscleId === m && !e.pinned && e.sets === 3 && (vol[m] + 1) <= weeklyMax[m]) { e.sets = 4; vol = actualVolNow(); }
+          }));
+          days.forEach(day => day.exercises.forEach(e => {   // דרופסטים
+            if (vol[m] >= weeklyMin[m]) return;
+            if (e.muscleId === m && !e.drop && canDrop(e.ex) && (vol[m] + 1) <= weeklyMax[m]) { e.drop = true; vol = actualVolNow(); }
+          }));
         });
-        supersetsNeeded = Math.max(0, totalShort);
-      } else if (sups) {
-        useSupersetsForTime = true;
       }
-      if (supersetsNeeded > 0 || useSupersetsForTime) {
-        const supsToUse = Math.max(supersetsNeeded, useSupersetsForTime ? Math.max(1, Math.floor(builtDays.length / 2)) : 0);
-        builtDays.forEach(day => { if (day.exercises.length > 0) day.exercises = assignSupersets(day.exercises, true, supsToUse); });
-      }
+      reconcileSets();
 
-      // ── Stage C: Trim Excess Volume ──
-      // אם actualVol > weeklyMax, הסר drop sets קודם, אחרי כך הוריד מ-4 סטים ל-3
-      // חריג: לא לצמצם glute אצל נשים
-      const isFemale = u.gender === 'אישה';
-      Object.keys(EXERCISE_POOLS).forEach(mId => {
-        const p = prio[mId] || 0;
-        if (p === 0) return;
-        const wMax = volumeRange(p, level)[1];
-        const actual = actualVol[mId] || 0;
-
-        // חריג: אל תצמצם glute לנשים
-        if (isFemale && mId === 'glute') return;
-
-        if (actual > wMax) {
-          const excess = actual - wMax;
-          let trimmed = 0;
-
-          // C1: הסר drop sets קודם (כל drop = -1 סט)
-          for (let dayIdx = 0; dayIdx < builtDays.length && trimmed < excess; dayIdx++) {
-            const day = builtDays[dayIdx];
-            for (let exIdx = 0; exIdx < day.exercises.length && trimmed < excess; exIdx++) {
-              const ex = day.exercises[exIdx];
-              if (ex.muscleId === mId && ex.drop && !ex.pinned) {
-                ex.drop = false;
-                trimmed += 1;
-              }
-            }
-          }
-
-          // C2: אם עדיין יותר מדי, הוריד מ-4 סטים ל-3
-          if (trimmed < excess) {
-            for (let dayIdx = 0; dayIdx < builtDays.length && trimmed < excess; dayIdx++) {
-              const day = builtDays[dayIdx];
-              for (let exIdx = 0; exIdx < day.exercises.length && trimmed < excess; exIdx++) {
-                const ex = day.exercises[exIdx];
-                if (ex.muscleId === mId && ex.sets === 4 && !ex.pinned) {
-                  ex.sets = 3;
-                  trimmed += (appearances[mId] || 1);
-                }
-              }
-            }
-          }
+      // ── שלב 5: מוצא אחרון — סופרסטים נגד בקשת המשתמש, רק אם עדיין חסר נפח והזמן מלא ──
+      // סופרסט = 2 תרגילים בבלוק → מרחיב קיבולת → מאפשר להוסיף תרגילים לשרירים החסרים.
+      let forcedSup = false;
+      if (!wantsSup) {
+        let vol = actualVolNow();
+        const stillShort = byPrio.some(m => prio[m] >= 2 && vol[m] < weeklyMin[m]);
+        const noRoom = days.every(d => d.exCount >= timeBudget);
+        if (stillShort && noRoom) {
+          forcedSup = true;
+          // קודם מבטיחים כיסוי: כל שריר prio≥2 שעדיין בלי תרגיל מקבל אחד
+          Object.keys(EXERCISE_POOLS)
+            .filter(m => (prio[m] || 0) >= 2 && directSets[m] === 0)
+            .sort((a, b) => prio[b] - prio[a])
+            .forEach(m => { assignOne(m, timeBudget * 2); });
+          fillToward(m => weeklyMin[m], timeBudget * 2); // ואז משלימים לכיוון היעד
+          realize();
+          reconcileSets();
         }
+      }
+
+      // ── שלב 6: קיצוץ נפח עודף (מעל weeklyMax): דרופסט → 4to3 → הסרת תרגיל ──
+      // חריג: לא מקצצים ישבן אצל נשים. נפח משני עודף נשאר (אי אפשר לקצץ בלי לפגוע בעיקרי).
+      (function trimExcess() {
+        let vol = actualVolNow();
+        byPrio.forEach(m => {
+          if (isFemale && m === 'glute') return;
+          const wMax = weeklyMax[m];
+          days.forEach(day => day.exercises.forEach(e => {   // הסר דרופסטים
+            if (vol[m] <= wMax) return;
+            if (e.muscleId === m && e.drop && !e.pinned) { e.drop = false; vol = actualVolNow(); }
+          }));
+          days.forEach(day => day.exercises.forEach(e => {   // 4→3 סטים
+            if (vol[m] <= wMax) return;
+            if (e.muscleId === m && e.sets === 4 && !e.pinned) { e.sets = 3; vol = actualVolNow(); }
+          }));
+          days.forEach(day => day.exercises.forEach(e => {   // 3→2 סטים (קיצוץ עדין לפני הסרת תרגיל)
+            if (vol[m] <= wMax) return;
+            if (e.muscleId === m && e.sets === 3 && !e.pinned && !e.drop) { e.sets = 2; vol = actualVolNow(); }
+          }));
+          days.forEach(day => {                              // הסרת תרגיל שלם (שומר ≥1, לא יורד מ-weeklyMin)
+            for (let k = day.exercises.length - 1; k >= 0; k--) {
+              if (vol[m] <= wMax) break;
+              const e = day.exercises[k];
+              if (e.muscleId !== m || e.pinned) continue;
+              // ידיים: מותר להוריד עד 0 תרגילים ישירים אם הנפח המשני לבדו מכסה את היעד.
+              // שאר השרירים: שומרים לפחות תרגיל אחד ישיר.
+              if (!isArm(m) && day.exercises.filter(x => x.muscleId === m).length <= 1) continue;
+              if (vol[m] - (e.sets + (e.drop ? 1 : 0)) < weeklyMin[m]) continue;
+              day.exercises.splice(k, 1);
+              vol = actualVolNow();
+            }
+          });
+        });
+      })();
+
+      // ── שלב 6.5: השלמה "זולה" — אם שריר עדיין מתחת ליעד, מוסיפים תרגיל של סט יחיד + דרופסט ──
+      // זול בזמן (סט אחד); נספר כשורה אך מתאחד לסופרסט אם נדרש כדי לא לחרוג מהזמן.
+      (function freeFill() {
+        let vol = actualVolNow();
+        byPrio.forEach(m => {
+          let guard = 0;
+          while (vol[m] < weeklyMin[m] && guard++ < 4) {
+            let added = false;
+            for (const day of days) {
+              if (!day.muscles.includes(m)) continue;
+              if (day.exercises.length >= timeBudget * 2) continue; // אל תחרוג מהמקסימום שמתאים לזמן (גם עם סופרסטים)
+              const used = new Set(day.exercises.filter(e => e.muscleId === m).map(e => e.ex.name));
+              const cand = (pickList[m] || []).find(ex => !used.has(ex.name));
+              if (!cand) continue;
+              day.exercises.push({ muscleId:m, ex:cand, sets:1, reps:repRange(cand.moveType, level),
+                                   drop: canDrop(cand), pinned:false, goalNote:'' });
+              vol = actualVolNow();
+              added = true; forcedSup = true; // שורה נוספת — מאפשרים סופרסט כדי לשמור על הזמן
+              break;
+            }
+            if (!added) break;
+          }
+        });
+      })();
+
+      // ── שלב 6.7: איזון אורך אימונים — הפרש ≤6 סטים בין אימון לאימון (דרופסטים לא נספרים) ──
+      // משתמשים בסלאק של טווח הנפח; אם לא מספיק, מותר לחרוג מעט מהטווח (עדיפות לאורך אחיד).
+      (function balanceLength() {
+        const DRIFT = 4;  // כמה סטים שבועיים מותר לחרוג מהטווח כדי לאזן
+        const wlen = s => s.exercises.reduce((a, e) => a + e.sets, 0); // אורך = סטים בלבד (לא דרופסטים)
+        let vol = actualVolNow();
+        let guard = 0;
+        while (guard++ < 100) {
+          const act = days.filter(s => s.exercises.length > 0);
+          if (act.length < 2) break;
+          act.sort((a, b) => wlen(a) - wlen(b));
+          const lo = act[0], hi = act[act.length - 1];
+          if (wlen(hi) - wlen(lo) <= 6) break;
+          // הוסף סט לאימון הקצר (שריר עם הכי הרבה מרווח מתחת ל-max+DRIFT)
+          const addTo = s => {
+            const c = s.exercises
+              .filter(e => !e.pinned && e.sets < 5 && (vol[e.muscleId] || 0) < weeklyMax[e.muscleId] + DRIFT)
+              .sort((a, b) => ((vol[a.muscleId]||0) - weeklyMax[a.muscleId]) - ((vol[b.muscleId]||0) - weeklyMax[b.muscleId]))[0];
+            if (!c) return false; c.sets++; vol = actualVolNow(); return true;
+          };
+          // הורד סט מהאימון הארוך (שריר עם הכי הרבה מרווח מעל ל-min-DRIFT)
+          const cutFrom = s => {
+            const c = s.exercises
+              .filter(e => !e.pinned && e.sets > 1 && (vol[e.muscleId] || 0) > weeklyMin[e.muscleId] - DRIFT)
+              .sort((a, b) => (weeklyMin[a.muscleId] - (vol[a.muscleId]||0)) - (weeklyMin[b.muscleId] - (vol[b.muscleId]||0)))[0];
+            if (!c) return false; c.sets--; vol = actualVolNow(); return true;
+          };
+          if (!(addTo(lo) || cutFrom(hi))) break;
+        }
+      })();
+
+      // ── שלב 7: הקצאת מספרים + סופרסטים (התאמה לזמן) ──
+      let anyPaired = false;
+      days.forEach(day => {
+        if (day.exercises.length === 0) return;
+        const pairsNeeded = Math.max(0, day.exercises.length - timeBudget); // זוגות כדי להיכנס לזמן
+        let assigned;
+        if (wantsSup) {
+          assigned = assignSupersets(day.exercises, true, pairsNeeded);   // לפי בקשה + כפייה לזמן
+        } else if (forcedSup && pairsNeeded > 0) {
+          assigned = assignSupersets(day.exercises, false, pairsNeeded);  // מוצא אחרון: רק כמה שצריך
+        } else {
+          assigned = assignSupersets(day.exercises, false, 0);            // מספור סדרתי בלבד
+        }
+        // סדר את הבלוקים: מורכבים/מוצמדים לפני בידוד, בטן/תאומים בסוף — כל זוג סופרסט נשאר יחד
+        const tmplM = day.tmpl.muscles;
+        const rankOf = e => (e.pinned ? -1000 : 0)
+          + ((e.muscleId === 'abs' || e.muscleId === 'calves') ? 1000 : 0)
+          + (tmplM.indexOf(e.muscleId) === -1 ? 90 : tmplM.indexOf(e.muscleId));
+        const groups = {};
+        assigned.forEach(e => { (groups[e.num] = groups[e.num] || []).push(e); });
+        const orderedGroups = Object.values(groups)
+          .sort((g1, g2) => Math.min(...g1.map(rankOf)) - Math.min(...g2.map(rankOf)));
+        let nn = 1; const flat = [];
+        orderedGroups.forEach(g => { g.forEach(e => { e.num = nn; flat.push(e); }); nn++; });
+        day.exercises = flat;
+        if (assigned.some(e => e.paired)) anyPaired = true;
       });
 
-      actualVol = computeActualVol(builtDays);
+      const actualVol = actualVolNow();
+
+      // חוסר משמעותי שנותר לשרירי prio≥3 — מפעיל הערה כנה בתוכנית
+      const volumeShortfall = byPrio.some(m => (prio[m] || 0) >= 3 && (actualVol[m] || 0) < weeklyMin[m] - 1);
 
       const suggestedDays = (u.trainingDaysSpecific && u.trainingDaysSpecific.length > 0)
         ? null : suggestTrainingDays(Math.max(1, u.trainingDays || 3));
 
-      return { level, levelName:['מתחיל','מתקדם','מנוסה מאוד'][level], split,
-        days: builtDays, actualVol: actualVol, prio,
-        sessionDuration: sessionMins, supersets: supersetsNeeded > 0 || useSupersetsForTime,
-        injuries: u.injuries || [], suggestedDays };
+      // ── הרחבה: כל יום אמיתי (לפי הסדר בלוח) מקבל את תרגילי הסשן שלו (שיכפול בקבוע) ──
+      const planDays = dayTmpls.map((t, i) => {
+        const sess = sessionByDayIndex[i];
+        return { name: t.name, exercises: (sess.exercises || []).map(e => ({ ...e })) };
+      });
+
+      return { level, levelName: ['מתחיל', 'מתקדם', 'מנוסה מאוד'][level], split,
+        days: planDays, actualVol, prio,
+        sessionDuration: sessionMins, supersets: anyPaired,
+        injuries: u.injuries || [], suggestedDays, volumeShortfall };
     };
 
     // ── רנדור טקסט ──
