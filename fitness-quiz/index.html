@@ -1235,7 +1235,7 @@
         {id:'teriyaki', lbl:'טריאקי',          kcal:30, prot:0, tier:'y'},
         {id:'ketchup',  lbl:'קטשופ',           kcal:30, prot:0, tier:'y'},
         {id:'pesto',    lbl:'פסטו',            kcal:80, prot:1, tier:'r'},
-        {id:'mayo',     lbl:'מיוקל / מיונז',  kcal:80, prot:0, tier:'r'}
+        {id:'mayo',     lbl:'מיוקל',  kcal:80, prot:0, tier:'r'}
       ]},
       { key:'extras', lbl:'ירקות', multi:false, opts:[
         {id:'small',  lbl:'סלט קטן',    kcal:100, prot:3, tier:'g'},
@@ -1274,7 +1274,7 @@
         {id:'tuna',       lbl:'טונה במים',          kcal:110, prot:25, tier:'g'},
         {id:'white_fish', lbl:'דגים לבנים',         kcal:90,  prot:18, tier:'g'},
         {id:'salmon',     lbl:'סלמון',              kcal:220, prot:20, tier:'y'},
-        {id:'beef',       lbl:'סטייק / אנטריקוט',  kcal:220, prot:26, tier:'y'},
+        {id:'beef',       lbl:'סטייק',  kcal:220, prot:26, tier:'y'},
         {id:'minced',     lbl:'בקר טחון 10%',       kcal:220, prot:22, tier:'y'},
         {id:'tofu',       lbl:'טופו',               kcal:200, prot:18, tier:'g'},
         {id:'meat_sub',   lbl:'תחליפי בשר',         kcal:200, prot:20, tier:'g'},
@@ -4894,10 +4894,8 @@ ${planHtml}
     const bread     = allBreads[0]; // לחם ראשון לחישוב קצבה
 
     // כל החלבונים שנבחרו — כחלופות (עד 3 ברירת מחדל)
-    const protIds   = getComp(meal, 'sandwich', 'protein') || [];
-    const activeProtNames = protIds.length > 0
-      ? protIds.map(id => SANDWICH_PROT_ID_MAP[id]).filter(Boolean)
-      : Object.keys(SANDWICH_PROTEIN_CAL).slice(0, 3);
+    const rawProtIds = getComp(meal, 'sandwich', 'protein') || [];
+    const protIds = rawProtIds.length > 0 ? rawProtIds : ['chicken', 'pastrama', 'tuna_w'];
 
     // חשב קצבה חלבון ולחם: 50/50 split
     const protCal = Math.max(0, cal - sauceCal - vegCal);
