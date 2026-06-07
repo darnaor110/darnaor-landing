@@ -1070,7 +1070,12 @@
 
   // Returns path to the sliced cell image
   function bodyImg(g, fatPct, muscleLevel) {
-    // Use image mapping for female to show alternate images
+    // Female images only exist at muscle level 0; map muscle level to a lower BF% image as visual proxy
+    if (g === 'f' && muscleLevel > 0) {
+      const fatProxies = [36, 33, 30, 27, 24, 21, 18]; // levels 1–7: least to most muscular
+      const proxyFat = fatProxies[Math.min(muscleLevel - 1, fatProxies.length - 1)];
+      return `images/f_${proxyFat}_0.png`;
+    }
     const displayFat = (g === 'f' && BF_IMAGE_MAP_FEMALE[fatPct]) ? BF_IMAGE_MAP_FEMALE[fatPct] : fatPct;
     return `images/${g}_${displayFat}_${muscleLevel}.png`;
   }
