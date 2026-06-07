@@ -243,6 +243,13 @@
       border-radius:8px;
       padding:0.4rem 0.6rem;
       margin:0 -0.4rem;
+      /* פעימה עדינה כשנכנסים למצב אישור — מושכת את העין לאזור הקלוריות, ואז נחה */
+      animation: calPulse 1.3s ease-in-out 3;
+    }
+    /* פועם בין הזוהר הרגיל לזוהר חזק יותר; הקצוות (0/100%) זהים למצב הנח כדי שיתייצב חלק */
+    @keyframes calPulse {
+      0%, 100% { box-shadow:0 0 16px rgba(91,212,255,0.25), inset 0 0 8px rgba(91,212,255,0.1); border-color:var(--accent2); }
+      50%      { box-shadow:0 0 24px rgba(91,212,255,0.6),  inset 0 0 12px rgba(91,212,255,0.25); border-color:var(--accent); }
     }
     .summ-chip { font-size:0.68rem; color:var(--accent2); background:rgba(8,127,163,0.1); border-radius:10px; padding:0.1rem 0.4rem; }
     /* Horizontal meal type chips — equal width, fill row */
@@ -1054,9 +1061,6 @@
   const BF_LEVELS_MALE   = [6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51];
   const BF_LEVELS_FEMALE = [15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 57];
 
-  // Image display mapping: which image to show for each BF% value (female)
-  const BF_IMAGE_MAP_FEMALE = { 15: 15, 18: 18, 21: 21, 24: 24, 27: 27, 30: 30, 33: 36, 36: 42, 39: 45, 42: 39, 45: 45, 48: 48, 51: 51, 54: 54, 57: 57 };
-
   // Labels ordered index-0 = MOST muscular; uniform lengths prevent badge width jump
   const MUSCLE_LABELS_MALE   = ['מתקדם', 'מאוד מאומן', 'מאומן', 'מתחיל', 'עובד עליו', 'לא מאומן'];
   const MUSCLE_LABELS_FEMALE = ['מאוד מאומנת', 'ספורטיבית', 'מאומנת', 'לא מאומנת'];
@@ -1066,18 +1070,11 @@
   const BULK_GOAL_LABELS_FEMALE = ['לא מתאמנת', 'מתחילה', 'פעילה', 'חטובה', 'מוגדרת', 'ספורטיבית מאוד', 'תחרותית'];
   // BF% used as proxy for goal photo in bulk mode (fixed, low body-fat = muscular look)
   const BULK_GOAL_BF_MALE   = 12;  // always show m_12_1-10 photos for bulk goal (muscle variations)
-  const BULK_GOAL_BF_FEMALE = 24;  // always show f_24_1-7 photos for bulk goal (muscle variations)
+  const BULK_GOAL_BF_FEMALE = 21;  // always show f_21_1-7 photos for bulk goal (muscle variations)
 
-  // Returns path to the sliced cell image
+  // Returns path to the body-composition image: images/<g>_<bf%>_<muscleLevel>.png
   function bodyImg(g, fatPct, muscleLevel) {
-    // Female images only exist at muscle level 0; map muscle level to a lower BF% image as visual proxy
-    if (g === 'f' && muscleLevel > 0) {
-      const fatProxies = [36, 33, 30, 27, 24, 21, 18]; // levels 1–7: least to most muscular
-      const proxyFat = fatProxies[Math.min(muscleLevel - 1, fatProxies.length - 1)];
-      return `images/f_${proxyFat}_0.png`;
-    }
-    const displayFat = (g === 'f' && BF_IMAGE_MAP_FEMALE[fatPct]) ? BF_IMAGE_MAP_FEMALE[fatPct] : fatPct;
-    return `images/${g}_${displayFat}_${muscleLevel}.png`;
+    return `images/${g}_${fatPct}_${muscleLevel}.png`;
   }
 
   // Clamp a slider index's fat% to the nearest available value in the array
@@ -1519,16 +1516,16 @@
     // PROTEINS
     chicken: { kcal_per_100g: 170, prot_per_100g: 31, unit_weight_g: 60, unit_name: 'יחידה' },
     turkey: { kcal_per_100g: 160, prot_per_100g: 24, unit_weight_g: 0, unit_name: 'גרמים' },
-    thigh: { kcal_per_100g: 200, prot_per_100g: 27, unit_weight_g: 100, unit_name: 'גרם' },
+    thigh: { kcal_per_100g: 200, prot_per_100g: 27, unit_weight_g: 110, unit_name: 'יחידה' },
     shwarma: { kcal_per_100g: 200, prot_per_100g: 28, unit_weight_g: 80, unit_name: 'יחידה' },
-    tuna: { kcal_per_100g: 110, prot_per_100g: 25, unit_weight_g: 100, unit_name: 'גרם' },
+    tuna: { kcal_per_100g: 110, prot_per_100g: 25, unit_weight_g: 110, unit_name: 'קופסה' },
     white_fish: { kcal_per_100g: 150, prot_per_100g: 20, unit_weight_g: 150, unit_name: 'פילה' },
     salmon: { kcal_per_100g: 220, prot_per_100g: 20, unit_weight_g: 150, unit_name: 'פילה' },
     beef: { kcal_per_100g: 250, prot_per_100g: 26, unit_weight_g: 200, unit_name: 'מנת מסעדה' },
     minced: { kcal_per_100g: 220, prot_per_100g: 22, unit_weight_g: 0, unit_name: 'גרמים' },
     tofu: { kcal_per_100g: 200, prot_per_100g: 18, unit_weight_g: 300, unit_name: 'קופסא' },
     liver: { kcal_per_100g: 165, prot_per_100g: 27, unit_weight_g: 0, unit_name: 'גרמים' },
-    tuna_o: { kcal_per_100g: 200, prot_per_100g: 23, unit_weight_g: 100, unit_name: 'גרם' },
+    tuna_o: { kcal_per_100g: 200, prot_per_100g: 23, unit_weight_g: 110, unit_name: 'קופסה' },
     pastrama: { kcal_per_100g: 100, prot_per_100g: 11, unit_weight_g: 20, unit_name: 'פרוסה' },
     smoked_s: { kcal_per_100g: 160, prot_per_100g: 10, unit_weight_g: 100, unit_name: 'גרם' },
     egg: { kcal_per_100g: 150, prot_per_100g: 12, unit_weight_g: 70, unit_name: 'ביצה L' },
@@ -2392,14 +2389,24 @@
   }
 
   function updateAllWeightUIs() {
-    const SLOT_MIN = { 'בוקר': 200, 'צהריים': (d.gender === 'גבר' ? 600 : 500), 'ערב': (d.gender === 'גבר' ? 600 : 500) };
+    // מינימום קלוריות לכל ארוחה — מתחת לזה מספר הקלוריות נצבע אדום (אזהרה, לא חסימה)
+    // כל הארוחות כולל הקטנות חייבות ערך כדי ש-toggle יקבל boolean אמיתי (אחרת הוא מתהפך בכל לחיצה)
+    const SLOT_MIN = {
+      'בוקר': 200,
+      'בין_בוקר_לצהריים': 100,
+      'צהריים': (d.gender === 'גבר' ? 600 : 500),
+      'בין_צהריים_לערב': 100,
+      'ערב': (d.gender === 'גבר' ? 600 : 500),
+      'לילה': 100
+    };
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
       if (!numEl) return;
       const weight = d.meals[mt.id].weight;
       const minForMeal = SLOT_MIN[mt.id];
-      const isBelowMin = minForMeal && weight < minForMeal;
+      // !! מבטיח boolean אמיתי — classList.toggle עם undefined מתהפך במקום לכבות
+      const isBelowMin = !!(minForMeal && weight < minForMeal);
       numEl.textContent = weight + ' קל׳';
       numEl.classList.toggle('below-min', isBelowMin);
       if (isBelowMin) {
@@ -3064,6 +3071,8 @@
     const content = document.getElementById('meals-unlocked-content');
     if (content) content.classList.add('confirm-mode');
     updateS5Btn();
+    // גלילה עדינה לרשימת הארוחות כדי שהפוקוס יעבור לאזור הקלוריות שעכשיו פועם
+    document.getElementById('meal-list')?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
   window.enterCalorieConfirmMode = enterCalorieConfirmMode;
 
@@ -3160,6 +3169,16 @@
   //   "ירקות טריים (100 קל)"      → name=ירקות טריים, qty=—,           g=—
   //   "1.5 כפות (~270ג)"           → name=אורז לבן,  qty=1.5 כפות,    g=270ג
   // Builders emit "name||qty||grams" — split by || for clean table columns
+
+  // מעגל את מספר הגרמים במחרוזת כלפי מטה לכפולה של 10 (282ג → 280ג) למספרים נקיים.
+  // שומר על תחיליות כמו ~ ועל ערכים בלי מספר (—); ערכים מתחת ל-10 נשארים כמו שהם.
+  function roundGramsStr(s) {
+    return s.replace(/\d+/, m => {
+      const n = parseInt(m, 10);
+      return n >= 10 ? String(Math.floor(n / 10) * 10) : m;
+    });
+  }
+
   function parseItemToRow(line) {
     // Handle multiple items separated by ' / ' (e.g., multiple sauces)
     // Each item could be: name||qty||grams or name||units||qty||grams||tier
@@ -3189,6 +3208,7 @@
           };
         }
       }
+      row.g = roundGramsStr(row.g); // עיגול גרמים כלפי מטה לכפולות של 10
       rows.push(row);
     });
 
