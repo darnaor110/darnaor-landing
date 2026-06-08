@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <!-- html2pdf: renders HTML to PDF in-browser (bundles html2canvas + jsPDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -395,6 +397,11 @@
     .bonus-box ul { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
     .bonus-box li { font-size:0.87rem; color:var(--muted); display:flex; align-items:flex-start; gap:0.5rem; }
     .bonus-box li::before { content:'▶'; color:var(--accent2); font-size:0.65rem; margin-top:3px; flex-shrink:0; }
+
+    /* ── Download PDF button ── */
+    .btn-download-pdf { display:inline-flex; align-items:center; gap:0.5rem; background:var(--accent2); color:#fff; border:none; border-radius:10px; padding:0.85rem 1.8rem; font-size:1rem; font-weight:800; cursor:pointer; transition:background 0.2s, transform 0.15s; font-family:inherit; margin-bottom:0.6rem; }
+    .btn-download-pdf:hover:not(:disabled) { background:var(--accent); color:var(--bg); transform:translateY(-1px); }
+    .btn-download-pdf:disabled { opacity:0.45; cursor:not-allowed; }
 
     /* ── Countdown bar ── */
     .cdown-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:0.55rem 0.9rem 0.65rem; margin-bottom:1.2rem; }
@@ -1039,7 +1046,9 @@
         <div class="success-icon">🎉</div>
         <h2 class="success-title">התוכנית בדרך אליך!</h2>
         <div class="success-email-badge" id="success-email-badge">נשלח ל: ...</div>
-        <p class="success-sub"><span data-g="תוכל|תוכלי">תוכל</span> גם לראות אותה ממש כאן למטה.</p>
+        <p class="success-sub">שלחנו לך גם PDF למייל — <span data-g="תוכל|תוכלי">תוכל</span> להוריד ישירות מכאן:</p>
+        <button id="btn-download-pdf" class="btn-download-pdf" disabled onclick="window.downloadPlan()">⬇ הורד את התוכנית שלי (PDF)</button>
+        <p id="pdf-status-txt" style="color:var(--muted);font-size:0.82rem;margin-bottom:1rem">מכין את הקובץ...</p>
       </div>
 
       <!-- Plan loading state -->
@@ -1048,8 +1057,8 @@
         <p style="color:var(--muted);font-size:0.9rem">בונה את התוכנית האישית שלך...</p>
       </div>
 
-      <!-- Plan output — hidden until ready -->
-      <div id="plan-output" class="hidden" style="margin-top:1rem"></div>
+      <!-- Plan output — kept off-screen for PDF generation, not shown in browser -->
+      <div id="plan-output" style="position:absolute;left:-9999px;top:0;width:390px;pointer-events:none" aria-hidden="true"></div>
 
       <!-- Booking section — shown after plan renders -->
       <div class="booking-section">
@@ -4646,66 +4655,93 @@
       + '</div>';
 
     output.innerHTML = html;
-    output.classList.remove('hidden');
-    output.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    sendPlanEmail(userData, html).catch(() => {});
+    // Plan stays off-screen — used only for PDF generation, not shown in browser
+
+    // Enable download button
+    const dlBtn = document.getElementById('btn-download-pdf');
+    const dlTxt = document.getElementById('pdf-status-txt');
+    if (dlBtn) dlBtn.disabled = false;
+    if (dlTxt) dlTxt.textContent = '';
+
+    // Send plan via email (PDF attachment) — fires in background
+    sendPlanEmail(userData, output).catch(() => {});
   }
 
   function renderPlanError(err) {
     const loading = document.getElementById('plan-loading');
-    const output  = document.getElementById('plan-output');
+    const txt     = document.getElementById('pdf-status-txt');
     if (loading) loading.style.display = 'none';
-    if (!output) return;
-    const errMsg = err ? `<p style="color:#ef4444;font-size:0.75rem;padding:1rem;background:rgba(239,68,68,0.1);border-radius:8px;word-break:break-all">${err.message}</p>` : '';
-    output.innerHTML = `<p style="color:var(--muted);font-size:0.88rem;text-align:center">לא הצלחנו לטעון את התוכנית כרגע — היא תגיע במייל.</p>${errMsg}`;
-    output.classList.remove('hidden');
+    // Plan stays off-screen — just update the status text near the download button
+    if (txt) txt.textContent = 'לא הצלחנו לבנות את התוכנית — היא תגיע במייל בקרוב.';
   }
 
   function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
-  // ── שליחת התוכנית במייל דרך Resend ──
-  async function sendPlanEmail(userData, planHtml) {
-    const isFemale = userData.gender === 'אישה';
-    const name     = escHtml(userData.name || '');
+  // ── ממיר Blob ל-base64 (בשביל קובץ מצורף ב-Resend) ──
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result.split(',')[1]);
+      reader.onerror   = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
 
-    // Wrap the plan HTML in a full email shell with dark background
+  // ── שליחת מייל עם PDF מצורף דרך Resend ──
+  async function sendPlanEmail(userData, planElement) {
+    const name = escHtml(userData.name || '');
+
+    // html2pdf מגנרט PDF מה-element (צריך שה-DOM יהיה זמין)
+    let pdfBase64 = null;
+    try {
+      const pdfBlob = await html2pdf().set({
+        margin: 0,
+        image: { type: 'jpeg', quality: 0.93 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#071419', logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).from(planElement).outputPdf('blob');
+      pdfBase64 = await blobToBase64(pdfBlob);
+    } catch(e) {
+      console.warn('PDF generation failed:', e.message);
+    }
+
+    // בונה גוף מייל פשוט (fallback אם PDF נכשל — או בתור גוף לצד הקובץ)
     const emailBody = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<style>
-  body{margin:0;padding:24px 12px;background:#040e12;font-family:Arial,sans-serif;direction:rtl}
-  .shell{max-width:640px;margin:0 auto;background:#0b1e26;border-radius:18px;overflow:hidden;border:1px solid rgba(8,127,163,0.25)}
-  /* plan styles are inline-injected by the quiz engine */
-</style>
-</head>
-<body>
-<div class="shell">
-${planHtml}
-</div>
-</body>
-</html>`;
+<head><meta charset="UTF-8"><style>
+  body{margin:0;padding:24px 12px;background:#040e12;font-family:Arial,sans-serif;direction:rtl;color:#e2edf2}
+  .wrap{max-width:520px;margin:0 auto;background:#0b1e26;border-radius:16px;padding:32px 24px;border:1px solid rgba(8,127,163,0.25);text-align:center}
+  h1{font-size:1.4rem;color:#5bd4ff;margin-bottom:12px} p{font-size:0.95rem;color:#8aa4af;line-height:1.7}
+  strong{color:#e2edf2}
+</style></head>
+<body><div class="wrap">
+  <h1>שלום ${name}! 👋</h1>
+  <p>התוכנית האישית שלך מוכנה ומצורפת למייל הזה כ-PDF.</p>
+  <p>שמור אותה — יש בה הכל: תפריט שבועי, תוכנית אימון, ורשימת קניות.</p>
+  <p style="margin-top:20px;font-size:0.85rem;color:rgba(138,164,175,0.6)">דר נאור · darnaor.com · @dar__naor</p>
+</div></body></html>`;
 
-    // קריאה ישירה ל-Resend API מהדפדפן — לא צריך שרת
+    const payload = {
+      from:    CFG.resendFrom,
+      to:      userData.email,
+      subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
+      html:    emailBody
+    };
+
+    // מצרף PDF אם ההמרה הצליחה
+    if (pdfBase64) {
+      payload.attachments = [{ filename: 'תוכנית-דר-נאור.pdf', content: pdfBase64 }];
+    }
+
     try {
       await fetch('https://api.resend.com/emails', {
         method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${CFG.resendKey}`
-        },
-        body: JSON.stringify({
-          from:    CFG.resendFrom,
-          to:      userData.email,
-          subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
-          html:    emailBody
-        })
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CFG.resendKey}` },
+        body: JSON.stringify(payload)
       });
     } catch(e) {
-      // זה בעיה בשרת או CORS — לא דורך את הקוד, רק log
       console.warn('Email sending failed:', e.message);
     }
   }
@@ -4759,8 +4795,31 @@ ${planHtml}
     }
   });
 
+  // ── הורדת PDF על-ידי לחיצת כפתור ──
+  function downloadPlan() {
+    const el  = document.getElementById('plan-output');
+    const btn = document.getElementById('btn-download-pdf');
+    const txt = document.getElementById('pdf-status-txt');
+    if (!el || typeof html2pdf === 'undefined') return;
+    if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
+    html2pdf().set({
+      margin: 0,
+      filename: 'תוכנית-דר-נאור.pdf',
+      image: { type: 'jpeg', quality: 0.95 },
+      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#071419', logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(el).save().then(() => {
+      if (btn) { btn.textContent = '⬇ הורד שוב (PDF)'; btn.disabled = false; }
+    }).catch(e => {
+      if (btn) { btn.textContent = '⬇ הורד את התוכנית שלי (PDF)'; btn.disabled = false; }
+      if (txt) txt.textContent = 'לא הצלחנו ליצור את הקובץ — נסה שוב.';
+      console.warn('PDF download failed:', e);
+    });
+  }
+
   window.submitQuiz=submitQuiz;
   window.renderPlanHtml=renderPlanHtml;
+  window.downloadPlan=downloadPlan;
 
   // ══════════════════════════════════════════════════════
   // MEAL PLAN ENGINE — pure JS, zero AI
