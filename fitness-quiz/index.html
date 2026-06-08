@@ -1786,8 +1786,10 @@
     if (!calc) return 2000;
     const baseSpare = calc.target_calories > 2000 ? 200 : 100;
     const milkCal   = Math.round((d.milkMl || 0) * 50 / 100);
-    // קלוריות חופשיות וחלב מנוכים מהסך — אלכוהול מנוכה מהארוחות בבניית התפריט, לא כאן
-    const raw = calc.target_calories - baseSpare - milkCal;
+    const calFloor  = d.gender === 'גבר' ? 1700 : 1300;
+    // At minimum floor: milk is absorbed into free calories — don't deduct from meal budget
+    const deductMilk = calc.target_calories > calFloor ? milkCal : 0;
+    const raw = calc.target_calories - baseSpare - deductMilk;
     return Math.max(500, Math.round(raw / 50) * 50);
   }
 
@@ -3326,7 +3328,7 @@
     return rows[0] || { name: line.trim(), qty: '—', g: '—', tier: null };
   }
 
-  // ── RENDER PLAN HTML — styled output matching email-preview design ──
+  // ── RENDER PLAN HTML — PDF-style design (pdi- prefix CSS) ──
   // Uses string concatenation only — no nested template literals.
   function renderPlanHtml(plan, workout, calc, userData) {
     const loading = document.getElementById('plan-loading');
@@ -3901,248 +3903,751 @@
       }
     }
 
-    // ── CSS injected once ──
-    if (!document.getElementById('plan-html-styles')) {
+    // ── inject PDF-style CSS once ──
+    if (!document.getElementById('plan-pdf-styles')) {
       var styleEl = document.createElement('style');
-      styleEl.id = 'plan-html-styles';
+      styleEl.id = 'plan-pdf-styles';
       styleEl.textContent = [
-        '.plan-shell{max-width:640px;margin:0 auto;background:#0b1e26;border-radius:18px;overflow:hidden;border:1px solid rgba(8,127,163,0.25);direction:rtl}',
-        '.plan-hero{background:linear-gradient(160deg,#071419 0%,#0c2535 60%,#071c28 100%);padding:36px 32px 28px;text-align:center;border-bottom:1px solid rgba(8,127,163,0.2)}',
-        '.plan-brand{font-size:1.2rem;font-weight:800;color:#5bd4ff;letter-spacing:0.5px;margin-bottom:18px}',
-        '.plan-tagline{font-size:1.2rem;font-weight:800;color:#5bd4ff;letter-spacing:0.5px}',
-        '.plan-credits{font-size:0.7rem;color:#4a6a7a;line-height:1.6;margin-bottom:18px}',
-        '.plan-hero h1{color:#e2edf2;font-size:clamp(1.2rem,4vw,1.7rem);font-weight:800;margin:0 0 8px;line-height:1.2;white-space:nowrap}',
-        '.plan-hero h1 span{color:#5bd4ff}',
-        '.plan-hero-sub{color:#8aa4af;font-size:0.88rem;margin:0;line-height:1.5}',
-        '.plan-stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid rgba(8,127,163,0.15)}',
-        '.plan-stat{padding:18px 8px;text-align:center;border-left:1px solid rgba(8,127,163,0.12)}',
-        '.plan-stat:last-child{border-left:0}',
-        '.plan-stat-val{font-size:1.35rem;font-weight:800;color:#5bd4ff;display:block;line-height:1}',
-        '.plan-stat-delta{font-size:0.66rem;color:#087fa3;font-weight:700;display:block;margin-top:2px}',
-        '.plan-stat-lbl{font-size:0.68rem;color:#8aa4af;margin-top:4px;display:block;line-height:1.3}',
-        '.plan-section{padding:24px 28px;border-bottom:1px solid rgba(8,127,163,0.1)}',
-        '.plan-section-label{font-size:0.68rem;font-weight:700;color:#087fa3;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;align-items:center;gap:8px}',
-        '.plan-section-label::after{content:"";flex:1;height:1px;background:rgba(8,127,163,0.2)}',
-        '.plan-msg{color:#c8dce6;font-size:0.9rem;line-height:1.8;margin:0 0 12px}',
-        '.plan-msg strong{color:#5bd4ff}',
-        '.plan-msg em{color:#e2edf2;font-style:normal;font-weight:700}',
-        '.plan-msg-note{font-size:0.8rem;color:#4a6a7a;margin:0}',
-        '.plan-card{background:rgba(5,14,20,0.55);border:1.5px solid rgba(8,127,163,0.2);border-radius:14px;padding:18px 20px}',
-        '.plan-block-title{font-size:0.72rem;font-weight:800;color:#5bd4ff;text-transform:uppercase;letter-spacing:1.2px;margin:0 0 10px;padding-bottom:7px;border-bottom:1px solid rgba(8,127,163,0.18)}',
-        '.plan-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:0.83rem}',
-        '.plan-row:last-child{border-bottom:0}',
-        '.plan-lbl{color:#8aa4af}',
-        '.plan-val{color:#e2edf2;font-weight:700}',
-        '.plan-val.hi{color:#5bd4ff}',
-        '.plan-divider{height:1px;background:rgba(8,127,163,0.1);margin:16px 0}',
-        '.plan-day-header{font-size:0.8rem;font-weight:800;color:#e2edf2;margin:0 0 12px;display:flex;align-items:center;gap:8px}',
-        '.plan-day-header::after{content:"";flex:1;height:1px;background:rgba(8,127,163,0.15)}',
-        '.plan-meal-block{background:rgba(8,127,163,0.04);border:1px solid rgba(8,127,163,0.14);border-radius:10px;padding:12px 14px;margin-bottom:8px}',
-        '.plan-meal-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}',
-        '.plan-meal-name{font-weight:800;color:#e2edf2;font-size:0.86rem}',
-        '.plan-meal-meta{font-size:0.73rem;color:#087fa3;font-weight:700;display:flex;align-items:center;gap:6px}',
-        '.plan-meal-prot{font-size:0.68rem;color:#4ade80;font-weight:700;background:rgba(74,222,128,0.1);padding:1px 6px;border-radius:10px;white-space:nowrap}',
-        '.plan-comp-grid{display:flex;flex-direction:column;gap:6px}',
-        '.plan-comp-card{background:rgba(5,14,20,0.5);border:1px solid rgba(8,127,163,0.18);border-radius:8px;padding:8px 12px}',
-        '.plan-comp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}',
-        '.plan-comp-type{font-size:0.76rem;font-weight:800;color:#e2edf2}',
-        '.plan-comp-kcal{font-size:0.7rem;color:#087fa3;font-weight:700;background:rgba(8,127,163,0.1);padding:2px 7px;border-radius:20px}',
-        '.plan-comp-opts{margin:0;padding:0;list-style:none}',
-        '.plan-comp-opts li{font-size:0.78rem;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:baseline}',
-        '.plan-comp-opts li:last-child{border-bottom:0}',
-        '.plan-comp-opts li.pref{color:#c8dce6}',
-        '.plan-comp-opts li.alt{color:#4a6a7a}',
-        '.plan-opt-name{flex:1}',
-        '.plan-opt-detail{font-size:0.7rem;color:#4a6a7a;margin-right:8px}',
-        '.plan-comp-opts li.pref .plan-opt-detail{color:#087fa3}',
-        // Meal option cards — side by side when 2, full width each when 1 or 3+
-        '.plan-opts-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:4px}',
-        '.plan-opt-card{background:rgba(5,14,20,0.5);border:1px solid rgba(8,127,163,0.18);border-radius:8px;padding:8px 10px;min-width:0;overflow:hidden}',
-        '.plan-opt-card-title{font-size:0.76rem;font-weight:800;color:#e2edf2;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}',
-        '.plan-opt-card-prot{font-size:0.68rem;color:#087fa3;font-weight:700;background:rgba(8,127,163,0.1);padding:1px 6px;border-radius:20px;flex-shrink:0}',
-        // Sub-cards inside each option — table layout
-        '.plan-sc{margin-bottom:6px;border:1px solid rgba(8,127,163,0.22);border-radius:7px;background:rgba(8,127,163,0.04);overflow:hidden}',
-        '.plan-sc:last-child{margin-bottom:0}',
-        '.plan-sc-head{display:flex;justify-content:space-between;align-items:center;padding:4px 10px;background:rgba(8,127,163,0.12);border-bottom:1px solid rgba(8,127,163,0.15)}',
-        '.plan-sc-name{font-size:0.72rem;font-weight:700;color:#e2edf2}',
-        '.plan-sc-cal{font-size:0.68rem;color:#5bd4ff;font-weight:700}',
-        // Food item table inside sub-card — 2 cols: שם | כמות | גרמים
-        '.plan-sc-tbl{width:100%;border-collapse:collapse;direction:rtl;table-layout:fixed}',
-        '.plan-sc-tbl td{font-size:0.73rem;padding:4px 6px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;text-align:right;overflow-wrap:break-word;word-break:break-word}',
-        '.plan-sc-tbl tr:last-child td{border-bottom:0}',
-        '.plan-sc-tbl th{font-size:0.64rem;font-weight:700;color:#4a7a8a;padding:3px 6px;text-align:right;border-bottom:1px solid rgba(8,127,163,0.18);background:rgba(8,127,163,0.06)}',
-        '.pst-col-hd{}',
-        '.pst-name{color:#e2edf2;font-weight:600;width:52%}',
-        '.pst-qty{color:#8aa4af;width:30%;font-size:0.7rem}',
-        '.pst-g{color:#087fa3;font-size:0.68rem;font-weight:700;width:18%;text-align:left!important;white-space:nowrap}',
-        // Tier color indicators for food priorities
-        '.pst-row{border-inline-start:3px solid transparent}',
-        '.pst-row.tier-g{border-inline-start-color:#4ade80}',
-        '.pst-row.tier-y{border-inline-start-color:#facc15}',
-        '.pst-row.tier-o{border-inline-start-color:#fb923c}',
-        '.pst-row.tier-r{border-inline-start-color:#f87171}',
-        '@media(max-width:600px){.plan-opts-row{grid-template-columns:1fr}}',
-        '.plan-bulk-note{font-size:0.82rem;color:#8aa4af;line-height:1.7;background:rgba(8,127,163,0.07);border:1px solid rgba(8,127,163,0.2);border-radius:8px;padding:10px 14px;margin-bottom:10px}',
-        '.plan-meal-notes-box{background:rgba(8,127,163,0.06);border:1px solid rgba(8,127,163,0.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:6px}',
-        '.plan-meal-note-item{font-size:0.8rem;color:#8aa4af;line-height:1.6}',
-        '.plan-meal-note-item strong{color:#e2edf2}',
-        // Vegatable note + tier legend
-        '.plan-veg-note{font-size:0.79rem;color:#8aa4af;line-height:1.7;background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.2);border-radius:8px;padding:10px 14px;margin-bottom:8px}',
-        '.plan-veg-note strong{color:#4ade80}',
-        '.plan-portion-note{font-size:0.79rem;color:#8aa4af;line-height:1.7;background:rgba(8,127,163,0.05);border:1px dashed rgba(8,127,163,0.2);border-radius:8px;padding:10px 14px;margin-bottom:8px}',
-        '.plan-portion-note strong{color:#e2edf2}',
-        '.plan-tier-legend{font-size:0.72rem;color:#8aa4af;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;opacity:0.9}',
-        // Shopping list
-        '.plan-shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}',
-        '@media(max-width:480px){.plan-shop-grid{grid-template-columns:1fr}}',
-        '.plan-shop-cat{background:rgba(8,127,163,0.05);border:1px solid rgba(8,127,163,0.18);border-radius:8px;padding:10px 12px}',
-        '.plan-shop-cat-title{font-size:0.74rem;font-weight:800;color:#e2edf2;margin-bottom:6px}',
-        '.plan-shop-list{margin:0;padding:0 1rem 0 0;list-style:disc;display:flex;flex-direction:column;gap:3px}',
-        '.plan-shop-list li{font-size:0.75rem;color:#8aa4af;line-height:1.5}',
+        // Base wrapper
+        '.pdf-plan{--bg:#071419;--bg2:#0b1e26;--bg3:#0e2535;--accent:#5bd4ff;--accent2:#087fa3;--text:#e2edf2;--muted:#8aa4af;--border:rgba(8,127,163,0.3);--borderB:rgba(91,212,255,0.35);--green:#4ade80;--orange:#f59e0b;font-family:"Assistant",sans-serif;direction:rtl;font-size:13px;line-height:1.55;background:var(--bg);color:var(--text);max-width:390px;margin:0 auto}',
+        // Header
+        '.pdi-hdr{background:linear-gradient(135deg,#071419 0%,#0c2535 60%,#071c28 100%);border-bottom:2px solid var(--accent2);padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}',
+        '.pdi-hdr-logo{width:48px;height:48px;border-radius:10px;background:rgba(8,127,163,0.15);border:1.5px solid var(--borderB);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted)}',
+        '.pdi-hdr-title{font-size:20px;font-weight:800;color:var(--accent)}',
+        '.pdi-hdr-tagline{font-size:11px;color:var(--muted)}',
+        '.pdi-hdr-credits{font-size:10px;color:var(--muted)}',
+        '.pdi-hdr-cta{display:block;background:var(--accent2);color:#fff;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700;font-size:11px;line-height:1.4;width:100%;margin-top:4px;text-align:center}',
+        '.pdi-hdr-cta2{display:block;background:rgba(8,127,163,0.12);border:1px solid var(--borderB);color:var(--accent);padding:7px 10px;border-radius:8px;text-decoration:none;font-weight:600;font-size:11px;line-height:1.4;width:100%;text-align:center}',
+        // Intro
+        '.pdi-intro{padding:14px;background:var(--bg2);border-bottom:1px solid var(--border)}',
+        '.pdi-greeting{font-size:17px;font-weight:800;text-align:center;margin-bottom:3px}',
+        '.pdi-greeting em{color:var(--accent);font-style:normal}',
+        '.pdi-sub{font-size:11px;color:var(--muted);text-align:center;margin-bottom:12px}',
+        '.pdi-goal-row{display:flex;align-items:flex-start;gap:10px;justify-content:center;margin-bottom:12px}',
+        '.pdi-goal-img-wrap{text-align:center;flex-shrink:0}',
+        '.pdi-goal-img{width:58px;height:80px;object-fit:cover;border-radius:7px;border:1.5px solid var(--borderB);display:block;margin:0 auto 3px}',
+        '.pdi-goal-img-lbl{font-size:8px;color:var(--muted);font-weight:700;display:block}',
+        '.pdi-goal-pct{font-size:12px;font-weight:800;color:var(--accent);display:block}',
+        '.pdi-goal-arrow{font-size:18px;color:var(--accent2);padding-top:28px;flex-shrink:0}',
+        // Stat strips
+        '.pdi-stat-strip{background:rgba(8,127,163,0.08);border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin-bottom:7px}',
+        '.pdi-stat-strip:last-child{margin-bottom:0}',
+        '.pdi-stat-strip-label{font-size:9px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--border)}',
+        '.pdi-stat-cells{display:flex;gap:0}',
+        '.pdi-stat-cell{flex:1;text-align:center;padding:2px;border-left:1px solid rgba(8,127,163,0.2)}',
+        '.pdi-stat-cell:last-child{border-left:none}',
+        '.pdi-stat-lbl{display:block;font-size:7.5px;color:var(--muted);line-height:1.3}',
+        '.pdi-stat-val{display:block;font-size:9.5px;font-weight:700;color:var(--text);line-height:1.3}',
+        '.pdi-stat-val-sm{font-size:8px}',
+        // Section title
+        '.pdi-sec-block{padding:13px 14px 9px;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:8px;text-align:center}',
+        '.pdi-sec-title{font-size:20px;font-weight:800;color:var(--accent);display:block;margin-bottom:2px}',
+        '.pdi-sec-sub{font-size:11px;color:var(--muted);display:block}',
+        // Meals
+        '.pdi-meals-area{background:var(--bg)}',
+        '.pdi-meal{border-top:3px solid var(--accent2)}',
+        '.pdi-meal-a{background:var(--bg2)}',
+        '.pdi-meal-b{background:var(--bg)}',
+        '.pdi-meal-hdr{display:flex;align-items:stretch;border-bottom:1px solid var(--border);min-height:40px}',
+        '.pdi-meal-a .pdi-meal-hdr{background:rgba(8,127,163,0.12)}',
+        '.pdi-meal-b .pdi-meal-hdr{background:rgba(8,127,163,0.07)}',
+        '.pdi-meal-nums{padding:5px 10px;display:flex;flex-direction:column;justify-content:center;align-items:center;border-left:1px solid var(--border);min-width:72px}',
+        '.pdi-meal-cal{font-size:11px;font-weight:700;color:var(--accent);line-height:1.4}',
+        '.pdi-meal-prot{font-size:10px;font-weight:600;color:var(--green);line-height:1.4}',
+        '.pdi-meal-name{flex:1;padding:5px 10px;font-size:13px;font-weight:800;color:var(--text);display:flex;align-items:center;justify-content:center;text-align:center}',
+        '.pdi-meal-time{padding:5px 10px;font-size:10px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);white-space:nowrap;min-width:72px}',
+        // Option rows
+        '.pdi-opts-list{border-top:none}',
+        '.pdi-opt-row{display:flex;border-top:1px solid var(--border)}',
+        '.pdi-opt-row:first-child{border-top:none}',
+        '.pdi-opt-num-col{width:52px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-left:1px solid var(--border);padding:6px 3px;background:rgba(8,127,163,0.1);gap:2px}',
+        '.pdi-opt-num-lbl{font-size:7px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}',
+        '.pdi-opt-num-n{font-size:13px;font-weight:800;color:var(--accent2);line-height:1}',
+        '.pdi-opt-type-lbl{font-size:7.5px;font-weight:700;color:var(--accent);text-align:center;line-height:1.3}',
+        '.pdi-opt-content{flex:1;padding:0}',
+        // Component table
+        '.pdi-comp-tbl{width:100%;border-collapse:collapse}',
+        '.pdi-comp-tbl tr{border-bottom:1px solid rgba(8,127,163,0.1)}',
+        '.pdi-comp-tbl tr:last-child{border-bottom:none}',
+        '.pdi-comp-tbl td{padding:6px 8px;vertical-align:middle}',
+        '.pdi-comp-label-cell{width:76px;white-space:nowrap;vertical-align:middle}',
+        '.pdi-comp-label{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--muted)}',
+        '.pdi-ico{width:15px;height:15px;color:var(--accent2);flex-shrink:0;display:inline-block;vertical-align:middle}',
+        '.pdi-comp-opts{display:flex;gap:5px;flex-wrap:wrap;align-items:center}',
+        '.pdi-alt-box{display:inline-flex;flex-direction:column;background:rgba(8,127,163,0.08);border:1px solid rgba(8,127,163,0.22);border-radius:6px;padding:4px 8px;font-size:10px}',
+        '.pdi-alt-name{font-weight:700;color:var(--text);line-height:1.4}',
+        '.pdi-alt-sub{color:var(--muted);font-size:9px;line-height:1.3}',
+        '.pdi-alt-sep{color:var(--accent2);font-size:13px;font-weight:700;align-self:center;line-height:1}',
+        // Shopping
+        '.pdi-shop-area{padding:10px 14px 14px;background:var(--bg);border-top:1px solid var(--border)}',
+        '.pdi-shop-title{font-size:13px;font-weight:800;color:var(--accent);text-align:center;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}',
+        '.pdi-shop-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}',
+        '.pdi-shop-box{background:rgba(8,127,163,0.06);border:1px solid var(--border);border-radius:8px;padding:8px 9px}',
+        '.pdi-shop-box-hdr{display:flex;align-items:center;gap:5px;margin-bottom:5px;padding-bottom:4px;border-bottom:1px solid var(--border)}',
+        '.pdi-shop-box-ico{width:15px;height:15px;color:var(--accent2);flex-shrink:0}',
+        '.pdi-shop-box-t{font-size:10px;font-weight:800;color:var(--accent2)}',
+        '.pdi-shop-item{font-size:9.5px;color:var(--text);padding:1px 0;display:flex;gap:4px;align-items:flex-start}',
+        '.pdi-shop-item::before{content:"□";color:var(--accent2);flex-shrink:0;font-size:10px;line-height:1.2}',
         // Weekend
-        '.plan-weekend-block{background:rgba(8,127,163,0.06);border:1.5px solid rgba(8,127,163,0.2);border-radius:10px;padding:14px 16px;margin-top:4px}',
-        '.plan-weekend-intro{font-size:0.82rem;color:#8aa4af;line-height:1.7;margin:0 0 12px}',
-        '.plan-weekend-day{margin-bottom:14px}',
-        '.plan-weekend-day:last-child{margin-bottom:0}',
-        '.plan-weekend-day-title{font-size:0.82rem;font-weight:800;color:#e2edf2;margin-bottom:6px}',
-        '.plan-weekend-note{font-size:0.78rem;color:#8aa4af;line-height:1.6;margin:0 0 8px}',
-        '.plan-transfer-row{display:flex;align-items:center;gap:6px;font-size:0.76rem;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.03)}',
-        '.plan-transfer-row:last-of-type{border-bottom:0}',
-        '.plan-tr-label{flex:1;color:#8aa4af}',
-        '.plan-tr-orig{color:#4a6a7a;text-decoration:line-through;min-width:50px;text-align:left}',
-        '.plan-tr-arrow{color:#087fa3;font-size:0.8rem}',
-        '.plan-tr-after{color:#e2edf2;font-weight:700;min-width:50px}',
-        '.plan-tr-diff{color:#ef4444;font-size:0.7rem;min-width:30px;text-align:left}',
-        '.plan-weekend-saved{margin-top:8px;font-size:0.78rem;font-weight:700;color:#5bd4ff;background:rgba(8,127,163,0.1);border-radius:6px;padding:6px 10px;text-align:center}',
+        '.pdi-wknd{padding:10px 14px 14px;background:var(--bg2);border-top:1px solid var(--border)}',
+        '.pdi-wknd-title{font-size:14px;font-weight:800;color:var(--accent2);margin-bottom:6px;text-align:center}',
+        '.pdi-wknd-explain{font-size:10px;color:var(--muted);line-height:1.6;background:rgba(8,127,163,0.05);border:1px solid var(--border);border-radius:6px;padding:7px 10px;margin-bottom:10px}',
+        '.pdi-wknd-explain strong{color:var(--accent)}',
+        '.pdi-wk-days{display:grid;grid-template-columns:1fr 1fr;gap:7px}',
+        '.pdi-wk-day-card{background:rgba(8,127,163,0.05);border:1px solid var(--border);border-radius:8px;overflow:hidden}',
+        '.pdi-wk-day-hdr{background:rgba(8,127,163,0.12);padding:5px 8px;font-size:10px;font-weight:800;color:var(--text);text-align:center;border-bottom:1px solid var(--border)}',
+        '.pdi-wk-tbl{width:100%;border-collapse:collapse;font-size:9.5px}',
+        '.pdi-wk-tbl th{background:rgba(8,127,163,0.08);color:var(--accent2);padding:3px 8px;text-align:right;border-bottom:1px solid var(--border);font-size:8.5px}',
+        '.pdi-wk-tbl td{padding:4px 8px;border-bottom:1px solid rgba(8,127,163,0.1);vertical-align:middle}',
+        '.pdi-wk-tbl tr:last-child td{border-bottom:none}',
+        '.pdi-wk-meal-name{color:var(--text);font-weight:700}',
+        '.pdi-wk-kcal{color:var(--accent);font-weight:700;white-space:nowrap}',
+        '.pdi-wk-skip{color:var(--orange);font-size:8.5px;font-weight:700}',
+        // Notes
+        '.pdi-notes{padding:0 14px 12px;margin-top:8px}',
+        '.pdi-notes-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:7px}',
+        '.pdi-note-box{background:rgba(8,127,163,0.06);border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;flex-direction:column}',
+        '.pdi-note-ico{height:28px;display:flex;align-items:center;justify-content:center;margin-bottom:6px}',
+        '.pdi-note-t{font-size:10px;font-weight:800;color:var(--accent2);margin-bottom:4px;text-align:center}',
+        '.pdi-note-body{font-size:9px;color:var(--muted);line-height:1.6}',
+        '.pdi-note-body strong{color:var(--text)}',
+        '.pdi-salad-box{background:rgba(8,127,163,0.06);border:1px solid var(--border);border-radius:8px;padding:10px 12px}',
+        '.pdi-salad-t{font-size:10px;font-weight:800;color:var(--accent2);margin-bottom:4px}',
+        '.pdi-salad-body{font-size:9px;color:var(--muted);line-height:1.6;margin-bottom:10px}',
+        '.pdi-salad-visual{display:flex;align-items:flex-end;gap:5px;justify-content:center}',
+        '.pdi-bowl-group{display:flex;flex-direction:column;align-items:center;gap:2px}',
+        '.pdi-bowl-lbl{font-size:11px;font-weight:800;color:var(--accent)}',
+        '.pdi-bowl-sub{font-size:8px;color:var(--muted)}',
+        '.pdi-ingr-group{display:flex;gap:3px;align-items:center;padding-bottom:4px}',
+        '.pdi-arrow-ltr{font-size:13px;color:var(--accent2);flex-shrink:0;align-self:center;padding-bottom:6px}',
+        '.pdi-salad-div{font-size:16px;color:var(--accent2);font-weight:700;align-self:center;padding:0 1px;padding-bottom:6px}',
         // Workout
-        '.plan-video-placeholder{display:flex;align-items:center;gap:12px;background:rgba(8,127,163,0.06);border:1.5px dashed rgba(8,127,163,0.3);border-radius:10px;padding:14px 18px;margin-bottom:4px;cursor:pointer}',
-        '.plan-video-placeholder span{font-size:1.4rem;color:#5bd4ff;flex-shrink:0}',
-        '.plan-video-placeholder p{font-size:0.82rem;color:#8aa4af;margin:0;line-height:1.5}',
-        '.plan-workout-day-title{font-size:0.8rem;font-weight:800;color:#5bd4ff;margin:0 0 5px}',
-        '.plan-ex-table{width:100%;border-collapse:collapse;font-size:0.78rem;margin-bottom:4px;table-layout:fixed}',
-        '.plan-ex-table th{color:#087fa3;font-weight:700;font-size:0.68rem;text-align:right;padding:5px 6px;border-bottom:1px solid rgba(8,127,163,0.18)}',
-        '.plan-ex-table td{color:#c8dce6;padding:5px 6px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;text-align:right}',
-        '.plan-ex-table tr:last-child td{border-bottom:0}',
-        '.plan-ex-num{width:26px;text-align:center!important}',
-        '.plan-ex-name{color:#e2edf2;text-align:right}',
-        '.plan-ex-goal{display:block;font-size:0.62rem;color:#5bd4ff;font-weight:600;margin-top:1px}',
-        '.plan-ex-sets{width:44px;text-align:center!important}',
-        '.plan-ex-reps{width:54px;text-align:center!important}',
-        '.plan-ex-drop{width:32px;text-align:center!important;font-size:0.68rem;color:#8aa4af}',
-        '.plan-drop-tick{color:#5bd4ff;font-weight:700}',
-        // Superset — highlighted # cell only, no full-row box
-        '.plan-ss-label-row td{border:0!important;padding:2px 6px 1px!important}',
-        '.plan-ss-label-cell{font-size:0.64rem;font-weight:700;color:#087fa3;text-align:right!important}',
-        '.plan-ss-row td{background:rgba(8,127,163,0.04)}',
-        '.plan-ex-num-ss{color:#5bd4ff!important;font-weight:800;background:rgba(8,127,163,0.18);border-right:2px solid #087fa3}',
-        '.plan-ss-first{border-radius:0 6px 0 0}',
-        '.plan-ss-last{border-radius:0 0 6px 0}',
-        '.plan-ss-sep td{background:transparent!important;height:6px;border:0!important}',
-        '.plan-ss-tip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid rgba(8,127,163,0.5);font-size:0.6rem;color:#087fa3;cursor:default;vertical-align:middle}',
-        // Workout notes
-        '.plan-workout-notes{font-size:0.79rem;color:#8aa4af;line-height:1.7;background:rgba(8,127,163,0.06);border:1px solid rgba(8,127,163,0.2);border-radius:8px;padding:10px 14px;margin-bottom:4px}',
-        '.plan-warmup-line{font-size:0.78rem;color:#087fa3;background:rgba(8,127,163,0.07);border-radius:6px;padding:5px 10px;margin-bottom:6px}',
-        '.plan-ds-note{font-size:0.79rem;color:#8aa4af;background:rgba(8,127,163,0.06);border:1px dashed rgba(8,127,163,0.25);border-radius:8px;padding:10px 14px;margin:8px 0}',
-        '.plan-ds-note strong{color:#e2edf2}',
-        '.plan-progression-box{background:rgba(8,127,163,0.07);border:1.5px solid rgba(8,127,163,0.25);border-radius:10px;padding:14px 16px;margin:10px 0}',
-        '.plan-beginner-guide{background:rgba(8,127,163,0.08);border:1.5px solid rgba(91,212,255,0.3);border-radius:12px;padding:16px 18px;margin-bottom:4px}',
-        '.plan-beginner-guide-title{font-size:0.82rem;font-weight:800;color:#5bd4ff;margin-bottom:12px}',
-        '.plan-beginner-guide-list{margin:0;padding:0 1.2rem 0 0;list-style:disc;display:flex;flex-direction:column;gap:8px}',
-        '.plan-beginner-guide-list li{font-size:0.8rem;color:#8aa4af;line-height:1.6}',
-        '.plan-beginner-guide-list li strong{color:#e2edf2}',
-        '.plan-vol-table{width:100%;border-collapse:collapse;font-size:0.76rem;margin-top:5px}',
-        '.plan-vol-table th{color:#087fa3;font-size:0.68rem;font-weight:700;text-align:right;padding:5px 6px;border-bottom:1px solid rgba(8,127,163,0.18)}',
-        '.plan-vol-table td{padding:4px 6px;color:#c8dce6;border-bottom:1px solid rgba(255,255,255,0.03)}',
-        '.plan-vol-table tr:last-child td{border-bottom:0}',
-        '.plan-prio-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:4px;vertical-align:middle}',
-        '.prio-1{background:#5bd4ff}',
-        '.prio-2{background:#087fa3}',
-        '.prio-3{background:#3a5a6a}',
-        '.prio-none{background:#1e3a45}',
-        '.plan-cta{padding:28px 32px;text-align:center;background:linear-gradient(180deg,transparent 0%,rgba(8,127,163,0.05) 100%)}',
-        '.plan-cta-headline{color:#e2edf2;font-size:1rem;font-weight:800;margin:0 0 10px;line-height:1.5}',
-        '.plan-cta-sub{color:#8aa4af;font-size:0.84rem;margin:0 0 18px;line-height:1.5}',
-        '.plan-cta-divider{height:1px;background:rgba(8,127,163,0.15);margin:16px 0}',
-        '.plan-cta-booking-lbl{color:#c8dce6;font-size:0.88rem;margin:0 0 6px;line-height:1.5;font-weight:600}',
-        '.plan-cta-booking-sub{color:#8aa4af;font-size:0.82rem;margin:0 0 16px}',
-        '.plan-cta-btn{display:inline-block;background:#087fa3;color:#fff;text-decoration:none;font-weight:700;font-size:0.95rem;padding:13px 32px;border-radius:10px;margin-bottom:10px}',
-        '.plan-cta-btn:hover{background:#5bd4ff;color:#071419}',
-        '.plan-cta-skip{color:#2e4a55;font-size:0.75rem;margin:0;cursor:pointer;text-decoration:underline}',
-        '.plan-cta-skip:hover{color:#4a6a7a}',
-        '.plan-footer{padding:16px 32px;text-align:center;border-top:1px solid rgba(8,127,163,0.1)}',
-        '.plan-footer p{color:#2e4a55;font-size:0.7rem;margin:2px 0}',
-        '@media(max-width:480px){.plan-stats-bar{grid-template-columns:repeat(2,1fr)}.plan-section{padding:18px 16px}.plan-hero{padding:26px 18px 22px}.plan-hero h1{white-space:normal}}'
+        '.pdi-wkt-wrap{padding:0 14px}',
+        '.pdi-wkt-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}',
+        '.pdi-wkt-tag{font-size:9px;background:rgba(8,127,163,0.1);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--muted)}',
+        '.pdi-wkt-guide{font-size:10px;color:var(--muted);background:rgba(8,127,163,0.05);border:1px solid var(--border);border-radius:6px;padding:9px 12px;margin-bottom:10px}',
+        '.pdi-wkt-guide strong{color:var(--accent2)}',
+        '.pdi-guide-row{padding:2.5px 0;line-height:1.6;display:flex;gap:6px}',
+        '.pdi-guide-row::before{content:"·";color:var(--accent2);flex-shrink:0}',
+        // Volume strip
+        '.pdi-vol-wrap{margin-bottom:12px}',
+        '.pdi-vol-label{font-size:10px;color:var(--accent2);font-weight:700;margin-bottom:5px;text-align:center}',
+        '.pdi-vol-strip{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:rgba(8,127,163,0.04)}',
+        '.pdi-vol-cell{flex:1;padding:6px 2px;text-align:center;border-left:1px solid var(--border)}',
+        '.pdi-vol-cell:last-child{border-left:none}',
+        '.pdi-vol-num{font-size:12px;font-weight:800;color:var(--accent);display:block;line-height:1.2}',
+        '.pdi-vol-sets{font-size:7px;color:var(--muted);display:block;line-height:1.3}',
+        '.pdi-vol-muscle{font-size:7px;color:var(--accent2);display:block}',
+        // Exercise table
+        '.pdi-tbl-wrap{margin:0 -14px 14px}',
+        '.pdi-ex-tbl{width:100%;border-collapse:collapse;border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:10px}',
+        '.pdi-ex-tbl th{background:rgba(8,127,163,0.1);color:var(--accent2);font-size:8.5px;font-weight:700;padding:4px 7px;text-align:right;border-bottom:1px solid var(--border)}',
+        '.pdi-ex-tbl td{padding:5px 7px;border-bottom:1px solid rgba(8,127,163,0.1);color:var(--text);vertical-align:top}',
+        '.pdi-ex-tbl tr:last-child td{border-bottom:none}',
+        '.pdi-day-sep td{background:rgba(8,127,163,0.14);color:var(--accent);font-weight:800;font-size:11px;text-align:center;border-top:2px solid var(--accent2);border-bottom:1px solid var(--border)!important}',
+        '.pdi-ss-a td{background:rgba(8,127,163,0.07)}',
+        '.pdi-ss-b td{background:rgba(91,212,255,0.04)}',
+        '.pdi-ss-num{font-size:10px;font-weight:700;color:var(--accent);text-align:center;vertical-align:middle!important;border-left:2px solid var(--accent2)!important;padding:5px 6px!important}',
+        '.pdi-drop{color:var(--green);font-weight:700}',
+        '.pdi-goal-note{display:block;font-size:8px;color:var(--accent);font-weight:600;margin-top:1px}',
+        // Tips
+        '.pdi-tips{margin:14px;background:rgba(8,127,163,0.06);border:1px solid var(--border);border-right:3px solid var(--accent2);border-radius:8px;padding:10px 12px}',
+        '.pdi-tips-t{font-size:11px;font-weight:800;color:var(--accent);margin-bottom:5px;text-align:center}',
+        '.pdi-tip{font-size:10px;color:var(--muted);padding:2px 0;display:flex;gap:6px;line-height:1.55}',
+        '.pdi-tip::before{content:"←";color:var(--accent2);flex-shrink:0}',
+        // Footer
+        '.pdi-ftr{background:var(--bg2);border-top:1px solid var(--border);padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}',
+        '.pdi-ftr-brand{font-size:10px;color:var(--muted)}',
+        '.pdi-ftr-brand em{color:var(--accent);font-style:normal}',
+        '.pdi-ftr-note{font-size:9px;color:rgba(138,164,175,0.45)}'
       ].join('\n');
       document.head.appendChild(styleEl);
     }
 
-    // ── CTA — gender-aware ──
+    // ── helpers ──
     const isFemale = userData.gender === 'אישה';
-    const pronoun  = isFemale ? 'את' : 'אתה';
-    const pronoun2 = isFemale ? 'תעבדי' : 'תעבוד';
-    const monthlyResult = plan && !plan.isBulk && plan.kgPerMonth > 0
-      ? 'כבר החודש ' + pronoun + ' אמור' + (isFemale ? 'ה' : '') + ' לרדת ~' + plan.kgPerMonth + ' ק"ג'
-      : 'כבר החודש ' + pronoun + ' אמור' + (isFemale ? 'ה' : '') + ' לראות עלייה במסת השריר';
-    var ctaHtml = '<p class="plan-cta-headline">מגיע' + (isFemale ? 'ה' : '') + ' לך פגישת ייעוץ וסיכום תהליך חינמית — איתי אישית.</p>'
-      + '<p class="plan-cta-sub">כדי לשריין לעצמ' + (isFemale ? 'ך' : 'ך') + ' מקום, צריך לקבוע אותה מראש. עכשיו.</p>'
-      + '<a href="' + CFG.bookingLink + '" target="_blank" rel="noopener" class="plan-cta-btn">כן, אני אשמח' + (isFemale ? '' : '') + ' לקבוע פגישה (בחינם) ←</a>'
-      + '<p class="plan-cta-skip">אי קביעה עכשיו = ויתור על הפגישה החינמית לשנה הקרובה</p>';
+    const g = isFemale ? 'f' : 'm';
 
-    // ── Assemble full HTML ──
-    var html = '<div class="plan-shell">'
+    // SVG icon map (pdi- prefix)
+    function icoUse(id) { return '<svg class="pdi-ico"><use href="#pdi-' + id + '"/></svg>'; }
+    function shopIco(id) { return '<svg class="pdi-shop-box-ico"><use href="#pdi-' + id + '"/></svg>'; }
 
-      // Hero
-      + '<div class="plan-hero">'
-      + '<div class="plan-brand">דר נאור <span class="plan-tagline">— חטובים לנצח</span></div>'
-      + '<div class="plan-credits">מאמן כושר · מפתח גוף חובב · סטודנט למדעי התזונה באוניברסיטה העברית · יועץ תזונה מטעם וינגייט</div>'
-      + '<h1>התוכנית האישית שלך מוכנה, <span>' + name + '</span>!</h1>'
-      + '<p class="plan-hero-sub">בנית עבורך תוכנית ייחודית בהתאם למטרות והעדפות שלך</p>'
-      + '</div>'
+    // map component label → icon id
+    function compIcon(lbl) {
+      if (lbl.includes('ביצ')) return 'egg';
+      if (lbl.includes('לחם') || lbl.includes('פיתה') || lbl.includes('טוסט')) return 'bread';
+      if (lbl.includes('יוגורט') || lbl.includes('קוטג') || lbl.includes('גבינ') || lbl.includes('מעדן') || lbl.includes('חלב')) return 'dairy';
+      if (lbl.includes('פרי') || lbl.includes('תפוח') || lbl.includes('בנ')) return 'fruit';
+      if (lbl.includes('פחמ') || lbl.includes('אורז') || lbl.includes('פסטה') || lbl.includes('בטטה') || lbl.includes('דגנ') || lbl.includes('קינואה')) return 'grain';
+      if (lbl.includes('רוטב') || lbl.includes('חרדל') || lbl.includes('טחינה')) return 'sauce';
+      if (lbl.includes('חטיף') || lbl.includes('שייק')) return 'bar';
+      if (lbl.includes('ירקות') || lbl.includes('סלט')) return 'veg';
+      return 'protein';
+    }
 
-      // Stats
-      + statsHtml
+    // Parse option lines into component groups
+    function parseOptGroups(opt) {
+      var groups = [], cur = null, typeTit = opt.type;
+      opt.lines.forEach(function(line) {
+        var t = line.trim().replace(/\s*—\s*חלופה\s*$/, '');
+        if (!t) return;
+        if (t.startsWith('GROUP:')) {
+          if (cur && cur.rows.length) groups.push(cur);
+          var gp = t.slice(6).split('|');
+          cur = { name: gp[0].trim(), cal: gp[1] || null, rows: [] };
+          return;
+        }
+        var hm = t.match(/^(.+?)\s*\((\d+)\s*קל\):\s*(.+)$/);
+        if (hm) {
+          if (cur && cur.rows.length) groups.push(cur);
+          cur = { name: hm[1].trim(), cal: hm[2], rows: [] };
+          hm[3].split(' / ').map(function(s){ return s.trim(); }).filter(Boolean).forEach(function(item){ cur.rows.push(parseItemToRow(item)); });
+        } else {
+          if (!cur) cur = { name: typeTit, cal: null, rows: [] };
+          cur.rows.push(parseItemToRow(t));
+        }
+      });
+      if (cur && cur.rows.length) groups.push(cur);
+      return groups;
+    }
 
-      // Personal message section
-      + '<div class="plan-section">'
-      + '<div class="plan-section-label">👋 מסר אישי</div>'
-      + msgHtml
-      + '</div>'
+    // Build one alt-box from a row
+    function altBox(r) {
+      var sub = '';
+      if (r.qty && r.qty !== '—') sub += r.qty;
+      if (r.g   && r.g   !== '—') sub += (sub ? ' · ' : '') + r.g;
+      return '<div class="pdi-alt-box"><span class="pdi-alt-name">' + escHtml(r.name) + '</span>'
+        + (sub ? '<span class="pdi-alt-sub">' + escHtml(sub) + '</span>' : '') + '</div>';
+    }
 
-      // Meal plan section
-      + '<div class="plan-section">'
-      + '<div class="plan-section-label">🍽 תפריט תזונה</div>'
-      + '<div class="plan-card">'
-      + summaryHtml
-      + mealsHtml
-      + '</div>'
-      + '</div>'
+    // Meal time hints
+    const MEAL_TIME = {
+      'בוקר':'07:00–09:00', 'בין_בוקר_לצהריים':'10:00–11:30',
+      'צהריים':'12:00–14:00', 'בין_צהריים_לערב':'15:30–17:00',
+      'ערב':'18:00–20:00', 'לילה':'21:00+'
+    };
+    const MEAL_LABEL = {
+      'בוקר':'ארוחת בוקר', 'בין_בוקר_לצהריים':'ביניים — בוקר',
+      'צהריים':'ארוחת צהריים', 'בין_צהריים_לערב':'ביניים — אחה"צ',
+      'ערב':'ארוחת ערב', 'לילה':'ארוחת לילה'
+    };
+    const TYPE_LABEL = {
+      hot:'ארוחה חמה', yogurt:'יוגורט', cereals:'קורנפלקס', toast:'טוסטים',
+      eggs:'ביצים', shake:'שייק חלבון', sandwich:'סנדוויץ׳', salad:'סלט',
+      fruit:'פרי', bar:'חטיף חלבון', cottage:'קוטג׳', salad_snack:'סלט ביניים', snack:'נשנוש'
+    };
+    const MUSCLE_HE = { chest:'חזה', back:'גב', shoulders:'כתפיים', tricep:'יד אח׳', bicep:'יד קד׳', quad:'ירך קד׳', hamstring:'ירך אח׳', glute:'ישבן', calves:'תאומים', abs:'בטן' };
 
-      // Workout section
-      + '<div class="plan-section">'
-      + '<div class="plan-section-label">🏋️ תוכנית אימון</div>'
-      + '<div class="plan-card">'
-      + workoutHtml
-      + '</div>'
-      + '</div>'
+    // booking link
+    const bookingLink = (window.CFG && window.CFG.bookingLink) ? window.CFG.bookingLink : 'https://darnaor.com';
 
-      // CTA — gender-aware, progress promise, booking urgency
-      + '<div class="plan-cta">'
-      + ctaHtml
-      + '</div>'
+    // ── SVG defs ──
+    var svgDefs = '<svg style="display:none" xmlns="http://www.w3.org/2000/svg">'
+      + '<symbol id="pdi-egg" viewBox="0 0 16 16"><ellipse cx="8" cy="9" rx="4" ry="5" fill="none" stroke="currentColor" stroke-width="1.5"/><ellipse cx="8" cy="7.5" rx="1.5" ry="2" fill="none" stroke="currentColor" stroke-width="1"/></symbol>'
+      + '<symbol id="pdi-bread" viewBox="0 0 16 16"><rect x="2" y="5" width="12" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 7 Q8 3.5 14 7" fill="none" stroke="currentColor" stroke-width="1"/><line x1="5" y1="9" x2="11" y2="9" stroke="currentColor" stroke-width=".8"/><line x1="5" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width=".8"/></symbol>'
+      + '<symbol id="pdi-dairy" viewBox="0 0 16 16"><path d="M5 3 h6 l-1 10 H6z" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="4.5" y1="5" x2="11.5" y2="5" stroke="currentColor" stroke-width="1"/></symbol>'
+      + '<symbol id="pdi-fruit" viewBox="0 0 16 16"><circle cx="8" cy="10" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5 Q9.5 3 11.5 2" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>'
+      + '<symbol id="pdi-grain" viewBox="0 0 16 16"><rect x="3" y="11" width="10" height="2.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="4" y="7.5" width="8" height="2.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.2"/><rect x="5.5" y="4" width="5" height="2.5" rx="1.2" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>'
+      + '<symbol id="pdi-protein" viewBox="0 0 16 16"><path d="M3 13 L5 5 L8 10 L11 5 L13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>'
+      + '<symbol id="pdi-veg" viewBox="0 0 16 16"><line x1="8" y1="14" x2="8" y2="5" stroke="currentColor" stroke-width="1.2"/><path d="M8 9 Q5 7 3 3.5 Q6.5 3.5 8 7" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7 Q11 5 13 2.5 Q9.5 3 8 6.5" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>'
+      + '<symbol id="pdi-sauce" viewBox="0 0 16 16"><path d="M8 2 Q12 8 12 11 Q12 14.5 8 14.5 Q4 14.5 4 11 Q4 8 8 2z" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>'
+      + '<symbol id="pdi-bar" viewBox="0 0 16 16"><rect x="2" y="5" width="12" height="6" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="5" x2="6" y2="11" stroke="currentColor" stroke-width=".8"/><line x1="10" y1="5" x2="10" y2="11" stroke="currentColor" stroke-width=".8"/></symbol>'
+      + '<symbol id="pdi-meat" viewBox="0 0 16 16"><path d="M4 12 Q4 4 8 4 Q12 4 12 8 Q12 12 8 12 Q6 12 5 10" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="4" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>'
+      + '<symbol id="pdi-milk" viewBox="0 0 16 16"><path d="M5 3 h6 l-1 10 H6z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4.5 5 Q8 4 11.5 5" fill="none" stroke="currentColor" stroke-width="1"/><line x1="5" y1="7.5" x2="8" y2="7.5" stroke="currentColor" stroke-width=".9"/></symbol>'
+      + '<symbol id="pdi-wheat" viewBox="0 0 16 16"><line x1="8" y1="14" x2="8" y2="3" stroke="currentColor" stroke-width="1.2"/><ellipse cx="5.5" cy="10" rx="2" ry="1.2" fill="none" stroke="currentColor" stroke-width="1"/><ellipse cx="10.5" cy="10" rx="2" ry="1.2" fill="none" stroke="currentColor" stroke-width="1"/><ellipse cx="5.5" cy="7" rx="2" ry="1.2" fill="none" stroke="currentColor" stroke-width="1"/><ellipse cx="10.5" cy="7" rx="2" ry="1.2" fill="none" stroke="currentColor" stroke-width="1"/><ellipse cx="8" cy="4.5" rx="2" ry="1.2" fill="none" stroke="currentColor" stroke-width="1"/></symbol>'
+      + '<symbol id="pdi-apple" viewBox="0 0 16 16"><path d="M4 9 Q4 14 8 14 Q12 14 12 9 Q12 5 8 5 Q4 5 4 9z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 5 Q9 3 10 2" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>'
+      + '<symbol id="pdi-leaf" viewBox="0 0 16 16"><line x1="8" y1="14" x2="8" y2="5" stroke="currentColor" stroke-width="1.2"/><path d="M8 9 Q5 6 2 3 Q5.5 2 8 6" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 7 Q11 4 14 2 Q10.5 2 8 6" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>'
+      + '<symbol id="pdi-bottle" viewBox="0 0 16 16"><rect x="5" y="2" width="6" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="6" x2="11" y2="6" stroke="currentColor" stroke-width="1"/><rect x="6.5" y="1" width="3" height="2" rx=".5" fill="none" stroke="currentColor" stroke-width="1"/></symbol>'
+      + '<symbol id="pdi-cucumber" viewBox="0 0 14 32"><ellipse cx="7" cy="16" rx="5.5" ry="13" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="7" y1="3" x2="7" y2="2" stroke="currentColor" stroke-width="1.4"/><line x1="2.5" y1="10" x2="11.5" y2="10" stroke="currentColor" stroke-width=".8"/><line x1="2" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width=".8"/><line x1="2.5" y1="22" x2="11.5" y2="22" stroke="currentColor" stroke-width=".8"/></symbol>'
+      + '<symbol id="pdi-tomato" viewBox="0 0 28 28"><circle cx="14" cy="17" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="14" y1="7" x2="14" y2="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 8 Q14 5 18 8" fill="none" stroke="currentColor" stroke-width="1.2"/></symbol>'
+      + '<symbol id="pdi-pepper" viewBox="0 0 22 32"><path d="M5 8 Q4 28 11 28 Q18 28 17 8 Q16 4 14 3 Q11 2 8 3 Q6 4 5 8z" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="11" y1="3" x2="11" y2="1" stroke="currentColor" stroke-width="1.4"/></symbol>'
+      + '<symbol id="pdi-bowl-full" viewBox="0 0 36 26"><path d="M3 10 Q3 22 18 22 Q33 22 33 10z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="0" y1="10" x2="36" y2="10" stroke="currentColor" stroke-width="2"/><line x1="11" y1="24" x2="25" y2="24" stroke="currentColor" stroke-width="1.5"/><path d="M6 14 Q12 11 18 14 Q24 17 30 14" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/></symbol>'
+      + '<symbol id="pdi-bowl-half" viewBox="0 0 36 26"><path d="M3 10 Q3 22 18 22 Q33 22 33 10z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="0" y1="10" x2="36" y2="10" stroke="currentColor" stroke-width="2"/><line x1="11" y1="24" x2="25" y2="24" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="17" x2="33" y2="17" stroke="currentColor" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/></symbol>'
+      + '</svg>';
 
-      // Footer
-      + '<div class="plan-footer">'
-      + '<p>דר נאור — חטובים לנצח</p>'
-      + '<p>התוכנית חושבה לפי הנתונים שמסרת בשאלון</p>'
-      + '</div>'
+    // ── HEADER ──
+    var hdrHtml = '<header class="pdi-hdr">'
+      + '<div class="pdi-hdr-logo">DN</div>'
+      + '<div class="pdi-hdr-title">חטובים לנצח</div>'
+      + '<div class="pdi-hdr-tagline">התוכנית החינמית של דר נאור</div>'
+      + '<div class="pdi-hdr-credits">דר נאור · מאמן כושר ותזונה · סטודנט למדעי התזונה</div>'
+      + '<a class="pdi-hdr-cta" href="' + bookingLink + '" target="_blank" rel="noopener">חוששים שתוכנית לא תספיק? פה תוכלו לקבל את העזרה האישית שלי</a>'
+      + '<a class="pdi-hdr-cta2" href="https://instagram.com/dar__naor" target="_blank" rel="noopener">לצפייה בתכנים שיעשו אתכם חטובים לנצח</a>'
+      + '</header>';
 
-      + '</div>'; // end plan-shell
+    // ── INTRO ──
+    var introHtml = '';
+    if (plan) {
+      // goal images
+      const curBF  = userData.currentBF  || 25;
+      const targBF = userData.targetBF   || 20;
+      const clampBF = function(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); };
+      // available images are rounded to nearest available step — we'll just use as-is
+      const curImg  = '/quiz/images/' + g + '_' + curBF  + '_0.png';
+      const targImg = '/quiz/images/' + g + '_' + targBF + '_0.png';
+
+      const goalLabel = plan.isBulk ? 'עלייה במסה' : 'חיטוב';
+
+      introHtml = '<section class="pdi-intro">'
+        + '<div class="pdi-greeting">התוכנית האישית שלך מוכנה, <em>' + name + '</em>!</div>'
+        + '<div class="pdi-sub">בניתי עבורך תוכנית מותאמת אישית, בדיוק לפי המטרות שהגדרת.</div>'
+        + '<div class="pdi-goal-row">'
+        + '<div class="pdi-goal-img-wrap">'
+        + '<img class="pdi-goal-img" src="' + curImg + '" alt="מצב נוכחי" loading="lazy">'
+        + '<span class="pdi-goal-img-lbl">מצב נוכחי</span>'
+        + '<span class="pdi-goal-pct">' + curBF + '% שומן</span>'
+        + '</div>'
+        + '<div class="pdi-goal-arrow">←</div>'
+        + '<div class="pdi-goal-img-wrap">'
+        + '<img class="pdi-goal-img" src="' + targImg + '" alt="יעד" loading="lazy">'
+        + '<span class="pdi-goal-img-lbl">יעד</span>'
+        + '<span class="pdi-goal-pct">' + targBF + '% שומן</span>'
+        + '</div>'
+        + '</div>';
+
+      // profile strip
+      const LEVEL_LABEL = { 0:'מתחיל', 1:'מתחיל', 2:'בינוני', 3:'מתקדם', 4:'מנוסה' };
+      const levelStr = LEVEL_LABEL[userData.trainingLevel] || (userData.trainingLevel + '');
+      introHtml += '<div class="pdi-stat-strip">'
+        + '<div class="pdi-stat-strip-label">פרופיל</div>'
+        + '<div class="pdi-stat-cells">'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">גיל</span><span class="pdi-stat-val">' + (userData.age || '') + '</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">גובה</span><span class="pdi-stat-val">' + (userData.height || '') + ' ס"מ</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">משקל</span><span class="pdi-stat-val">' + (userData.weight || '') + ' ק"ג</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">יעד</span><span class="pdi-stat-val">' + (calc.target_weight || '') + ' ק"ג</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">מטרה</span><span class="pdi-stat-val">' + goalLabel + '</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">ניסיון</span><span class="pdi-stat-val">' + levelStr + '</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">צעדים</span><span class="pdi-stat-val">~' + (userData.steps || 6000) + '</span></div>'
+        + '</div></div>';
+
+      // goals strip
+      const deficitOrSurplus = plan.isBulk
+        ? ((calc.target_calories - calc.tdee) > 0 ? '+' + (calc.target_calories - calc.tdee) + ' קל<br>עודף' : 'recomp')
+        : (plan.deficit + ' קל<br>גרעון');
+      const etaStr = plan.etaMonths ? '~' + plan.etaMonths + ' חודשים' : '—';
+      const paceStr = plan.isBulk ? '—' : (plan.kgPerMonth ? '~' + plan.kgPerMonth + ' ק"ג' : '—');
+      introHtml += '<div class="pdi-stat-strip">'
+        + '<div class="pdi-stat-strip-label">יעדים</div>'
+        + '<div class="pdi-stat-cells">'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">קלוריות</span><span class="pdi-stat-val">' + calc.target_calories + ' קל</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">חלבון</span><span class="pdi-stat-val">' + calc.protein_target + ' ג׳</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">' + (plan.isBulk ? 'עודף' : 'גרעון') + '</span><span class="pdi-stat-val pdi-stat-val-sm">' + deficitOrSurplus + '</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">קצב</span><span class="pdi-stat-val">' + paceStr + '/חודש</span></div>'
+        + '<div class="pdi-stat-cell"><span class="pdi-stat-lbl">זמן ליעד</span><span class="pdi-stat-val">' + etaStr + '</span></div>'
+        + '</div></div>'
+        + '</section>';
+    }
+
+    // ── NUTRITION SECTION HEADER ──
+    var nutSecHtml = '';
+    if (plan && plan.meals && plan.meals.length > 0) {
+      const daysStr = (plan.hasFriday || plan.hasSaturday) ? 'ימים א׳–ה׳' : 'כל ימות השבוע';
+      nutSecHtml = '<div class="pdi-sec-block">'
+        + '<span class="pdi-sec-title">תפריט שבועי</span>'
+        + '<span class="pdi-sec-sub">' + daysStr + ' · ' + calc.target_calories + ' קלוריות ליום · ' + calc.protein_target + ' גרם חלבון</span>'
+        + '</div>';
+    }
+
+    // ── MEALS ──
+    var mealsAreaHtml = '';
+    if (plan && plan.meals && plan.meals.length > 0) {
+      mealsAreaHtml = '<div class="pdi-meals-area">';
+      plan.meals.forEach(function(meal, mIdx) {
+        const mClass = (mIdx % 2 === 0) ? 'pdi-meal-a' : 'pdi-meal-b';
+        const mLabel = MEAL_LABEL[meal.id] || meal.id;
+        const mTime  = MEAL_TIME[meal.id]  || '';
+        // average protein across options
+        const avgProt = meal.options && meal.options.length > 0
+          ? Math.round(meal.options.reduce(function(s,o){ return s + (o.prot || 0); }, 0) / meal.options.length)
+          : 0;
+
+        var optRowsHtml = '';
+        meal.options.forEach(function(opt, oIdx) {
+          const typeLabel = TYPE_LABEL[opt.type] || opt.type;
+          const groups = parseOptGroups(opt);
+
+          // build component table rows
+          var compRows = '';
+          groups.forEach(function(gr) {
+            var altBoxes = gr.rows.map(altBox).join('<span class="pdi-alt-sep">/</span>');
+            compRows += '<tr>'
+              + '<td class="pdi-comp-label-cell"><div class="pdi-comp-label">' + icoUse(compIcon(gr.name)) + escHtml(gr.name) + '</div></td>'
+              + '<td><div class="pdi-comp-opts">' + altBoxes + '</div></td>'
+              + '</tr>';
+          });
+
+          optRowsHtml += '<div class="pdi-opt-row">'
+            + '<div class="pdi-opt-num-col">'
+            + '<span class="pdi-opt-num-lbl">אופציה</span>'
+            + '<span class="pdi-opt-num-n">' + (oIdx + 1) + '</span>'
+            + '<span class="pdi-opt-type-lbl">' + escHtml(typeLabel) + '</span>'
+            + '</div>'
+            + '<div class="pdi-opt-content">'
+            + '<table class="pdi-comp-tbl">' + compRows + '</table>'
+            + '</div>'
+            + '</div>';
+        });
+
+        mealsAreaHtml += '<div class="pdi-meal ' + mClass + '">'
+          + '<div class="pdi-meal-hdr">'
+          + '<div class="pdi-meal-nums"><span class="pdi-meal-cal">' + meal.cal + ' קל</span><span class="pdi-meal-prot">' + avgProt + 'ג חלבון</span></div>'
+          + '<div class="pdi-meal-name">' + escHtml(mLabel) + '</div>'
+          + '<div class="pdi-meal-time">' + escHtml(mTime) + '</div>'
+          + '</div>'
+          + '<div class="pdi-opts-list">' + optRowsHtml + '</div>'
+          + '</div>';
+      });
+      mealsAreaHtml += '</div>';
+    }
+
+    // ── SHOPPING LIST ──
+    // Collect items from plan lines, categorize, render as 3-col grid
+    var shopHtml = '';
+    if (plan && plan.meals && plan.meals.length > 0) {
+      const shopProteins = [], shopDairy = [], shopCarbs = [], shopFruits = [], shopSauces = [], shopVeg = [], shopOther = [];
+      const seenNames = {};
+      const SAUCE_SET = new Set(['רוטב עגבניות','חרדל ודבש לייט','חרדל לייט','רוטב סויה','טחינה','רוטב שום לייט','פסטו','קטשופ','מיונז','ריבה לייט','חומץ בלסמי','שמן זית']);
+      function isProtein(n) { return n.includes('עוף')||n.includes('הודו')||n.includes('טונה')||n.includes('סלמון')||n.includes('ביצ')||n.includes('פסטרמה')||n.includes('אבקת חלבון')||n.includes('דגים')||n.includes('שייק')||n.includes('בשר'); }
+      function isDairy(n)   { return n.includes('יוגורט')||n.includes('גבינ')||n.includes('קוטג')||n.includes('חלב')||n.includes('מוצרלה')||n.includes('שמנת')||n.includes('מעדן'); }
+      function isCarb(n)    { return n.includes('אורז')||n.includes('פסטה')||n.includes('לחם')||n.includes('פיתה')||n.includes('בטטה')||n.includes('עדשים')||n.includes('קינואה')||n.includes('קורנפלקס')||n.includes('גרנולה')||n.includes('שיבולת')||n.includes('כוסמת')||n.includes('לחמניה'); }
+      function isFruitN(n)  { return n.includes('תפוח')||n.includes('בננה')||n.includes('תות')||n.includes('תמר')||n.includes('קלמנטינה')||n.includes('ענבים')||n.includes('מנגו')||n.includes('אבוקדו')||n.includes('תפוז'); }
+      function isSauce(n)   { return SAUCE_SET.has(n)||n.includes('רוטב'); }
+
+      plan.meals.forEach(function(meal) {
+        meal.options.forEach(function(opt) {
+          opt.lines.forEach(function(line) {
+            var t = line.trim();
+            if (!t || t.startsWith('GROUP:')) return;
+            var itemsStr = t;
+            var colon = t.indexOf(':');
+            if (colon > 0 && colon < 30) itemsStr = t.slice(colon + 1).trim();
+            itemsStr.split(' / ').forEach(function(entry) {
+              var parts = entry.trim().split('||');
+              if (parts.length >= 1) {
+                var fn = parts[0].trim().replace(/\s*\(\d+\s*קל\)/g,'').replace(/[:()/]/g,'').trim();
+                if (fn && fn.length > 2 && !seenNames[fn]) {
+                  seenNames[fn] = true;
+                  if (isProtein(fn))     shopProteins.push(fn);
+                  else if (isDairy(fn))  shopDairy.push(fn);
+                  else if (isCarb(fn))   shopCarbs.push(fn);
+                  else if (isFruitN(fn)) shopFruits.push(fn);
+                  else if (isSauce(fn))  shopSauces.push(fn);
+                  else if (!fn.includes('ירקות') && !fn.includes('בחירה') && !fn.includes('לבחירה')) shopOther.push(fn);
+                }
+              }
+            });
+          });
+        });
+      });
+
+      function shopBox(title, icoId, items) {
+        if (!items.length) return '';
+        var itemsHtml = items.map(function(i){ return '<div class="pdi-shop-item">' + escHtml(i) + '</div>'; }).join('');
+        return '<div class="pdi-shop-box">'
+          + '<div class="pdi-shop-box-hdr">' + shopIco(icoId) + '<span class="pdi-shop-box-t">' + title + '</span></div>'
+          + itemsHtml + '</div>';
+      }
+
+      // vegetables box is always shown (generic items since quiz doesn't track them)
+      var vegBox = '<div class="pdi-shop-box">'
+        + '<div class="pdi-shop-box-hdr">' + shopIco('leaf') + '<span class="pdi-shop-box-t">ירקות</span></div>'
+        + '<div class="pdi-shop-item">עגבניות</div>'
+        + '<div class="pdi-shop-item">מלפפונים</div>'
+        + '<div class="pdi-shop-item">פלפלים</div>'
+        + '<div class="pdi-shop-item">חסה / עלי תרד</div>'
+        + '</div>';
+
+      var allBoxes = shopBox('חלבונים', 'meat', shopProteins)
+        + shopBox('חלביים', 'milk', shopDairy)
+        + shopBox('פחמימות', 'wheat', shopCarbs)
+        + shopBox('פירות', 'apple', shopFruits)
+        + vegBox
+        + shopBox('שונות', 'bottle', shopSauces.concat(shopOther));
+
+      if (allBoxes) {
+        shopHtml = '<div class="pdi-shop-area">'
+          + '<div class="pdi-shop-title">רשימת קניות שבועית</div>'
+          + '<div class="pdi-shop-grid">' + allBoxes + '</div>'
+          + '</div>';
+      }
+    }
+
+    // ── WEEKEND ──
+    var weekendHtml = '';
+    if (plan && (plan.hasFriday || plan.hasSaturday)) {
+      const mealById = {};
+      if (plan.meals) plan.meals.forEach(function(m){ mealById[m.id] = m; });
+
+      weekendHtml = '<div class="pdi-wknd">'
+        + '<div class="pdi-wknd-title">שישי ושבת — העברת קלוריות</div>'
+        + '<div class="pdi-wknd-explain"><strong>הרעיון:</strong> מדלגים על ארוחות הביניים ומקטינים מעט ארוחות אחרות כדי לשמור קלוריות לארוחה המיוחדת — ומשמרים את הסה"כ היומי.</div>'
+        + '<div class="pdi-wk-days">';
+
+      function buildDayCard(dayLabel, rows) {
+        var rowsHtml = rows.map(function(r){
+          return '<tr><td class="pdi-wk-meal-name">' + escHtml(r.label) + '</td>'
+            + '<td>' + (r.skip ? '<span class="pdi-wk-skip">0 — מדלגים</span>' : '<span class="pdi-wk-kcal">' + r.cal + '</span>') + '</td></tr>';
+        }).join('');
+        return '<div class="pdi-wk-day-card">'
+          + '<div class="pdi-wk-day-hdr">' + dayLabel + '</div>'
+          + '<table class="pdi-wk-tbl"><tr><th>ארוחה</th><th>קל</th></tr>' + rowsHtml + '</table>'
+          + '</div>';
+      }
+
+      if (plan.hasFriday) {
+        var fridayRows = [];
+        var fridaySaved = 0;
+        var bkfst = mealById['בוקר'];
+        var midM  = mealById['בין_בוקר_לצהריים'];
+        var lunch = mealById['צהריים'];
+        var midA  = mealById['בין_צהריים_לערב'];
+        var dinner = mealById['ערב'];
+        if (bkfst) {
+          var cut = Math.round(bkfst.cal / 2 / 50) * 50;
+          fridayRows.push({ label:'בוקר', cal: bkfst.cal - cut });
+          fridaySaved += cut;
+        }
+        if (midM) { fridayRows.push({ label:'ביניים בוקר', skip:true }); fridaySaved += midM.cal; }
+        if (lunch) {
+          var lunchCut = Math.round(lunch.cal * 0.2 / 50) * 50;
+          fridayRows.push({ label:'צהריים', cal: lunch.cal - lunchCut });
+          fridaySaved += lunchCut;
+        }
+        if (midA) { fridayRows.push({ label:'ביניים אחה"צ', skip:true }); fridaySaved += midA.cal; }
+        if (plan.snackSpare) fridaySaved += plan.snackSpare;
+        var dinnerTotal = (dinner ? dinner.cal : 0) + fridaySaved;
+        fridayRows.push({ label:'ערב שישי', cal: dinnerTotal + '+' });
+        weekendHtml += buildDayCard('יום שישי', fridayRows);
+      }
+
+      if (plan.hasSaturday) {
+        var satRows = [];
+        var satSaved = 0;
+        var bkfstS = mealById['בוקר'];
+        var midMS  = mealById['בין_בוקר_לצהריים'];
+        var midAS  = mealById['בין_צהריים_לערב'];
+        var lunchS = mealById['צהריים'];
+        if (bkfstS) { satRows.push({ label:'בוקר', skip:true }); satSaved += bkfstS.cal; }
+        if (midMS)  { satRows.push({ label:'ביניים', skip:true }); satSaved += midMS.cal; }
+        if (midAS)  { satSaved += midAS.cal; }
+        if (plan.snackSpare) satSaved += plan.snackSpare;
+        var satLunchTotal = (lunchS ? lunchS.cal : 0) + satSaved;
+        satRows.push({ label:'ארוחת שבת', cal: satLunchTotal + '+' });
+        var dinnerS = mealById['ערב'];
+        if (dinnerS) satRows.push({ label:'ערב', cal: dinnerS.cal });
+        weekendHtml += buildDayCard('יום שבת', satRows);
+      }
+
+      weekendHtml += '</div></div>';
+    }
+
+    // ── NOTES ──
+    var notesHtml = '';
+    if (plan) {
+      // coffee cups SVG (milk)
+      const milkMl = plan.milkMl || 0;
+      const milkCal = plan.milkCal || 0;
+      const cups = Math.max(1, Math.round(milkMl / 140));
+      // build cup SVGs
+      var cupsHtml = '';
+      for (var ci = 0; ci < cups; ci++) {
+        var fillH = Math.round(44 * 0.44); // fixed 44px fill for 140ml
+        var fillY = 52 - fillH;
+        var clipId = 'pdi-cc-' + ci;
+        cupsHtml += '<svg width="14" height="20" viewBox="0 0 36 52" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline-block">'
+          + '<defs><clipPath id="' + clipId + '"><rect x="4" y="' + fillY + '" width="28" height="44"/></clipPath></defs>'
+          + '<path d="M6 4 L4 48 Q4 50 6 50 L30 50 Q32 50 32 48 L30 4 Z" stroke="var(--accent2)" stroke-width="1.5" fill="rgba(8,127,163,0.06)"/>'
+          + '<path d="M6 4 L4 48 Q4 50 6 50 L30 50 Q32 50 32 48 L30 4 Z" fill="rgba(8,127,163,0.4)" clip-path="url(#' + clipId + ')"/>'
+          + '<line x1="4" y1="4" x2="32" y2="4" stroke="var(--accent2)" stroke-width="1.5" stroke-linecap="round"/>'
+          + '</svg>';
+      }
+
+      const snackSpare = plan.snackSpare || 0;
+      notesHtml = '<div class="pdi-notes">'
+        + '<div class="pdi-notes-row">'
+        // coffee box
+        + '<div class="pdi-note-box"><div class="pdi-note-ico">' + cupsHtml + '</div>'
+        + '<div class="pdi-note-t">קפה</div>'
+        + '<div class="pdi-note-body">לאורך היום יש לך <strong>' + milkMl + ' מ"ל חלב</strong> עבור הקפה שלך.</div>'
+        + '</div>'
+        // free cals box
+        + '<div class="pdi-note-box"><div class="pdi-note-ico"><svg width="20" height="20" style="color:var(--accent2)" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><text x="8" y="11" font-size="5.5" fill="currentColor" text-anchor="middle" font-weight="bold" font-family="sans-serif">' + snackSpare + '</text></svg></div>'
+        + '<div class="pdi-note-t">קלוריות חופשיות</div>'
+        + '<div class="pdi-note-body"><strong>' + snackSpare + ' קל ביום</strong> לשימוש חופשי. מתוק, נשנוש, תוספת — שלכם.</div>'
+        + '</div>'
+        // accuracy box
+        + '<div class="pdi-note-box"><div class="pdi-note-ico"><svg width="20" height="20" style="color:var(--accent2)" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><polyline points="5,8 7,10.5 11,6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+        + '<div class="pdi-note-t">דיוק</div>'
+        + '<div class="pdi-note-body">התפריט <strong>מחמיר מעט</strong>. עם הקפדה מלאה — <strong>10–20% מהר יותר</strong>.</div>'
+        + '</div>'
+        + '</div>'
+        // salad box
+        + '<div class="pdi-salad-box">'
+        + '<div class="pdi-salad-t">סלט ירקות — כמה זה 100 קלוריות?</div>'
+        + '<div class="pdi-salad-body">דמיינו מלפפון, עגבניה וגמבה חתוכים. הנפח שנוצר = 100 קל. לא חשוב אילו ירקות — רק לפי הכמות.</div>'
+        + '<div class="pdi-salad-visual">'
+        + '<div class="pdi-ingr-group">'
+        + '<svg width="12" height="28" style="color:var(--muted);display:block"><use href="#pdi-cucumber" width="12" height="28"/></svg>'
+        + '<svg width="20" height="20" style="color:var(--muted);display:block;margin-bottom:4px"><use href="#pdi-tomato" width="20" height="20"/></svg>'
+        + '<svg width="16" height="24" style="color:var(--muted);display:block;margin-bottom:2px"><use href="#pdi-pepper" width="16" height="24"/></svg>'
+        + '</div>'
+        + '<div class="pdi-arrow-ltr">←</div>'
+        + '<div class="pdi-bowl-group"><svg width="36" height="26" style="color:var(--accent)"><use href="#pdi-bowl-full" width="36" height="26"/></svg><span class="pdi-bowl-lbl">100ק</span><span class="pdi-bowl-sub">קערה מלאה</span></div>'
+        + '<div class="pdi-arrow-ltr" style="font-size:11px">←</div>'
+        + '<div class="pdi-bowl-group"><svg width="30" height="22" style="color:var(--muted)"><use href="#pdi-bowl-half" width="30" height="22"/></svg><span class="pdi-bowl-lbl" style="color:var(--muted);font-size:10px">50ק</span><span class="pdi-bowl-sub">חצי</span></div>'
+        + '<div class="pdi-salad-div">/</div>'
+        + '<div class="pdi-bowl-group"><div style="display:flex;gap:2px"><svg width="26" height="19" style="color:var(--green)"><use href="#pdi-bowl-full" width="26" height="19"/></svg><svg width="26" height="19" style="color:var(--green)"><use href="#pdi-bowl-full" width="26" height="19"/></svg></div><span class="pdi-bowl-lbl" style="color:var(--green);font-size:10px">200ק</span><span class="pdi-bowl-sub">שתי קערות</span></div>'
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    // ── WORKOUT SECTION ──
+    var wktSecHtml = '', wktBodyHtml = '';
+    if (workout && workout.days && workout.days.length > 0) {
+      // section header
+      const wDays = userData.trainingDays || workout.days.length;
+      const wDur  = workout.sessionDuration || 60;
+      const wkSplit = workout.days.length <= 2 ? 'Full Body' : workout.days.length <= 4 ? 'Upper/Lower' : 'Split';
+      wktSecHtml = '<div class="pdi-sec-block" style="margin-top:8px">'
+        + '<span class="pdi-sec-title">תוכנית אימון</span>'
+        + '<span class="pdi-sec-sub">' + wDays + ' ימים בשבוע · ' + wDur + ' דקות · ' + wkSplit + '</span>'
+        + '</div>';
+
+      // meta tags
+      const specificDaysStr = userData.trainingDaysSpecific && userData.trainingDaysSpecific.length > 0
+        ? userData.trainingDaysSpecific.map(function(d){ return 'יום ' + d + '׳'; }).join(', ')
+        : (workout.suggestedDays || (wDays + ' ימים'));
+      var tags = '<div class="pdi-wkt-meta">'
+        + '<span class="pdi-wkt-tag">ימי אימון: ' + escHtml(specificDaysStr) + '</span>'
+        + '<span class="pdi-wkt-tag">' + wDur + ' דקות לאימון</span>'
+        + '<span class="pdi-wkt-tag">סופרסטים: ' + (workout.supersets ? 'כן' : 'לא') + '</span>';
+      if (userData.injuries && userData.injuries.length > 0) {
+        tags += '<span class="pdi-wkt-tag">הותאם: ' + escHtml(userData.injuries.join(', ')) + '</span>';
+      }
+      tags += '<span class="pdi-wkt-tag">Double Progression</span>'
+        + '</div>';
+
+      // guide
+      var guide = '<div class="pdi-wkt-guide">'
+        + '<div class="pdi-guide-row"><strong>חימום:</strong> 5 דק׳ הליכון + 2 סטי חימום לתרגיל הראשון (50% → 75%).</div>'
+        + '<div class="pdi-guide-row"><strong>קצב:</strong> ירידה 3 שניות, עלייה 1 שנייה.</div>'
+        + '<div class="pdi-guide-row"><strong>מנוחה:</strong> 2–3 דקות בין סטים.</div>'
+        + '<div class="pdi-guide-row"><strong>איך מתקדמים:</strong> נסו להגיע לסוף טווח החזרות — אם הצלחתם, בפעם הבאה תוסיפו משקל.</div>'
+        + (workout.supersets ? '<div class="pdi-guide-row"><strong>סופרסט:</strong> שני תרגילים ברצף ללא מנוחה ביניהם — ורק אז נחים 2–3 דק׳.</div>' : '')
+        + '<div class="pdi-guide-row"><strong>דרופסט ✓:</strong> מיד אחרי הסט האחרון — הורידו 20% ועשו סט נוסף ללא מנוחה.</div>'
+        + '</div>';
+
+      // volume strip
+      var volCells = '';
+      const MUSCLE_ORDER = ['glute','back','abs','quad','hamstring','chest','shoulders','bicep','tricep','calves'];
+      MUSCLE_ORDER.forEach(function(mId) {
+        var vol = (workout.actualVol && workout.actualVol[mId]) ? Math.round(workout.actualVol[mId]) : 0;
+        if (!vol) return;
+        var mName = MUSCLE_HE[mId] || mId;
+        volCells += '<div class="pdi-vol-cell"><span class="pdi-vol-num">' + vol + '</span><span class="pdi-vol-sets">סטים בשבוע</span><span class="pdi-vol-muscle">' + escHtml(mName) + '</span></div>';
+      });
+      var volStrip = volCells
+        ? '<div class="pdi-vol-wrap"><div class="pdi-vol-label">נפח שבועי</div><div class="pdi-vol-strip">' + volCells + '</div></div>'
+        : '';
+
+      // exercise table — ONE continuous table with day separator rows
+      var tbodyRows = '';
+      workout.days.forEach(function(day) {
+        // day separator row
+        tbodyRows += '<tr class="pdi-day-sep"><td colspan="6">' + escHtml(day.name) + '</td></tr>';
+
+        // group exercises by num for superset detection
+        var grouped = {}, order = [];
+        day.exercises.forEach(function(e) {
+          if (!grouped[e.num]) { grouped[e.num] = []; order.push(e.num); }
+          grouped[e.num].push(e);
+        });
+
+        // track SS color alternation
+        var ssColor = 'a'; // 'a' or 'b'
+        var prevWasSS = false;
+
+        order.forEach(function(num) {
+          var group = grouped[num];
+          var isSS  = group.length > 1;
+
+          if (isSS) {
+            // alternate ss-a/ss-b per superset group
+            if (prevWasSS) { ssColor = (ssColor === 'a') ? 'b' : 'a'; }
+            var ssClass = 'pdi-ss-' + ssColor;
+            group.forEach(function(e, idx) {
+              var numCell = (idx === 0)
+                ? '<td class="pdi-ss-num" rowspan="' + group.length + '">' + num + '</td>'
+                : '';
+              tbodyRows += '<tr class="' + ssClass + '">'
+                + numCell
+                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
+                + '<td>' + e.sets + '</td>'
+                + '<td>' + escHtml(e.reps) + '</td>'
+                + '<td>' + (e.drop ? '<span class="pdi-drop">✓</span>' : '') + '</td>'
+                + '</tr>';
+            });
+            prevWasSS = true;
+          } else {
+            prevWasSS = false;
+            group.forEach(function(e) {
+              tbodyRows += '<tr>'
+                + '<td style="text-align:center">' + num + '</td>'
+                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
+                + '<td style="text-align:center">' + e.sets + '</td>'
+                + '<td style="text-align:center">' + escHtml(e.reps) + '</td>'
+                + '<td style="text-align:center">' + (e.drop ? '<span class="pdi-drop">✓</span>' : '') + '</td>'
+                + '</tr>';
+            });
+          }
+        });
+      });
+
+      var exTable = '<div class="pdi-tbl-wrap">'
+        + '<table class="pdi-ex-tbl">'
+        + '<thead><tr><th style="width:28px">#</th><th>תרגיל</th><th style="width:36px">סטים</th><th style="width:46px">חזרות</th><th style="width:38px">דרופסט</th></tr></thead>'
+        + '<tbody>' + tbodyRows + '</tbody>'
+        + '</table></div>';
+
+      wktBodyHtml = '<div class="pdi-wkt-wrap" style="padding-top:10px">'
+        + tags + guide + volStrip + exTable + '</div>';
+    }
+
+    // ── TIPS ──
+    var tipsHtml = '<div class="pdi-tips">'
+      + '<div class="pdi-tips-t">איך מתקדמים מהר יותר?</div>'
+      + '<div class="pdi-tip">הגיעו ליעד החלבון — זה הגורם הכי משמעותי לשמירה על מסת שריר בחיטוב.</div>'
+      + '<div class="pdi-tip">הוסיפו צעדים — כל 1,500 צעד = שריפה כמשקל גופכם בקלוריות. יעד: 8,000–10,000 ביום.</div>'
+      + '<div class="pdi-tip">ניתן להפחית עד 15% מהקלוריות (~250 קל) אם אין התקדמות אחרי שבועיים.</div>'
+      + '<div class="pdi-tip">עקביות עולה על שלמות. 80% ברוב הימים עדיפה על 100% למשך שבוע ואז נפילה.</div>'
+      + '</div>';
+
+    // ── FOOTER ──
+    var ftrHtml = '<footer class="pdi-ftr">'
+      + '<div class="pdi-ftr-brand"><em>חטובים לנצח</em> · דר נאור · darnaor.com · @dar__naor</div>'
+      + '<div class="pdi-ftr-note">התוכנית מבוססת על הנתונים שהזנת ועשויה לדרוש התאמות אישיות.</div>'
+      + '</footer>';
+
+    // ── ASSEMBLE ──
+    var html = '<div class="pdf-plan">'
+      + svgDefs
+      + hdrHtml
+      + introHtml
+      + nutSecHtml
+      + mealsAreaHtml
+      + shopHtml
+      + weekendHtml
+      + notesHtml
+      + wktSecHtml
+      + wktBodyHtml
+      + tipsHtml
+      + ftrHtml
+      + '</div>';
 
     output.innerHTML = html;
     output.classList.remove('hidden');
-    output.scrollIntoView({ behavior:'smooth', block:'start' });
-
-    // Send plan as email via Resend (fire & forget)
+    output.scrollIntoView({ behavior: 'smooth', block: 'start' });
     sendPlanEmail(userData, html).catch(() => {});
   }
 
@@ -4207,7 +4712,7 @@ ${planHtml}
 
   // ── COUNTDOWN TIMER ──
   function startCountdown() {
-    const SECS = 20;
+    const SECS = 25;
     const bar  = document.getElementById('cdown-bar');
     const lbl  = document.getElementById('cdown-label');
     const btn  = document.getElementById('btn-send-plan');
@@ -5487,6 +5992,11 @@ ${planHtml}
 
     // קלוריות חלב בקפה — 50 קל/100 מ"ל
     const milkCal = Math.round((userData.milkMl || 0) * 50 / 100);
+    // At minimum calorie floor: milk wasn't deducted from meal budget, so absorb it into snackSpare
+    const calFloor = userData.gender === 'גבר' ? 1700 : 1300;
+    if (targetCal <= calFloor && milkCal > 0) {
+      snackSpare = Math.max(0, snackSpare - milkCal);
+    }
 
     const isBulk = userData.goal === 'bulk';
     const kgPerMonth = isBulk ? 0 : Math.round(calc.deficit * 26 / 7700 * 10) / 10;
