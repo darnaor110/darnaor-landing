@@ -5824,7 +5824,13 @@ ${planHtml}
 
   // ── build one meal's options ────────────────────────────
   function buildMealOptions(mealId, meal, cal, restrictions) {
-    if (!meal || !meal.checked || !meal.types || meal.types.length === 0) return [];
+    if (!meal || !meal.checked) return [];
+    // If no food types selected, apply meal defaults so the meal always has content
+    if (!meal.types || meal.types.length === 0) {
+      const def = MEAL_DEFAULTS[mealId];
+      if (!def) return [];
+      meal = { checked: true, types: [def.type], typeComponents: { [def.type]: def.comps }, weight: meal.weight };
+    }
 
     const dislikes = (restrictions.dislikes || '').toLowerCase();
     const restr    = restrictions.list || [];
