@@ -396,6 +396,49 @@
     .bonus-box li { font-size:0.87rem; color:var(--muted); display:flex; align-items:flex-start; gap:0.5rem; }
     .bonus-box li::before { content:'▶'; color:var(--accent2); font-size:0.65rem; margin-top:3px; flex-shrink:0; }
 
+    /* ── Countdown bar ── */
+    .cdown-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:0.55rem 0.9rem 0.65rem; margin-bottom:1.2rem; }
+    .cdown-bar-track { height:5px; background:rgba(8,127,163,0.2); border-radius:3px; overflow:hidden; margin-bottom:0.45rem; }
+    .cdown-bar-fill { height:100%; background:var(--accent2); border-radius:3px; width:0%; transition:width 1s linear; }
+    .cdown-lbl { font-size:0.78rem; color:var(--muted); text-align:center; transition:color 0.3s; }
+
+    /* ── Gap section ── */
+    .gap-section { background:rgba(8,127,163,0.05); border:1px solid var(--border); border-radius:14px; padding:1.4rem 1.2rem; text-align:right; margin-bottom:1.8rem; }
+    .gap-title { font-size:1rem; font-weight:800; color:var(--text); margin-bottom:0.75rem; }
+    .gap-intro { font-size:0.9rem; color:var(--muted); line-height:1.65; margin-bottom:1rem; }
+    .gap-list { list-style:none; display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem; }
+    .gap-list li { font-size:0.87rem; color:var(--muted); display:flex; align-items:flex-start; gap:0.55rem; line-height:1.45; }
+    .gap-list li::before { content:'—'; color:var(--accent2); flex-shrink:0; margin-top:1px; }
+    .gap-blame { font-size:0.88rem; color:var(--muted); line-height:1.6; border-top:1px solid var(--border); padding-top:0.9rem; margin-top:0.6rem; }
+    .gap-blame strong { color:var(--text); }
+    .gap-forever { font-size:0.88rem; color:var(--accent); font-weight:700; margin-top:0.75rem; line-height:1.5; }
+
+    /* ── Send plan button ── */
+    #btn-send-plan { width:100%; padding:1rem; background:var(--accent2); color:#fff; border:none; border-radius:12px; font-family:'Assistant',sans-serif; font-size:1.05rem; font-weight:700; cursor:pointer; transition:all 0.25s; }
+    #btn-send-plan:hover:not(:disabled) { background:var(--accent); color:var(--bg); transform:translateY(-1px); }
+    #btn-send-plan:disabled { opacity:0.35; cursor:not-allowed; }
+    #btn-send-plan.ready { animation:pulse-cta 2s ease-in-out infinite; }
+
+    /* ── Booking cards ── */
+    .booking-section { margin-top:2.5rem; border-top:1px solid var(--border); padding-top:2rem; text-align:right; }
+    .booking-title { font-size:1.1rem; font-weight:800; margin-bottom:0.35rem; }
+    .booking-sub-txt { font-size:0.87rem; color:var(--muted); line-height:1.5; margin-bottom:1.2rem; }
+    .booking-cards { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+    @media (max-width:480px) { .booking-cards { grid-template-columns:1fr; } }
+    .booking-card { background:var(--bg2); border:1.5px solid var(--border); border-radius:14px; padding:1.2rem 1rem; transition:all 0.2s; text-decoration:none; display:block; color:inherit; }
+    .booking-card:hover { border-color:var(--accent2); transform:translateY(-2px); box-shadow:0 0 16px rgba(8,127,163,0.2); }
+    .booking-card .bc-icon { font-size:1.6rem; margin-bottom:0.5rem; }
+    .booking-card .bc-title { font-size:0.95rem; font-weight:800; color:var(--text); margin-bottom:0.3rem; }
+    .booking-card .bc-desc { font-size:0.78rem; color:var(--muted); line-height:1.45; margin-bottom:0.75rem; }
+    .booking-card .bc-cta { font-size:0.85rem; font-weight:700; color:var(--accent2); }
+    .booking-card.hot { border-color:var(--accent2); background:rgba(8,127,163,0.08); }
+    .booking-card.hot .bc-title { color:var(--accent); }
+    .booking-card.hot .bc-cta { color:var(--accent); }
+    .bc-scarcity { display:inline-block; font-size:0.72rem; color:var(--accent2); font-weight:700; background:rgba(8,127,163,0.1); border-radius:6px; padding:0.15rem 0.5rem; margin-top:0.5rem; }
+    .landing-ref { text-align:center; margin-top:1.5rem; font-size:0.85rem; color:var(--muted); }
+    .landing-ref a { color:var(--accent2); text-decoration:none; font-weight:600; }
+    .landing-ref a:hover { color:var(--accent); }
+
     /* Goal cards */
     .goal-cards { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1.8rem; }
     .goal-card { background:var(--bg2); border:2px solid var(--border); border-radius:14px; padding:1.4rem 1rem; text-align:center; cursor:pointer; transition:all 0.2s; }
@@ -958,21 +1001,83 @@
 
   <!-- SUCCESS -->
   <div class="screen hidden" id="screen-success">
-    <div class="success-icon">🎉</div>
-    <h2 class="success-title">התוכנית שלך מוכנה!</h2>
-    <div class="success-email-badge" id="success-email-badge">נשלח ל: ...</div>
-    <p class="success-sub">התוכנית נשלחה למייל שלך, ו<span data-g="תוכל|תוכלי">תוכל</span> לראות אותה כאן למטה כבר עכשיו.</p>
 
-    <!-- Plan loading state -->
-    <div id="plan-loading" style="text-align:center;padding:2rem 0">
-      <div class="spinner" style="margin:0 auto 1rem"></div>
-      <p style="color:var(--muted);font-size:0.9rem">בונה את התוכנית האישית שלך...</p>
+    <!-- PHASE 1: Countdown + Gap content + Send button -->
+    <div id="phase-wait">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">הטופס שלך התקבל</h2>
+      <p class="success-sub">אנחנו מוודאים שכל פרט בתוכנית מדויק ומותאם לך לפני שנשלח אותה.</p>
+
+      <!-- Countdown progress bar -->
+      <div class="cdown-wrap">
+        <div class="cdown-bar-track"><div class="cdown-bar-fill" id="cdown-bar"></div></div>
+        <p class="cdown-lbl" id="cdown-label">מכין את התוכנית שלך...</p>
+      </div>
+
+      <!-- The gap -->
+      <div class="gap-section">
+        <h3 class="gap-title">דבר אחד כנה לפני שהתוכנית מגיעה</h3>
+        <p class="gap-intro">רוב האנשים שמקבלים תוכנית מצוינת — לא מגיעים לגוף שרצו.<br>לא כי התוכנית הייתה לא נכונה. אלא כי:</p>
+        <ul class="gap-list">
+          <li>המשקל נעצר שבועיים ולא ידעו אם זה תהליך תקין — או שהם עושים משהו לא נכון</li>
+          <li>החיים קצת נסחפו, החמיצו כמה אימונים — ולא הייתה להם שיטה לחזור למסלול</li>
+          <li>אכלו נכון, אבל הגוף לא הגיב כמו שציפו — ולא ידעו מה לשנות</li>
+          <li>התוכנית לא לימדה אותם <em>למה</em> — אז כשהיא הפסיקה לעבוד, לא ידעו להסתגל</li>
+        </ul>
+        <div class="gap-blame">
+          <strong>זה לא אשמתכם.</strong> המוח האנושי לא בנוי לעמידה בעקביות לאורך זמן ללא לולאת משוב. זה ביולוגיה, לא חוסר רצון.
+        </div>
+        <p class="gap-forever">תוכנית היא נקודת ההתחלה — <strong>חטובים לנצח</strong> זה ללמוד לנווט לבד: להבין את הגוף שלך, לדעת מתי לדחוף ומתי להפחית, ולא להתחיל מאפס בכל פעם שהחיים קורים.</p>
+      </div>
+
+      <button id="btn-send-plan" disabled>שלחו לי את התוכנית שלי ←</button>
     </div>
 
-    <!-- Plan output — hidden until ready -->
-    <div id="plan-output" class="hidden" style="margin-top:1rem"></div>
+    <!-- PHASE 2: Plan + Booking — revealed after button click -->
+    <div id="phase-plan" class="hidden">
+      <div style="text-align:center;padding:1.5rem 0 0.5rem">
+        <div class="success-icon">🎉</div>
+        <h2 class="success-title">התוכנית בדרך אליך!</h2>
+        <div class="success-email-badge" id="success-email-badge">נשלח ל: ...</div>
+        <p class="success-sub"><span data-g="תוכל|תוכלי">תוכל</span> גם לראות אותה ממש כאן למטה.</p>
+      </div>
 
-    <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:2rem">לא קיבלת? <span data-g="בדוק|בדקי">בדוק</span> בתיקיית הספאם. עדיין לא הגיע? <a href="mailto:darnaor110@gmail.com" style="color:var(--accent)"><span data-g="שלח|שלחי">שלח</span> לנו מייל</a></p>
+      <!-- Plan loading state -->
+      <div id="plan-loading" style="text-align:center;padding:2rem 0">
+        <div class="spinner" style="margin:0 auto 1rem"></div>
+        <p style="color:var(--muted);font-size:0.9rem">בונה את התוכנית האישית שלך...</p>
+      </div>
+
+      <!-- Plan output — hidden until ready -->
+      <div id="plan-output" class="hidden" style="margin-top:1rem"></div>
+
+      <!-- Booking section — shown after plan renders -->
+      <div class="booking-section">
+        <h3 class="booking-title">רוצה לוודא שהתוכנית עובדת בשבילך?</h3>
+        <p class="booking-sub-txt">לתוכנית מושלמת יש כל מה שצריך — חוץ ממישהו שיעזור לך להסתגל כשהגוף מפתיע אותך.</p>
+        <div class="booking-cards">
+          <a href="https://calendar.app.google/Sk4xN8TG9xLNCXcp9" target="_blank" class="booking-card hot">
+            <div class="bc-icon">🔥</div>
+            <div class="bc-title">שיחת אסטרטגיה עכשיו</div>
+            <div class="bc-desc">10 דקות — עוברים על התוכנית ביחד. אסייר לך על 1-2 הדברים שהכי עשויים להאט אותך.</div>
+            <div class="bc-cta">← קבע שיחה עכשיו</div>
+            <span class="bc-scarcity">⚡ 4 מקומות פנויים השבוע</span>
+          </a>
+          <a href="https://calendar.app.google/Sk4xN8TG9xLNCXcp9" target="_blank" class="booking-card">
+            <div class="bc-icon">📅</div>
+            <div class="bc-title">פגישת סיכום לסוף החודש</div>
+            <div class="bc-desc">תתחיל את התוכנית. בסוף החודש נסקור ביחד — מה עבד, מה לשנות, מה הצעד הבא.</div>
+            <div class="bc-cta">← קבע עכשיו לסוף החודש</div>
+          </a>
+        </div>
+        <div class="landing-ref">
+          <a href="https://darnaor.com" target="_blank">← איך 280+ אנשים שינו את הגוף שלהם? קרא עוד כאן</a>
+        </div>
+      </div>
+
+      <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:2rem">לא קיבלת? <span data-g="בדוק|בדקי">בדוק</span> בתיקיית הספאם. עדיין לא הגיע? <a href="mailto:darnaor110@gmail.com" style="color:var(--accent)"><span data-g="שלח|שלחי">שלח</span> לנו מייל</a></p>
+    </div>
+
   </div>
 
   <!-- ERROR -->
@@ -3149,24 +3254,21 @@
     // MailerLite — fire & forget
     addMailerLite(d.name, d.email, calc).catch(()=>{});
 
-    // Show success screen, then build plan locally (no API needed)
-    showScreen('success');
-    document.getElementById('success-email-badge').textContent = `נשלח ל: ${d.email}`;
-
-    // Resend — send plan email (fired after plan is built, see renderPlanHtml)
-    // sendPlanEmail is called from renderPlanHtml once HTML is ready
-
-    // Build meal plan + workout plan locally with pure JS engines
+    // Pre-build plan in background while user reads the gap content
+    // sendPlanEmail fires later — only when the user clicks the send button
     setTimeout(() => {
       try {
         const plan    = buildMealPlan(d, calc);
         const workout = buildWorkoutPlan(d);
-        renderPlanHtml(plan, workout, calc, d);
+        window._pendingPlan = { plan, workout, calc, userData: Object.assign({}, d) };
       } catch(e) {
         console.error('Plan build error:', e.message, e.stack);
-        renderPlanError(e);
+        window._pendingPlan = { error: e };
       }
-    }, 300);
+    }, 100);
+
+    showScreen('success');
+    startCountdown();
   }
 
   // ── Parse a food item string → table row {name, qty, g} ──
@@ -4102,6 +4204,55 @@ ${planHtml}
       console.warn('Email sending failed:', e.message);
     }
   }
+
+  // ── COUNTDOWN TIMER ──
+  function startCountdown() {
+    const SECS = 20;
+    const bar  = document.getElementById('cdown-bar');
+    const lbl  = document.getElementById('cdown-label');
+    const btn  = document.getElementById('btn-send-plan');
+    let elapsed = 0;
+    const iv = setInterval(() => {
+      elapsed++;
+      bar.style.width = (elapsed / SECS * 100) + '%';
+      if (elapsed >= SECS) {
+        clearInterval(iv);
+        lbl.textContent = 'התוכנית מוכנה ✓';
+        lbl.style.color = 'var(--accent)';
+        btn.disabled = false;
+        btn.classList.add('ready');
+      }
+    }, 1000);
+  }
+
+  // ── SEND BUTTON — reveals plan + triggers email ──
+  document.getElementById('btn-send-plan').addEventListener('click', function() {
+    this.disabled = true;
+    this.textContent = '✓ בדרך אליך!';
+
+    const badge = document.getElementById('success-email-badge');
+    if (badge) badge.textContent = 'נשלח ל: ' + d.email;
+
+    // Reveal plan phase
+    const phasePlan = document.getElementById('phase-plan');
+    phasePlan.classList.remove('hidden');
+    setTimeout(() => phasePlan.scrollIntoView({ behavior:'smooth', block:'start' }), 80);
+
+    // Render plan (sendPlanEmail fires inside renderPlanHtml)
+    const pp = window._pendingPlan;
+    if (pp && !pp.error) {
+      renderPlanHtml(pp.plan, pp.workout, pp.calc, pp.userData);
+    } else if (pp && pp.error) {
+      renderPlanError(pp.error);
+    } else {
+      // Plan not ready yet — retry after brief delay
+      setTimeout(() => {
+        const pp2 = window._pendingPlan;
+        if (pp2 && !pp2.error) renderPlanHtml(pp2.plan, pp2.workout, pp2.calc, pp2.userData);
+        else renderPlanError(pp2 ? pp2.error : new Error('Plan not ready'));
+      }, 600);
+    }
+  });
 
   window.submitQuiz=submitQuiz;
   window.renderPlanHtml=renderPlanHtml;
