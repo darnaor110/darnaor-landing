@@ -4689,11 +4689,9 @@
     });
   }
 
-  // ── שליחת מייל עם PDF מצורף דרך Resend ──
+  // ── שליחת מייל עם PDF מצורף דרך /api/send-email (Vercel serverless) ──
   async function sendPlanEmail(userData, planElement) {
-    const name = escHtml(userData.name || '');
-
-    // html2pdf מגנרט PDF מה-element (צריך שה-DOM יהיה זמין)
+    // html2pdf מגנרט PDF מה-element
     let pdfBase64 = null;
     try {
       const pdfBlob = await html2pdf().set({
@@ -4707,39 +4705,12 @@
       console.warn('PDF generation failed:', e.message);
     }
 
-    // בונה גוף מייל פשוט (fallback אם PDF נכשל — או בתור גוף לצד הקובץ)
-    const emailBody = `<!DOCTYPE html>
-<html dir="rtl" lang="he">
-<head><meta charset="UTF-8"><style>
-  body{margin:0;padding:24px 12px;background:#040e12;font-family:Arial,sans-serif;direction:rtl;color:#e2edf2}
-  .wrap{max-width:520px;margin:0 auto;background:#0b1e26;border-radius:16px;padding:32px 24px;border:1px solid rgba(8,127,163,0.25);text-align:center}
-  h1{font-size:1.4rem;color:#5bd4ff;margin-bottom:12px} p{font-size:0.95rem;color:#8aa4af;line-height:1.7}
-  strong{color:#e2edf2}
-</style></head>
-<body><div class="wrap">
-  <h1>שלום ${name}! 👋</h1>
-  <p>התוכנית האישית שלך מוכנה ומצורפת למייל הזה כ-PDF.</p>
-  <p>שמור אותה — יש בה הכל: תפריט שבועי, תוכנית אימון, ורשימת קניות.</p>
-  <p style="margin-top:20px;font-size:0.85rem;color:rgba(138,164,175,0.6)">דר נאור · darnaor.com · @dar__naor</p>
-</div></body></html>`;
-
-    const payload = {
-      from:    CFG.resendFrom,
-      to:      userData.email,
-      subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
-      html:    emailBody
-    };
-
-    // מצרף PDF אם ההמרה הצליחה
-    if (pdfBase64) {
-      payload.attachments = [{ filename: 'התוכנית האישית של ' + (userData.name || 'דר נאור') + '.pdf', content: pdfBase64 }];
-    }
-
+    // קריאה ל-serverless function שקוראת ל-Resend (נמנע מבעיות CORS)
     try {
-      await fetch('https://api.resend.com/emails', {
+      await fetch('/api/send-email', {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CFG.resendKey}` },
-        body: JSON.stringify(payload)
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ to: userData.email, name: userData.name || '', pdfBase64 })
       });
     } catch(e) {
       console.warn('Email sending failed:', e.message);
