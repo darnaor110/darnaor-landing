@@ -4689,11 +4689,13 @@
     });
   }
 
-  // בונה Worker של html2pdf — סינכרוני לחלוטין
-  // פורמט: 103mm רוחב × 999mm גובה — דף ארוך אחד, ללא חיתוך ללא פיצול
+  // בונה Worker של html2pdf — סינכרוני
+  // גובה PDF = 103mm × (scrollHeight / 390) + 15% buffer — מחושב לפי יחס html2pdf
   function makePdfWorker(planElement, filename) {
     const css     = document.getElementById('plan-pdf-styles')?.textContent || '';
     const htmlStr = '<style>' + css + '</style>' + planElement.innerHTML;
+    const h       = planElement.scrollHeight || 3000;
+    const pdfH    = Math.ceil(103 * h / 390 * 1.2) + 60; // 20% + 60mm buffer
     return html2pdf().set({
       margin:   0,
       filename: filename || 'תוכנית.pdf',
@@ -4708,7 +4710,7 @@
       },
       jsPDF: {
         unit:   'mm',
-        format: [103, 999],
+        format: [103, pdfH],
         orientation: 'portrait'
       }
     }).from(htmlStr);
