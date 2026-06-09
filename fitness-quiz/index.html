@@ -7330,7 +7330,7 @@
     const tgtW    = Math.round(ffm/(1-u.targetBF/100));
     const kgLose  = Math.max(0,u.weight-tgtW);
 
-    let def, tgtCal;
+    let def, tgtCal, hitFloor = false;
 
     if (u.goal === 'bulk') {
       const surplus = u.pace === 'אגרסיבי' ? 250 : 100; // מתון=100, אגרסיבי=250
@@ -7341,7 +7341,7 @@
       // → קצב ירידה: ~2, ~2.5, ~3.3 ק"ג לחודש
       def = u.pace==='איטי' ? 500 : u.pace==='מהיר' ? 850 : 650;
       const calFloor = u.gender==='גבר' ? 1700 : 1300;
-      const hitFloor = (tdee - def) < calFloor;
+      hitFloor = (tdee - def) < calFloor;
       tgtCal = Math.max(calFloor, tdee - def);
     }
 
