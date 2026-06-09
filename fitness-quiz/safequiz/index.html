@@ -972,7 +972,7 @@
     <!-- Plan output — hidden until ready -->
     <div id="plan-output" class="hidden" style="margin-top:1rem"></div>
 
-    <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:2rem">לא קיבלת? בדוק/י בתיקיית ספאם. עדיין לא הגיע? <a href="mailto:darnaor110@gmail.com" style="color:var(--accent)">שלח/י לנו מייל</a></p>
+    <p style="color:var(--muted);font-size:0.85rem;text-align:center;margin-top:2rem">לשאלות — מוזמנ/ת לפנות אלי ישירות: <a href="https://darnaor.com" target="_blank" rel="noopener" style="color:var(--accent)">darnaor.com</a></p>
   </div>
 
   <!-- ERROR -->
@@ -3347,7 +3347,7 @@
             fridaySaved += midAfter.cal;
           }
           if (plan.snackSpare) {
-            fridayRows += transferRow('קלוריות חופשיות', plan.snackSpare, plan.snackSpare);
+            fridayRows += transferRow('קלוריות חופשיות (' + plan.snackSpare + ' קל׳ — מדלגים)', plan.snackSpare, plan.snackSpare);
             fridaySaved += plan.snackSpare;
           }
           if (lunch) {
@@ -3386,7 +3386,7 @@
             satSaved += midAfter.cal;
           }
           if (plan.snackSpare) {
-            satRows += transferRow('קלוריות חופשיות', plan.snackSpare, plan.snackSpare);
+            satRows += transferRow('קלוריות חופשיות (' + plan.snackSpare + ' קל׳ — מדלגים)', plan.snackSpare, plan.snackSpare);
             satSaved += plan.snackSpare;
           }
 
@@ -3791,7 +3791,7 @@
         '.plan-ex-table td{color:#c8dce6;padding:5px 6px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;text-align:right}',
         '.plan-ex-table tr:last-child td{border-bottom:0}',
         '.plan-ex-num{width:26px;text-align:center!important}',
-        '.plan-ex-name{color:#e2edf2;text-align:right}',
+        '.plan-ex-name{color:#e2edf2;text-align:right!important;padding-right:10px}',
         '.plan-ex-sets{width:44px;text-align:center!important}',
         '.plan-ex-reps{width:54px;text-align:center!important}',
         '.plan-ex-drop{width:32px;text-align:center!important;font-size:0.68rem;color:#8aa4af}',
@@ -3846,13 +3846,8 @@
     const isFemale = userData.gender === 'אישה';
     const pronoun  = isFemale ? 'את' : 'אתה';
     const pronoun2 = isFemale ? 'תעבדי' : 'תעבוד';
-    const monthlyResult = plan && !plan.isBulk && plan.kgPerMonth > 0
-      ? 'כבר החודש ' + pronoun + ' אמור' + (isFemale ? 'ה' : '') + ' לרדת ~' + plan.kgPerMonth + ' ק"ג'
-      : 'כבר החודש ' + pronoun + ' אמור' + (isFemale ? 'ה' : '') + ' לראות עלייה במסת השריר';
-    var ctaHtml = '<p class="plan-cta-headline">מגיע' + (isFemale ? 'ה' : '') + ' לך פגישת ייעוץ וסיכום תהליך חינמית — איתי אישית.</p>'
-      + '<p class="plan-cta-sub">כדי לשריין לעצמ' + (isFemale ? 'ך' : 'ך') + ' מקום, צריך לקבוע אותה מראש. עכשיו.</p>'
-      + '<a href="' + CFG.bookingLink + '" target="_blank" rel="noopener" class="plan-cta-btn">כן, אני אשמח' + (isFemale ? '' : '') + ' לקבוע פגישה (בחינם) ←</a>'
-      + '<p class="plan-cta-skip">אי קביעה עכשיו = ויתור על הפגישה החינמית לשנה הקרובה</p>';
+    var ctaHtml = '<p class="plan-cta-headline">רוצ' + (isFemale ? 'ה' : 'ה') + ' לשאול משהו? אני כאן.</p>'
+      + '<a href="https://darnaor.com" target="_blank" rel="noopener" class="plan-cta-btn">darnaor.com ←</a>';
 
     // ── Assemble full HTML ──
     var html = '<div class="plan-shell">'
