@@ -4689,23 +4689,42 @@
     });
   }
 
-  // בונה HTML string עצמאי עם ה-CSS המוטמע — html2pdf יוצר ממנו אלמנט נקי ומצייר אותו
-  function planToHtmlStr(planElement) {
-    const css = document.getElementById('plan-pdf-styles')?.textContent || '';
-    return '<html><head><meta charset="UTF-8"><style>' + css + '</style></head>'
-      + '<body style="margin:0;background:#071419;">' + planElement.innerHTML + '</body></html>';
+  // בונה PDF מ-planElement — מחזיר Worker של html2pdf
+  // mode: 'save' לשמירה, 'blob' לצירוף למייל
+  function makePdfWorker(planElement, filename) {
+    const css    = document.getElementById('plan-pdf-styles')?.textContent || '';
+    // fragment בלבד — ללא html/head/body (גורמים ל-black space ב-output)
+    const htmlStr = '<style>' + css + '</style>' + planElement.innerHTML;
+
+    const W_PX = 390;
+    const H_PX = planElement.scrollHeight || 2000;
+    const toMm = px => Math.ceil(px * 25.4 / 96);
+
+    return html2pdf().set({
+      margin:   0,
+      filename: filename || 'תוכנית.pdf',
+      image:    { type: 'jpeg', quality: 0.92 },
+      html2canvas: {
+        scale:           2,
+        useCORS:         true,
+        backgroundColor: '#071419',
+        logging:         false,
+        windowWidth:     W_PX,  // מרנדר בדיוק 390px רוחב — ללא שוליים לבנים
+        scrollX: 0, scrollY: 0
+      },
+      jsPDF: {
+        unit:   'mm',
+        format: [toMm(W_PX), toMm(H_PX + 10)], // דף אחד גבוה — ללא פיצול לעמודים
+        orientation: 'portrait'
+      }
+    }).from(htmlStr);
   }
 
   // ── שליחת מייל עם PDF מצורף דרך /api/send-email (Vercel serverless) ──
   async function sendPlanEmail(userData, planElement) {
     let pdfBase64 = null;
     try {
-      const blob = await html2pdf().set({
-        margin: 0,
-        image: { type: 'jpeg', quality: 0.93 },
-        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#071419', logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }).from(planToHtmlStr(planElement)).outputPdf('blob');
+      const blob = await makePdfWorker(planElement, '').outputPdf('blob');
       pdfBase64 = await blobToBase64(blob);
     } catch(e) {
       console.warn('PDF generation failed:', e.message);
@@ -4780,13 +4799,7 @@
     if (!el || typeof html2pdf === 'undefined') return;
     if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
     const filename = 'התוכנית האישית של ' + (d.name || 'דר נאור') + '.pdf';
-    html2pdf().set({
-      margin: 0,
-      filename: filename,
-      image: { type: 'jpeg', quality: 0.95 },
-      html2canvas: { scale: 2, useCORS: true, backgroundColor: '#071419', logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(planToHtmlStr(el)).save().then(() => {
+    makePdfWorker(el, filename).save().then(() => {
       if (btn) { btn.textContent = '⬇ הורד שוב (PDF)'; btn.disabled = false; }
     }).catch(e => {
       if (btn) { btn.textContent = '⬇ הורד את התוכנית שלי (PDF)'; btn.disabled = false; }
