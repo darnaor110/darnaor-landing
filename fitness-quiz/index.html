@@ -662,7 +662,7 @@
         </div>
 
         <!-- Arrow centered at photo mid-height -->
-        <div class="bfq-arrow">←</div>
+        <div class="bfq-arrow" id="bfq-arrow-main">←</div>
 
         <!-- PANEL LEFT: goal state — second in DOM = leftmost in RTL -->
         <div class="bfq-pane-left" id="pane-goal">
@@ -689,6 +689,11 @@
         </div>
 
       </div>
+    <!-- Warning: bulk not recommended at high BF -->
+    <div id="bulk-bf-warning" style="display:none;margin-top:1rem;padding:1rem 1.2rem;background:rgba(239,68,68,0.1);border:1.5px solid rgba(239,68,68,0.4);border-radius:12px;text-align:center">
+      <div style="font-size:0.95rem;font-weight:700;color:#ef4444;margin-bottom:0.3rem">⚠️ לא מומלץ עבורך לעשות מסה כרגע</div>
+      <div style="font-size:0.85rem;color:var(--muted);line-height:1.6">עדיף לבחור <strong>חיטוב מהיר</strong> ורק אז מסה — עם אחוז שומן גבוה, רוב העודף הקלורי הולך לשומן ולא לשריר.</div>
+    </div>
     </div>
     <!-- Bulk mode: Step 2 note and muscle sliders -->
     <div id="bulk-step2-wrapper" style="display:none;margin-top:2.5rem">
@@ -2224,8 +2229,29 @@
     const colGoalMBulkNew = document.getElementById('col-goal-muscle-bulk-new');
     const slGoalMBulkNew = document.getElementById('sl-goal-muscle-bulk-new');
 
+    // In bulk mode: hide goal BF panel (user only picks current BF)
+    const paneGoal     = document.getElementById('pane-goal');
+    const arrowMain    = document.getElementById('bfq-arrow-main');
+    const bulkBfWarn   = document.getElementById('bulk-bf-warning');
     if (isBulk) {
-      // Step 1: Show BF note, current/goal BF sliders
+      paneGoal.style.display  = 'none';
+      arrowMain.style.display = 'none';
+    } else {
+      paneGoal.style.display  = '';
+      arrowMain.style.display = '';
+      if (bulkBfWarn) bulkBfWarn.style.display = 'none';
+    }
+
+    // Helper: show/hide bulk BF warning based on current BF threshold
+    function updateBulkBfWarning() {
+      if (!isBulk || !bulkBfWarn) return;
+      const threshold = isFemale ? 24 : 18;
+      bulkBfWarn.style.display = (d.currentBF !== null && d.currentBF > threshold) ? 'block' : 'none';
+    }
+    updateBulkBfWarning(); // check on init with default BF value
+
+    if (isBulk) {
+      // Step 1: Show BF note
       bulkStep1Note.style.display = 'block';
       bulkStep2Wrap.style.display = 'block';
       // Step 2: Initialize current and goal muscle sliders
@@ -2277,6 +2303,7 @@
       d.currentBF = bfLevels[+slCurBF.value];
       document.getElementById('badge-cur-bf').textContent = d.currentBF + '%';
       setPhoto('photo-cur', g, d.currentBF, bfLevels, d.currentMuscleLevel);
+      updateBulkBfWarning();
     };
     slGoalBF.oninput = () => {
       d.targetBF = bfLevels[+slGoalBF.value];
@@ -2918,7 +2945,6 @@
       if (d.targetBF >= d.currentBF)   return showErr('err-2', 'אחוז השומן היעד צריך להיות נמוך מהנוכחי.');
     }
     if (d.goal === 'bulk') {
-      if (d.targetBF === null)          return showErr('err-2', 'נא להגדיר אחוז שומן יעד.');
       if (d.currentMuscleLevel === null) return showErr('err-2', 'נא לבחור רמת שריריות נוכחית.');
       if (d.targetMuscleLevel === null)  return showErr('err-2', 'נא לבחור רמת שריריות יעד.');
     }
@@ -3365,11 +3391,14 @@
         const kgPerMonth = plan.kgPerMonth || 0;
         const kgStr = kgPerMonth > 0 ? '<strong>~' + kgPerMonth + ' ק"ג לחודש</strong>' : '';
         const etaStr = plan.etaMonths ? ' — יעד צפוי בעוד <strong>~' + plan.etaMonths + ' חודשים</strong>' : '';
+        const floorNote = calc.hitFloor
+          ? '<br><br>⚠️ <strong>שים לב:</strong> הגוף שלך שורף מעט — הגרעון הנבחר היה מוביל לפחות מ-' + (userData.gender === 'אישה' ? '1300' : '1700') + ' קל׳ ביום, אז הגבלנו אותו לרצפה הבטוחה. הגרעון בפועל קטן מהמוצהר.'
+          : '';
         msgHtml = '<p class="plan-msg">שלום <strong>' + name + '</strong>, 👋<br><br>'
           + 'הגוף שלך מוציא כ‑<strong>' + calc.tdee + ' קל׳</strong> ביום. '
           + 'יצרתי לך גרעון יומי של <strong>' + plan.deficit + ' קל׳</strong>'
           + (kgStr ? ' — קצב ירידה של ' + kgStr : '')
-          + etaStr + '.</p>';
+          + etaStr + floorNote + '.</p>';
       }
     }
 
@@ -4690,12 +4719,11 @@
   }
 
   // בונה Worker של html2pdf — סינכרוני
-  // גובה PDF = 103mm × (scrollHeight / 390) + 15% buffer — מחושב לפי יחס html2pdf
+  // 2500mm = גבוה מספיק לכל תוכנית; עדיף ריק בסוף על פני תוכן חתוך
   function makePdfWorker(planElement, filename) {
     const css     = document.getElementById('plan-pdf-styles')?.textContent || '';
     const htmlStr = '<style>' + css + '</style>' + planElement.innerHTML;
-    const h       = planElement.scrollHeight || 3000;
-    const pdfH    = Math.ceil(103 * h / 390 * 1.2) + 60; // 20% + 60mm buffer
+    const pdfH    = 2500;
     return html2pdf().set({
       margin:   0,
       filename: filename || 'תוכנית.pdf',
@@ -5829,7 +5857,13 @@
   }
 
   function buildCottage(meal, cal) {
-    // קוטג 5% = 100 קל/100ג
+    // קוטג 5% = 100 קל/100ג. חצי קופסה (125ג) = ~125 קל — המינימום לארוחה הגיונית
+    if (cal < 125) {
+      return {
+        lines: ['⚠️ הקלוריות שהוקצבו (' + cal + ' קל) אינן מספיקות לארוחת קוטג׳ (מינימום ~125 קל לחצי קופסה)'],
+        prot: 0
+      };
+    }
     const CAL_PER_100 = 100;
     const grams = Math.round(cal / CAL_PER_100 * 100 / 25) * 25; // round to 25g
     const desc  = grams >= 250 ? 'קופסה שלמה' : grams >= 125 ? 'חצי קופסה' : 'רבע קופסה';
@@ -7307,6 +7341,7 @@
       // → קצב ירידה: ~2, ~2.5, ~3.3 ק"ג לחודש
       def = u.pace==='איטי' ? 500 : u.pace==='מהיר' ? 850 : 650;
       const calFloor = u.gender==='גבר' ? 1700 : 1300;
+      const hitFloor = (tdee - def) < calFloor;
       tgtCal = Math.max(calFloor, tdee - def);
     }
 
@@ -7315,7 +7350,7 @@
 
     const prot  = Math.max(90, Math.round(2.2 * tgtW));
 
-    return { bmr, tdee, deficit:def, target_calories:tgtCal, protein_target:prot, target_weight:tgtW, kg_to_lose:kgLose };
+    return { bmr, tdee, deficit:def, target_calories:tgtCal, protein_target:prot, target_weight:tgtW, kg_to_lose:kgLose, hitFloor: !!hitFloor };
   }
 
   // ── MAILERLITE ──
