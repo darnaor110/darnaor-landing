@@ -4689,15 +4689,25 @@
     });
   }
 
-  // בונה PDF מ-planElement — מחזיר Worker של html2pdf
-  // mode: 'save' לשמירה, 'blob' לצירוף למייל
-  function makePdfWorker(planElement, filename) {
+  // מודד את הגובה האמיתי של ה-HTML string ב-390px — כדי שה-PDF יהיה גבוה בדיוק
+  async function measureHtmlHeight(htmlStr) {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;left:-9999px;top:0;width:390px;visibility:hidden;pointer-events:none';
+    probe.innerHTML = htmlStr;
+    document.body.appendChild(probe);
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const h = probe.scrollHeight;
+    document.body.removeChild(probe);
+    return h;
+  }
+
+  // בונה PDF מ-planElement — מחזיר Promise<Worker>
+  async function makePdfWorker(planElement, filename) {
     const css    = document.getElementById('plan-pdf-styles')?.textContent || '';
-    // fragment בלבד — ללא html/head/body (גורמים ל-black space ב-output)
     const htmlStr = '<style>' + css + '</style>' + planElement.innerHTML;
 
     const W_PX = 390;
-    const H_PX = planElement.scrollHeight || 2000;
+    const H_PX = await measureHtmlHeight(htmlStr); // גובה אמיתי, לא scrollHeight של element אחר
     const toMm = px => Math.ceil(px * 25.4 / 96);
 
     return html2pdf().set({
@@ -4709,12 +4719,12 @@
         useCORS:         true,
         backgroundColor: '#071419',
         logging:         false,
-        windowWidth:     W_PX,  // מרנדר בדיוק 390px רוחב — ללא שוליים לבנים
+        windowWidth:     W_PX,
         scrollX: 0, scrollY: 0
       },
       jsPDF: {
         unit:   'mm',
-        format: [toMm(W_PX), toMm(H_PX + 10)], // דף אחד גבוה — ללא פיצול לעמודים
+        format: [toMm(W_PX), toMm(H_PX + 20)],
         orientation: 'portrait'
       }
     }).from(htmlStr);
@@ -4724,7 +4734,8 @@
   async function sendPlanEmail(userData, planElement) {
     let pdfBase64 = null;
     try {
-      const blob = await makePdfWorker(planElement, '').outputPdf('blob');
+      const worker = await makePdfWorker(planElement, '');
+      const blob   = await worker.outputPdf('blob');
       pdfBase64 = await blobToBase64(blob);
     } catch(e) {
       console.warn('PDF generation failed:', e.message);
@@ -4799,7 +4810,7 @@
     if (!el || typeof html2pdf === 'undefined') return;
     if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
     const filename = 'התוכנית האישית של ' + (d.name || 'דר נאור') + '.pdf';
-    makePdfWorker(el, filename).save().then(() => {
+    makePdfWorker(el, filename).then(w => w.save()).then(() => {
       if (btn) { btn.textContent = '⬇ הורד שוב (PDF)'; btn.disabled = false; }
     }).catch(e => {
       if (btn) { btn.textContent = '⬇ הורד את התוכנית שלי (PDF)'; btn.disabled = false; }
