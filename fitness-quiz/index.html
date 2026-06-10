@@ -4722,7 +4722,9 @@
   // בלי חיתוך, בלי שוליים, בלי שטח שחור ריק. async כי מודד את הקנבס אחרי הרינדור.
   async function buildPlanPdf(planElement) {
     const css     = document.getElementById('plan-pdf-styles')?.textContent || '';
-    const htmlStr = '<style>' + css + '</style>' + planElement.innerHTML;
+    // עוטף ב-div ברוחב 390px קבוע — בלי זה ה-.pdf-plan (margin:auto) מתמרכז בתוך מיכל רחב יותר
+    // והתוכן יוצא צמוד לצד אחד עם רצועה ריקה בצד השני. הרוחב הקבוע מבטיח מילוי מלא.
+    const htmlStr = '<style>' + css + '</style><div style="width:390px">' + planElement.innerHTML + '</div>';
 
     // שלב 1: מרנדר את ה-HTML לקנבס יחיד ברוחב מובייל (390px)
     const worker = html2pdf().set({
@@ -4733,6 +4735,7 @@
         useCORS:         true,
         backgroundColor: '#071419',
         logging:         false,
+        width:           390,   // מצמיד את רוחב הקנבס בדיוק לרוחב התוכן — בלי רצועה ריקה בצד
         windowWidth:     390,
         scrollX: 0, scrollY: 0
       }
