@@ -4722,6 +4722,17 @@
   // בלי חיתוך, בלי שוליים, בלי שטח שחור ריק. async כי מודד את הקנבס אחרי הרינדור.
   async function buildPlanPdf(planElement) {
     const css     = document.getElementById('plan-pdf-styles')?.textContent || '';
+
+    // ממתין שכל התמונות בתוכנית ייטענו לפני הצילום (עד 4 שניות) —
+    // בלי זה התמונות עלולות להיחתך/לפגוע ברינדור בפרודקשן.
+    await Promise.race([
+      Promise.all([...planElement.querySelectorAll('img')].map(img =>
+        img.complete ? Promise.resolve()
+                     : new Promise(res => { img.onload = img.onerror = res; })
+      )),
+      new Promise(res => setTimeout(res, 4000))
+    ]);
+
     // עוטף ב-div ברוחב 390px קבוע — בלי זה ה-.pdf-plan (margin:auto) מתמרכז בתוך מיכל רחב יותר
     // והתוכן יוצא צמוד לצד אחד עם רצועה ריקה בצד השני. הרוחב הקבוע מבטיח מילוי מלא.
     const htmlStr = '<style>' + css + '</style><div style="width:390px">' + planElement.innerHTML + '</div>';
