@@ -4718,16 +4718,16 @@
     });
   }
 
-  // בונה Worker של html2pdf — סינכרוני
-  // 2500mm = גבוה מספיק לכל תוכנית; עדיף ריק בסוף על פני תוכן חתוך
-  function makePdfWorker(planElement, filename) {
+  // בונה PDF של עמוד אחד שגובהו נתפר בדיוק לגובה התוכן —
+  // בלי חיתוך, בלי שוליים, בלי שטח שחור ריק. async כי מודד את הקנבס אחרי הרינדור.
+  async function buildPlanPdf(planElement) {
     const css     = document.getElementById('plan-pdf-styles')?.textContent || '';
     const htmlStr = '<style>' + css + '</style>' + planElement.innerHTML;
-    const pdfH    = 2500;
-    return html2pdf().set({
-      margin:   0,
-      filename: filename || 'תוכנית.pdf',
-      image:    { type: 'jpeg', quality: 0.92 },
+
+    // שלב 1: מרנדר את ה-HTML לקנבס יחיד ברוחב מובייל (390px)
+    const worker = html2pdf().set({
+      margin: 0,
+      image:  { type: 'jpeg', quality: 0.95 },
       html2canvas: {
         scale:           2,
         useCORS:         true,
@@ -4735,21 +4735,32 @@
         logging:         false,
         windowWidth:     390,
         scrollX: 0, scrollY: 0
-      },
-      jsPDF: {
-        unit:   'mm',
-        format: [103, pdfH],
-        orientation: 'portrait'
       }
     }).from(htmlStr);
+
+    // מודד את הגובה האמיתי של התוכן אחרי שהוא עבר רינדור
+    const canvas = await worker.toCanvas().get('canvas');
+
+    // שלב 2: עמוד יחיד — רוחב קבוע 103 מ"מ, גובה לפי יחס הקנבס בדיוק.
+    // כשגובה העמוד = גובה התמונה, html2pdf מייצר עמוד אחד מדויק: בלי חיתוך, בלי שטח ריק.
+    const pageW = 103;
+    const pageH = canvas.height * pageW / canvas.width;
+    worker.set({ jsPDF: { unit: 'mm', format: [pageW, pageH], orientation: 'portrait' } });
+
+    // שלב 3: ממשיך את הצינור (תמונה ← PDF) ומחזיר את אובייקט ה-jsPDF.
+    // הbundle לא חושף את הקונסטרקטור כגלובל — חייבים לעבור דרך ה-worker.
+    await worker.toImg();
+    await worker.toPdf();
+    return worker.get('pdf');
   }
 
   // ── שליחת מייל עם PDF מצורף דרך /api/send-email (Vercel serverless) ──
   async function sendPlanEmail(userData, planElement) {
     let pdfBase64 = null;
     try {
-      const blob = await makePdfWorker(planElement, '').outputPdf('blob');
-      pdfBase64 = await blobToBase64(blob);
+      const pdf  = await buildPlanPdf(planElement);
+      const blob = pdf.output('blob');
+      pdfBase64  = await blobToBase64(blob);
     } catch(e) {
       console.warn('PDF generation failed:', e.message);
     }
@@ -4823,7 +4834,8 @@
     if (!el || typeof html2pdf === 'undefined') return;
     if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
     const filename = 'התוכנית האישית של ' + (d.name || 'דר נאור') + '.pdf';
-    makePdfWorker(el, filename).save().then(() => {
+    buildPlanPdf(el).then(pdf => {
+      pdf.save(filename);
       if (btn) { btn.textContent = '⬇ הורד שוב (PDF)'; btn.disabled = false; }
     }).catch(e => {
       if (btn) { btn.textContent = '⬇ הורד את התוכנית שלי (PDF)'; btn.disabled = false; }
