@@ -3163,9 +3163,7 @@
     const note = document.getElementById('prio-cap-note');
     if (note) {
       if (capped) {
-        const c5final = Object.values(d.musclePriorities).filter(v => v === 5).length;
-        const c4final = Object.values(d.musclePriorities).filter(v => v === 4).length;
-        note.textContent = `תקציב תעדוף מלא (${c5final}×פוקוס + ${c4final}×גבוה) — שרירים נוספים מוגבלים לרמה 3 ומטה.`;
+        note.textContent = 'אי אפשר שכל השרירים יתועדפו כה גבוה, אנא בחרו עד 2-3 בתעדוף 5.';
         note.style.display = 'block';
       } else {
         note.style.display = 'none';
@@ -6579,6 +6577,7 @@
       'מתח אחיזה רחבה':                                      'https://youtu.be/R6JM0tCmWr8',
       'משיכת פולי אחיזה רחבה':                               'https://youtu.be/63hHEJFibrg',
       'משיכת פולי אחיזה נטרלית':                             'https://youtu.be/K3rKH6pnWH8',
+      'חתירה עם משקולת יד':                                  'https://youtu.be/JUA95QuH5SY',
       'חתירה במכונה עם תמיכה לחזה':                         'https://youtu.be/9rsrovRvvYE',
       'חתירה רחבה במכונה':                                   'https://youtu.be/O6o8oWJUljw',
       'פולאובר עם מוט קצר בכבלים':                           'https://youtu.be/_6QmOqTcDO4',
@@ -6589,6 +6588,7 @@
       'הרחקת כתף כנגד כבל':                                 'https://youtu.be/dARFWckyAXY',
       'הרחקה אופקית עם משקולת יד בהשענות קדימה':            'https://youtu.be/yRQq9fepWjM',
       'הרחקה אופקית כנגד כבל':                              'https://youtu.be/sfq8EqafKCg',
+      'הרחקה אופקית במכונת פרפר':                           'https://youtu.be/sITCwWxXWAs',
       'פייספול':                                              'https://youtu.be/RuWmhbPKv7o',
       'כפיפת כתף עם משקולת יד':                             'https://youtu.be/VU0b4yRLfjs',
       'חתירת כתפיים':                                        'https://youtu.be/Iav4-e9TJCw',
@@ -6600,6 +6600,8 @@
       'פשיטת מרפקים כנגד חבל':                              'https://youtu.be/VrCRHYuFPYE',
       'קיק בק עם כבל':                                       'https://youtu.be/KOYETbcLG1g',
       'קיק בק עם משקולת יד':                                'https://youtu.be/3aAAr-k0myY',
+      'ג׳קסונס':                                             'https://youtu.be/EbNmqLmvA3Y',
+      'פשיטת מרפק מעל הראש (קטאנה)':                        'https://youtu.be/8H2F4SC9Ujc',
       // יד קדמית
       'כפיפת מרפקים על ספסל בשיפוע חיובי כנגד משקולות':    'https://youtu.be/yIpehvHSRo0',
       'פריצר עם מוט דאבליו':                                 'https://youtu.be/vVL2QiVaOLY',
@@ -6607,6 +6609,7 @@
       'פטישים כנגד משקולות יד':                             'https://youtu.be/hUQZL2-A_nY',
       'פטישים כנגד כבל':                                    'https://youtu.be/hUQZL2-A_nY',
       'כפיפת מרפקים בעמידה כנגד כבל':                       'https://youtu.be/-AxVhZROPhg',
+      'כפיפת מרפקים כנגד קרוסאובר תחתון':                   'https://youtu.be/-AxVhZROPhg',
       // ישבן
       'היפ טראסט עם מכונה':                                 'https://youtu.be/LA0VDnLnR4A',
       'היפ טראסט עם מוט':                                   'https://youtu.be/zg9AJjcQDz4',
@@ -6620,6 +6623,7 @@
       'פשיטת ברכיים במכונה':                                'https://youtu.be/emm0kixlpXs',
       'סיסי סקווט':                                          'https://youtu.be/awUZ5NHuIfA',
       'לאנץ בולגרי':                                         'https://youtu.be/RrObhl9uAA4',
+      'לאנצים בהליכה עם משקולות יד':                        'https://youtu.be/-53R2sWipvQ',
       // המסטרינג
       'דדליפט רומני עם מוט':                                'https://youtu.be/HoZJ0agUvpg',
       'דדליפט רומני עם משקולות יד':                         'https://youtu.be/ytF2tYSzFtI',
@@ -6632,6 +6636,7 @@
       'כפיפות בטן בשכיבה עם משקולת יד':                    'https://youtu.be/rQsHRX4VJhU',
       'כפיפות בטן על בוסו עם משקולת יד':                   'https://youtu.be/10kZu7-CGPo',
       'כפיפות בטן על בוסו כנגד כבלים':                     'https://youtu.be/lD358baZ8T4',
+      'הרמות רגליים בשכיבה':                                'https://youtu.be/hmy08Az8Grw',
     };
 
     // ══════════════════════════════════════════════════════
