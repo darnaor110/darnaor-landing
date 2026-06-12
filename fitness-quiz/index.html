@@ -6564,8 +6564,8 @@
     };
 
     // ── מאגר סרטוני הדרכה — מיפוי שם תרגיל → לינק יוטיוב ──
-    // רק תרגילים שיש להם סרטון. הלינק מוצג בטבלת האימון ב-PDF.
-    const EXERCISE_VIDEOS = {
+    // window.EXERCISE_VIDEOS כדי שיהיה נגיש גם ל-renderPlanHtml שנמצא מחוץ ל-IIFE הזה
+    window.EXERCISE_VIDEOS = {
       // חזה
       'לחיצת חזה במכונה':                                    'https://youtu.be/N_9c-UtM5u4',
       'לחיצת חזה עם משקולות יד':                             'https://youtu.be/YFn6-lXh9Wk',
