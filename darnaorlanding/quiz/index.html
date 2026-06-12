@@ -863,12 +863,13 @@
         </button>
       </div>
     </div>
+    <!-- כל שאר מסך הארוחות — נעול עד שעונים על שאלת הקלוריות -->
+    <div id="meal-list-wrapper" style="display:none">
     <!-- הסבר שמוצג למי שלא יודע קלוריות -->
     <div id="cal-pct-hint" style="display:none;font-size:0.85rem;color:var(--muted);line-height:1.65;margin-bottom:0.8rem;padding:0.6rem 1rem;background:rgba(8,127,163,0.05);border-radius:8px;border:1px solid var(--border)">
       מסך כל האוכל שאתה אוכל במהלך היום, כמה לרוב אתה אוכל בארוחה הזאת?
     </div>
     <div class="meals-note" id="meals-main-note" style="font-size:0.88rem;font-weight:700;color:var(--accent2);background:rgba(8,127,163,0.1);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem">
-      💡 לא חייבים לסמן את כל הארוחות — ועדיף שלא! פחות ארוחות = כל ארוחה גדולה יותר = שובע חזק יותר.
     </div>
     <div class="tier-legend" style="margin-bottom:1rem;justify-content:center">
       <span class="tier-g">●</span> מומלץ מאוד&nbsp;
@@ -878,6 +879,7 @@
     </div>
     <div class="meal-list" id="meal-list"></div>
     <div class="err-msg" id="err-5"></div>
+    </div><!-- end meal-list-wrapper -->
     </div><!-- end meals-unlocked-content -->
     <div class="nav-row"><button type="button" class="btn-back" id="s5-back-btn" onclick="s5back()">← חזרה</button><button type="button" class="btn-primary" id="s5-continue-btn" onclick="s5next()">המשך ←</button></div>
   </div>
@@ -2555,6 +2557,9 @@
     // הצג/הסתר את משפט ההנחיה לאחוזים
     const hint = document.getElementById('cal-pct-hint');
     if (hint) hint.style.display = val === false ? 'block' : 'none';
+    // חשוף את רשימת הארוחות אחרי שהשאלה נענתה
+    const wrapper = document.getElementById('meal-list-wrapper');
+    if (wrapper) wrapper.style.display = 'block';
     updateAllWeightUIs();
   }
   window.setKnowsCalories = setKnowsCalories;
@@ -2597,13 +2602,14 @@
       'ערב': (d.gender === 'גבר' ? 600 : 500),
       'לילה': 100
     };
-    // עדכן את הודעת מגבלת הארוחות באופן דינמי
+    // עדכן את הודעת ההנחיה + מגבלת ארוחות באופן דינמי
     const maxMeals = targetCal < 1400 ? 3 : targetCal < 1800 ? 4 : 0;
     const noteEl = document.getElementById('meals-main-note');
-    if (noteEl) {
-      noteEl.innerHTML = maxMeals
-        ? `💡 לפי הקלוריות שלך, מומלץ לסמן <strong>עד ${maxMeals} ארוחות</strong> בלבד — פחות ארוחות = כל ארוחה גדולה יותר = שובע חזק יותר.`
-        : '💡 לא חייבים לסמן את כל הארוחות — ועדיף שלא! פחות ארוחות = כל ארוחה גדולה יותר = שובע חזק יותר.';
+    if (noteEl && d.knowsCalories !== null) {
+      const maxNote = maxMeals ? ` <strong>עד ${maxMeals} ארוחות.</strong>` : '';
+      noteEl.innerHTML = usePct
+        ? `💡 סמן באחוזים (בערך) כמה גדולה תרצה כל ארוחה ביחס לאחרות.${maxNote}`
+        : `💡 חלק את הקלוריות כפי שאתה מעדיף.${maxNote}`;
     }
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
@@ -2613,13 +2619,14 @@
       const minForMeal = SLOT_MIN[mt.id];
       // !! מבטיח boolean אמיתי — classList.toggle עם undefined מתהפך במקום לכבות
       const isBelowMin = !!(minForMeal && weight < minForMeal);
-      // תצוגה: אחוזים (עגולים) אם המשתמש לא יודע קלוריות, אחרת קלוריות
-      numEl.textContent = usePct ? Math.round(weight / targetCal * 100) + '%' : weight + ' קל׳';
+      // תצוגה: אחוזים מעוגלים ל-2.5% אם המשתמש לא יודע קלוריות, אחרת קלוריות
+      // Math.round(x * 40) / 40 * 100 מעגל לקפיצות של 2.5% (כי 100/2.5 = 40)
+      numEl.textContent = usePct ? (Math.round(weight / targetCal * 40) / 40 * 100) + '%' : weight + ' קל׳';
       numEl.classList.toggle('below-min', isBelowMin);
       if (isBelowMin) {
         const parentSpan = numEl.parentElement;
         let infoEl = parentSpan.querySelector('.meal-min-info');
-        const minDisplay = usePct ? Math.round(minForMeal / targetCal * 100) + '%' : minForMeal + " קל׳";
+        const minDisplay = usePct ? (Math.round(minForMeal / targetCal * 40) / 40 * 100) + '%' : minForMeal + " קל׳";
         if (!infoEl) {
           infoEl = document.createElement('span');
           infoEl.className = 'meal-min-info meal-min-tooltip';
@@ -4794,14 +4801,18 @@
     output.innerHTML = html;
     // Plan stays off-screen — used only for PDF generation, not shown in browser
 
+    // Start PDF generation immediately in background — shared by both download button and email.
+    // By the time the user scrolls down and clicks "הורד", it will already be ready.
+    window._pdfBlob = buildPlanPdf(output).then(pdf => pdf.output('blob')).catch(() => null);
+
     // Enable download button
     const dlBtn = document.getElementById('btn-download-pdf');
     const dlTxt = document.getElementById('pdf-status-txt');
     if (dlBtn) dlBtn.disabled = false;
     if (dlTxt) dlTxt.textContent = '';
 
-    // Send plan via email (PDF attachment) — fires in background
-    sendPlanEmail(userData, output).catch(() => {});
+    // Send plan via email (PDF attachment) — reuses the same _pdfBlob promise
+    sendPlanEmail(userData).catch(() => {});
   }
 
   function renderPlanError(err) {
@@ -4879,12 +4890,12 @@
   }
 
   // ── שליחת מייל עם PDF מצורף דרך /api/send-email (Vercel serverless) ──
-  async function sendPlanEmail(userData, planElement) {
+  // משתמש ב-window._pdfBlob שכבר רץ ברקע — לא בונה PDF פעמיים
+  async function sendPlanEmail(userData) {
     let pdfBase64 = null;
     try {
-      const pdf  = await buildPlanPdf(planElement);
-      const blob = pdf.output('blob');
-      pdfBase64  = await blobToBase64(blob);
+      const blob = await window._pdfBlob;
+      if (blob) pdfBase64 = await blobToBase64(blob);
     } catch(e) {
       console.warn('PDF generation failed:', e.message);
     }
@@ -4951,15 +4962,24 @@
   });
 
   // ── הורדת PDF על-ידי לחיצת כפתור ──
+  // אם _pdfBlob כבר מוכן (נבנה ברקע ב-renderPlanHtml) — ההורדה מיידית. אחרת בונה מחדש.
   function downloadPlan() {
     const el  = document.getElementById('plan-output');
     const btn = document.getElementById('btn-download-pdf');
     const txt = document.getElementById('pdf-status-txt');
     if (!el || typeof html2pdf === 'undefined') return;
-    if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
     const filename = 'התוכנית האישית של ' + (d.name || 'דר נאור') + '.pdf';
-    buildPlanPdf(el).then(pdf => {
-      pdf.save(filename);
+    // אם הblob כבר מוכן — לא מציגים spinner כלל (הורדה מיידית)
+    const blobP = window._pdfBlob
+      ? window._pdfBlob.then(b => b || buildPlanPdf(el).then(p => p.output('blob')))
+      : buildPlanPdf(el).then(p => p.output('blob'));
+    if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
+    blobP.then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
       if (btn) { btn.textContent = '⬇ הורד שוב (PDF)'; btn.disabled = false; }
     }).catch(e => {
       if (btn) { btn.textContent = '⬇ הורד את התוכנית שלי (PDF)'; btn.disabled = false; }
