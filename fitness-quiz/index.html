@@ -4890,12 +4890,12 @@
   }
 
   // ── שליחת מייל עם PDF מצורף דרך /api/send-email (Vercel serverless) ──
-  async function sendPlanEmail(userData, planElement) {
+  // משתמש ב-window._pdfBlob שכבר רץ ברקע — לא בונה PDF פעמיים
+  async function sendPlanEmail(userData) {
     let pdfBase64 = null;
     try {
-      const pdf  = await buildPlanPdf(planElement);
-      const blob = pdf.output('blob');
-      pdfBase64  = await blobToBase64(blob);
+      const blob = await window._pdfBlob;
+      if (blob) pdfBase64 = await blobToBase64(blob);
     } catch(e) {
       console.warn('PDF generation failed:', e.message);
     }
@@ -4962,15 +4962,24 @@
   });
 
   // ── הורדת PDF על-ידי לחיצת כפתור ──
+  // אם _pdfBlob כבר מוכן (נבנה ברקע ב-renderPlanHtml) — ההורדה מיידית. אחרת בונה מחדש.
   function downloadPlan() {
     const el  = document.getElementById('plan-output');
     const btn = document.getElementById('btn-download-pdf');
     const txt = document.getElementById('pdf-status-txt');
     if (!el || typeof html2pdf === 'undefined') return;
-    if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
     const filename = 'התוכנית האישית של ' + (d.name || 'דר נאור') + '.pdf';
-    buildPlanPdf(el).then(pdf => {
-      pdf.save(filename);
+    // אם הblob כבר מוכן — לא מציגים spinner כלל (הורדה מיידית)
+    const blobP = window._pdfBlob
+      ? window._pdfBlob.then(b => b || buildPlanPdf(el).then(p => p.output('blob')))
+      : buildPlanPdf(el).then(p => p.output('blob'));
+    if (btn) { btn.disabled = true; btn.textContent = 'מכין קובץ...'; }
+    blobP.then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
       if (btn) { btn.textContent = '⬇ הורד שוב (PDF)'; btn.disabled = false; }
     }).catch(e => {
       if (btn) { btn.textContent = '⬇ הורד את התוכנית שלי (PDF)'; btn.disabled = false; }
