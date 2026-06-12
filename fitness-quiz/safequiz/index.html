@@ -6518,16 +6518,29 @@ ${planHtml}
       body:JSON.stringify({
         email,
         fields:{
+          // identity
           name,
-          tdee:           String(calc.tdee),
-          target_calories:String(calc.target_calories),
-          protein_target: String(calc.protein_target),
-          target_weight:  String(calc.target_weight),
-          kg_to_lose:     String(calc.kg_to_lose),
-          pace:           d.pace,
-          snack_spare:    String(spare),
-          training_days:  String(d.trainingDays),
-          training_level: String(d.trainingLevel)
+          gender:          d.gender,
+          age:             String(d.age),
+          height:          String(d.height),
+          weight:          String(d.weight),
+          // body composition
+          current_bf:      d.currentBF !== null ? String(d.currentBF) : '',
+          target_bf:       d.targetBF  !== null ? String(d.targetBF)  : '',
+          goal:            d.goal,
+          // nutrition targets
+          tdee:            String(calc.tdee),
+          target_calories: String(calc.target_calories),
+          protein_target:  String(calc.protein_target),
+          target_weight:   String(calc.target_weight),
+          kg_to_lose:      String(calc.kg_to_lose),
+          pace:            d.pace,
+          snack_spare:     String(spare),
+          // training
+          training_days:     String(d.trainingDays),
+          training_level:    String(d.trainingLevel),
+          session_duration:  String(d.sessionDuration),
+          training_location: d.trainingLocation
         },
         groups:[CFG.mailerLiteGroupId]
       })
