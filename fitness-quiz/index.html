@@ -4219,7 +4219,8 @@
         '.pdi-ss-b td{background:rgba(91,212,255,0.04)}',
         '.pdi-ss-num{font-size:10px;font-weight:700;color:var(--accent);text-align:center;vertical-align:middle!important;border-left:2px solid var(--accent2)!important;padding:5px 6px!important}',
         '.pdi-drop{color:var(--green);font-weight:700}',
-        '.pdi-video-link{display:inline-block;margin-right:5px;color:var(--accent2);font-size:8px;text-decoration:none;border:1px solid var(--accent2);border-radius:3px;padding:1px 4px;line-height:1.4;white-space:nowrap}',
+        '.pdi-vid-cell{width:32px;text-align:center;padding:4px 3px!important;vertical-align:middle}',
+        '.pdi-video-link{display:inline-block;color:var(--accent2);font-size:8px;text-decoration:none;border:1px solid var(--accent2);border-radius:3px;padding:1px 4px;line-height:1.4;white-space:nowrap}',
         '.pdi-goal-note{display:block;font-size:8px;color:var(--accent);font-weight:600;margin-top:1px}',
         // Tips
         '.pdi-tips{margin:14px;background:rgba(8,127,163,0.06);border:1px solid var(--border);border-right:3px solid var(--accent2);border-radius:8px;padding:10px 12px}',
@@ -4751,9 +4752,11 @@
               var numCell = (idx === 0)
                 ? '<td class="pdi-ss-num" rowspan="' + group.length + '">' + num + '</td>'
                 : '';
+              var vidUrl = (window.EXERCISE_VIDEOS||{})[e.ex.name];
               tbodyRows += '<tr class="' + ssClass + '">'
+                + '<td class="pdi-vid-cell">' + (vidUrl ? '<a href="' + vidUrl + '" class="pdi-video-link">&#9654;</a>' : '') + '</td>'
                 + numCell
-                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + ((window.EXERCISE_VIDEOS||{})[e.ex.name] ? ' <a href="' + (window.EXERCISE_VIDEOS||{})[e.ex.name] + '" class="pdi-video-link">&#9654; סרטון</a>' : '') + '</td>'
+                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
                 + '<td>' + e.sets + '</td>'
                 + '<td>' + escHtml(e.reps) + '</td>'
                 + '<td>' + (e.drop ? '<span class="pdi-drop">✓</span>' : '') + '</td>'
@@ -4763,9 +4766,11 @@
           } else {
             prevWasSS = false;
             group.forEach(function(e) {
+              var vidUrl2 = (window.EXERCISE_VIDEOS||{})[e.ex.name];
               tbodyRows += '<tr>'
+                + '<td class="pdi-vid-cell">' + (vidUrl2 ? '<a href="' + vidUrl2 + '" class="pdi-video-link">&#9654;</a>' : '') + '</td>'
                 + '<td style="text-align:center">' + num + '</td>'
-                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + ((window.EXERCISE_VIDEOS||{})[e.ex.name] ? ' <a href="' + (window.EXERCISE_VIDEOS||{})[e.ex.name] + '" class="pdi-video-link">&#9654; סרטון</a>' : '') + '</td>'
+                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
                 + '<td style="text-align:center">' + e.sets + '</td>'
                 + '<td style="text-align:center">' + escHtml(e.reps) + '</td>'
                 + '<td style="text-align:center">' + (e.drop ? '<span class="pdi-drop">✓</span>' : '') + '</td>'
@@ -4777,7 +4782,7 @@
 
       var exTable = '<div class="pdi-tbl-wrap">'
         + '<table class="pdi-ex-tbl">'
-        + '<thead><tr><th style="width:28px">#</th><th>תרגיל</th><th style="width:36px">סטים</th><th style="width:46px">חזרות</th><th style="width:38px">דרופסט</th></tr></thead>'
+        + '<thead><tr><th class="pdi-vid-cell">▶</th><th style="width:28px">#</th><th>תרגיל</th><th style="width:36px">סטים</th><th style="width:46px">חזרות</th><th style="width:38px">דרופסט</th></tr></thead>'
         + '<tbody>' + tbodyRows + '</tbody>'
         + '</table></div>';
 
