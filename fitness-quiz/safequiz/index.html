@@ -3923,10 +3923,9 @@
 
   // ── שליחת התוכנית במייל דרך Resend ──
   async function sendPlanEmail(userData, planHtml) {
-    const isFemale = userData.gender === 'אישה';
-    const name     = escHtml(userData.name || '');
+    const name = escHtml(userData.name || '');
 
-    // Wrap the plan HTML in a full email shell with dark background
+    // Wrap plan HTML in email shell
     const emailBody = `<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head>
@@ -3935,7 +3934,6 @@
 <style>
   body{margin:0;padding:24px 12px;background:#040e12;font-family:Arial,sans-serif;direction:rtl}
   .shell{max-width:640px;margin:0 auto;background:#0b1e26;border-radius:18px;overflow:hidden;border:1px solid rgba(8,127,163,0.25)}
-  /* plan styles are inline-injected by the quiz engine */
 </style>
 </head>
 <body>
@@ -3945,23 +3943,18 @@ ${planHtml}
 </body>
 </html>`;
 
-    // קריאה ישירה ל-Resend API מהדפדפן — לא צריך שרת
+    // Route through Vercel API function (avoids CORS + hides API key)
     try {
-      await fetch('https://api.resend.com/emails', {
+      await fetch('/api/send-email', {
         method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${CFG.resendKey}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          from:    CFG.resendFrom,
-          to:      userData.email,
-          subject: `${name}, התוכנית האישית שלך מוכנה 💪`,
-          html:    emailBody
+          to:       userData.email,
+          name:     name,
+          planHtml: emailBody
         })
       });
     } catch(e) {
-      // זה בעיה בשרת או CORS — לא דורך את הקוד, רק log
       console.warn('Email sending failed:', e.message);
     }
   }
