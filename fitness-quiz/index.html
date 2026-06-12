@@ -849,7 +849,25 @@
       ☝️ ענה קודם על שאלת הקפה / חלב למעלה
     </div>
     <div id="meals-unlocked-content" style="display:none">
-    <div class="meals-note" style="font-size:0.88rem;font-weight:700;color:var(--accent2);background:rgba(8,127,163,0.1);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem">
+    <!-- שאלת ידע קלורי — נשאלת פעם אחת לפני בחירת הארוחות -->
+    <div id="cal-mode-question" style="background:rgba(8,127,163,0.08);border:1.5px solid var(--border);border-radius:12px;padding:0.9rem 1rem;margin-bottom:0.9rem">
+      <div style="font-size:0.92rem;font-weight:700;color:var(--text);margin-bottom:0.7rem">האם <span data-g="אתה יודע|את יודעת">אתה יודע</span> לספור קלוריות?</div>
+      <div style="display:flex;gap:0.6rem">
+        <button type="button" id="cal-mode-yes-btn" onclick="setKnowsCalories(true)"
+          style="flex:1;padding:0.45rem 0.8rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Assistant',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.2s">
+          כן, יודע/ת
+        </button>
+        <button type="button" id="cal-mode-no-btn" onclick="setKnowsCalories(false)"
+          style="flex:1;padding:0.45rem 0.8rem;border-radius:8px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Assistant',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.2s">
+          לא ממש
+        </button>
+      </div>
+    </div>
+    <!-- הסבר שמוצג למי שלא יודע קלוריות -->
+    <div id="cal-pct-hint" style="display:none;font-size:0.85rem;color:var(--muted);line-height:1.65;margin-bottom:0.8rem;padding:0.6rem 1rem;background:rgba(8,127,163,0.05);border-radius:8px;border:1px solid var(--border)">
+      מסך כל האוכל שאתה אוכל במהלך היום, כמה לרוב אתה אוכל בארוחה הזאת?
+    </div>
+    <div class="meals-note" id="meals-main-note" style="font-size:0.88rem;font-weight:700;color:var(--accent2);background:rgba(8,127,163,0.1);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.8rem">
       💡 לא חייבים לסמן את כל הארוחות — ועדיף שלא! פחות ארוחות = כל ארוחה גדולה יותר = שובע חזק יותר.
     </div>
     <div class="tier-legend" style="margin-bottom:1rem;justify-content:center">
@@ -1126,7 +1144,7 @@
     trainingLocation:'', strengthExercises:[], trainingLimitations:'', injuries:[],
     gymEquipment:'full', equipmentItems:[],
     cardio:'לא', cardioHours:0,
-    meals:{}, expandedMeal:null,
+    meals:{}, expandedMeal:null, knowsCalories:null,
     coffee:'לא', milkMl:0,
     fridaySpecial:false, saturdaySpecial:false, alcoholWeekly:0,
     dislikes:'', email:'', pace:''
@@ -2447,6 +2465,16 @@
     const m = d.meals[id];
     const item = document.getElementById(`mitem-${id}`);
     if (!m.checked) {
+      // בדוק מגבלת ארוחות לפי קלוריות יומיות
+      const targetCal = getMealTargetCal();
+      const maxMeals = targetCal < 1400 ? 3 : targetCal < 1800 ? 4 : 0;
+      if (maxMeals > 0) {
+        const checkedCount = MEAL_TIMES.filter(mt => d.meals[mt.id]?.checked).length;
+        if (checkedCount >= maxMeals) {
+          showErr('err-5', `לפי הקלוריות שלך, כדאי לא לסמן יותר מ-${maxMeals} ארוחות`);
+          return;
+        }
+      }
       // Close everything first, then open this one
       collapseAll();
       m.checked = true;
@@ -2516,6 +2544,21 @@
     updateAllWeightUIs();
   }
   window.adjMealKcal = adjMealKcal;
+
+  function setKnowsCalories(val) {
+    d.knowsCalories = val;
+    // סמן את הכפתור הנבחר בצבע מודגש
+    const yesBtn = document.getElementById('cal-mode-yes-btn');
+    const noBtn  = document.getElementById('cal-mode-no-btn');
+    if (yesBtn) { yesBtn.style.background = val === true  ? 'var(--accent2)' : 'var(--bg2)'; yesBtn.style.color = val === true  ? '#fff' : 'var(--text)'; }
+    if (noBtn)  { noBtn.style.background  = val === false ? 'var(--accent2)' : 'var(--bg2)'; noBtn.style.color  = val === false ? '#fff' : 'var(--text)'; }
+    // הצג/הסתר את משפט ההנחיה לאחוזים
+    const hint = document.getElementById('cal-pct-hint');
+    if (hint) hint.style.display = val === false ? 'block' : 'none';
+    updateAllWeightUIs();
+  }
+  window.setKnowsCalories = setKnowsCalories;
+
   // מחשב ממוצע חלבון לארוחה לפי כל הבחירות ב-typeComponents
   function calcMealProtein(mealId) {
     const m = d.meals[mealId];
@@ -2543,8 +2586,9 @@
   }
 
   function updateAllWeightUIs() {
+    const targetCal = getMealTargetCal();
+    const usePct = d.knowsCalories === false; // מצב אחוזים — רק תצוגה, האלגורתם עדיין עובד בקלוריות
     // מינימום קלוריות לכל ארוחה — מתחת לזה מספר הקלוריות נצבע אדום (אזהרה, לא חסימה)
-    // כל הארוחות כולל הקטנות חייבות ערך כדי ש-toggle יקבל boolean אמיתי (אחרת הוא מתהפך בכל לחיצה)
     const SLOT_MIN = {
       'בוקר': 200,
       'בין_בוקר_לצהריים': 100,
@@ -2553,6 +2597,14 @@
       'ערב': (d.gender === 'גבר' ? 600 : 500),
       'לילה': 100
     };
+    // עדכן את הודעת מגבלת הארוחות באופן דינמי
+    const maxMeals = targetCal < 1400 ? 3 : targetCal < 1800 ? 4 : 0;
+    const noteEl = document.getElementById('meals-main-note');
+    if (noteEl) {
+      noteEl.innerHTML = maxMeals
+        ? `💡 לפי הקלוריות שלך, מומלץ לסמן <strong>עד ${maxMeals} ארוחות</strong> בלבד — פחות ארוחות = כל ארוחה גדולה יותר = שובע חזק יותר.`
+        : '💡 לא חייבים לסמן את כל הארוחות — ועדיף שלא! פחות ארוחות = כל ארוחה גדולה יותר = שובע חזק יותר.';
+    }
     MEAL_TIMES.forEach(mt => {
       if (!d.meals[mt.id]?.checked) return;
       const numEl = document.getElementById(`wnum-${mt.id}`);
@@ -2561,17 +2613,20 @@
       const minForMeal = SLOT_MIN[mt.id];
       // !! מבטיח boolean אמיתי — classList.toggle עם undefined מתהפך במקום לכבות
       const isBelowMin = !!(minForMeal && weight < minForMeal);
-      numEl.textContent = weight + ' קל׳';
+      // תצוגה: אחוזים (עגולים) אם המשתמש לא יודע קלוריות, אחרת קלוריות
+      numEl.textContent = usePct ? Math.round(weight / targetCal * 100) + '%' : weight + ' קל׳';
       numEl.classList.toggle('below-min', isBelowMin);
       if (isBelowMin) {
         const parentSpan = numEl.parentElement;
         let infoEl = parentSpan.querySelector('.meal-min-info');
+        const minDisplay = usePct ? Math.round(minForMeal / targetCal * 100) + '%' : minForMeal + " קל׳";
         if (!infoEl) {
           infoEl = document.createElement('span');
           infoEl.className = 'meal-min-info meal-min-tooltip';
-          infoEl.innerHTML = `<span class="meal-min-icon">?</span><span class="tooltip-text">מינימום מומלץ: ${minForMeal} קל׳</span>`;
           parentSpan.insertBefore(infoEl, numEl);
         }
+        // תמיד עדכן את הטקסט — ייתכן שהמצב השתנה בין קלוריות לאחוזים
+        infoEl.innerHTML = `<span class="meal-min-icon">?</span><span class="tooltip-text">מינימום מומלץ: ${minDisplay}</span>`;
       } else {
         const infoEl = numEl.parentElement.querySelector('.meal-min-info');
         if (infoEl) infoEl.remove();
