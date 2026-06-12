@@ -2620,13 +2620,13 @@
       // !! מבטיח boolean אמיתי — classList.toggle עם undefined מתהפך במקום לכבות
       const isBelowMin = !!(minForMeal && weight < minForMeal);
       // תצוגה: אחוזים מעוגלים ל-2.5% אם המשתמש לא יודע קלוריות, אחרת קלוריות
-      // Math.round(x * 40) / 40 * 100 מעגל לקפיצות של 2.5% (כי 100/2.5 = 40)
-      numEl.textContent = usePct ? (Math.round(weight / targetCal * 40) / 40 * 100) + '%' : weight + ' קל׳';
+      // toFixed(1) ואז parseFloat מונע floating-point זבל כמו 27.500000000000004
+      numEl.textContent = usePct ? parseFloat((Math.round(weight / targetCal * 40) / 40 * 100).toFixed(1)) + '%' : weight + ' קל׳';
       numEl.classList.toggle('below-min', isBelowMin);
       if (isBelowMin) {
         const parentSpan = numEl.parentElement;
         let infoEl = parentSpan.querySelector('.meal-min-info');
-        const minDisplay = usePct ? (Math.round(minForMeal / targetCal * 40) / 40 * 100) + '%' : minForMeal + " קל׳";
+        const minDisplay = usePct ? parseFloat((Math.round(minForMeal / targetCal * 40) / 40 * 100).toFixed(1)) + '%' : minForMeal + " קל׳";
         if (!infoEl) {
           infoEl = document.createElement('span');
           infoEl.className = 'meal-min-info meal-min-tooltip';
@@ -3298,16 +3298,34 @@
     const btn = document.getElementById('s5-continue-btn');
     if (!btn) return;
     const targetCal = getMealTargetCal();
-    const total = MEAL_TIMES.reduce((s,mt) => s + (d.meals[mt.id]?.checked ? d.meals[mt.id].weight : 0), 0);
-    const any   = MEAL_TIMES.some(mt => d.meals[mt.id]?.checked);
-    const ready = any && total === targetCal;
+    const usePct = d.knowsCalories === false;
+    const any = MEAL_TIMES.some(mt => d.meals[mt.id]?.checked);
 
-    if (inCalorieConfirmMode) {
-      btn.disabled = false;
-      btn.textContent = gtext('ודא שאתה מרוצה מחלוקת הקלוריות — ואז אשר','ודאי שאת מרוצה מחלוקת הקלוריות — ואז אשרי');
+    let ready;
+    if (usePct) {
+      // במצב אחוזים: בדוק שסכום האחוזים המוצגים = 100 (לא kcal, כי עיגול גורם לסטייה)
+      const totalPct = MEAL_TIMES.reduce((s, mt) => {
+        if (!d.meals[mt.id]?.checked) return s;
+        return s + parseFloat((Math.round(d.meals[mt.id].weight / targetCal * 40) / 40 * 100).toFixed(1));
+      }, 0);
+      ready = any && Math.round(totalPct * 10) === 1000; // 1000 = 100.0% × 10
+      if (inCalorieConfirmMode) {
+        btn.disabled = false;
+        btn.textContent = gtext('ודא שאתה מרוצה מחלוקת הארוחות — ואז אשר','ודאי שאת מרוצה מחלוקת הארוחות — ואז אשרי');
+      } else {
+        btn.disabled = !ready;
+        btn.textContent = ready ? 'המשך ←' : `חלק את הארוחות לטעמך (${parseFloat(totalPct.toFixed(1))}% מתוך 100%)`;
+      }
     } else {
-      btn.disabled = !ready;
-      btn.textContent = ready ? 'המשך ←' : `חלק את הקצבה שלך (${total} / ${targetCal} קל)`;
+      const total = MEAL_TIMES.reduce((s,mt) => s + (d.meals[mt.id]?.checked ? d.meals[mt.id].weight : 0), 0);
+      ready = any && total === targetCal;
+      if (inCalorieConfirmMode) {
+        btn.disabled = false;
+        btn.textContent = gtext('ודא שאתה מרוצה מחלוקת הקלוריות — ואז אשר','ודאי שאת מרוצה מחלוקת הקלוריות — ואז אשרי');
+      } else {
+        btn.disabled = !ready;
+        btn.textContent = ready ? 'המשך ←' : `חלק את הקצבה שלך (${total} / ${targetCal} קל)`;
+      }
     }
   }
   window.updateS5Btn = updateS5Btn;
