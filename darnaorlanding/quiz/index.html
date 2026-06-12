@@ -1936,9 +1936,10 @@
       document.querySelectorAll('#grp-super .toggle-btn').forEach(b => {
         b.classList.toggle('selected', b.dataset.val === 'כן');
       });
-      if (note) note.style.display = 'block';
+      if (note) { note.textContent = 'ב-45 דקות — כשנדרש הנפח, סופרסטים יופעלו אוטומטית כדי להכניס מספיק תרגילים.'; note.style.display = 'block'; }
     } else {
-      if (note) note.style.display = 'none';
+      // הסתר רק אם גם ימי האימון אינם 2 (updateTdays מטפל בזה בעצמו)
+      if (note && d.trainingDays !== 2) note.style.display = 'none';
     }
   }
   window.pickDuration = pickDuration;
@@ -2166,6 +2167,17 @@
   function updateTdays(v) {
     d.trainingDays = Math.max(2, parseInt(v));
     document.getElementById('tdays-display').innerHTML = `${d.trainingDays} <span>ימים</span>`;
+    // 2 ימים → סופרסטים אוטומטיים (כמו 45 דקות — הנפח לא מתאפשר אחרת)
+    const note = document.getElementById('super-auto-note');
+    if (d.trainingDays === 2) {
+      d.supersets = 'כן';
+      document.querySelectorAll('#grp-super .toggle-btn').forEach(b => {
+        b.classList.toggle('selected', b.dataset.val === 'כן');
+      });
+      if (note) { note.textContent = '2 ימי אימון — סופרסטים יופעלו אוטומטית כדי לכסות מספיק נפח בכל אימון.'; note.style.display = 'block'; }
+    } else {
+      if (note && d.sessionDuration !== 45) note.style.display = 'none';
+    }
   }
   window.updateTdays = updateTdays;
 
@@ -2996,7 +3008,7 @@
         <span class="tip-btn" onclick="openTip(this,event)">?<span class="tip-text">קבועים — אותם תרגילים בכל אימון (מומלץ, פחות מבלבל ומאפשר להתקדם במשקלים). מגוונים — התרגילים מתחלפים בין אימון לאימון.</span></span>
       </span>
       <div class="toggle-group" id="grp-variety">${varietyBtns}</div>
-      <div id="super-auto-note" style="display:${d.sessionDuration===45?'block':'none'};font-size:0.78rem;color:#087fa3;background:rgba(8,127,163,0.08);border-radius:6px;padding:6px 10px;margin-top:4px">ב-45 דקות — כשנדרש הנפח, סופרסטים יופעלו אוטומטית כדי להכניס מספיק תרגילים.</div>
+      <div id="super-auto-note" style="display:${(d.sessionDuration===45||d.trainingDays===2)?'block':'none'};font-size:0.78rem;color:#087fa3;background:rgba(8,127,163,0.08);border-radius:6px;padding:6px 10px;margin-top:4px">${d.trainingDays===2?'2 ימי אימון — סופרסטים יופעלו אוטומטית כדי לכסות מספיק נפח בכל אימון.':'ב-45 דקות — כשנדרש הנפח, סופרסטים יופעלו אוטומטית כדי להכניס מספיק תרגילים.'}</div>
       <span class="section-label">יש תרגיל כוח ש<span data-g="תרצה|תרצי">תרצה</span> לשפר? <span style="font-weight:400;opacity:0.65">(עד 2, רשות)</span></span>
       <div class="check-grid" id="strength-ex-chips" style="grid-template-columns:1fr 1fr;margin-bottom:0.5rem">${[
         {id:'squat',lbl:'סקווט'},
@@ -3041,12 +3053,13 @@
       const btns = [0,1,2,3,4,5].map(v=>
         `<button type="button" class="pri-btn${cur===v?' sel':''}" onclick="setPriority('${m.id}',${v},this)">${v}</button>`
       ).join('');
-      return `<div class="muscle-row"><span class="muscle-nm">${m.nm}</span><div class="pri-btns">${btns}</div></div>`;
+      return `<div class="muscle-row" data-mid="${m.id}"><span class="muscle-nm">${m.nm}</span><div class="pri-btns">${btns}</div></div>`;
     }).join('');
 
     document.getElementById('training-priority').innerHTML = `
       <span class="section-label">באילו שרירים בא לך להתמקד?</span>
       <div class="muscle-grid-wrap">${headerRow}${muscleHtml}</div>
+      <div id="prio-cap-note" style="display:none;font-size:0.78rem;color:#087fa3;background:rgba(8,127,163,0.08);border-radius:6px;padding:6px 10px;margin-top:4px"></div>
     `;
     updateGenderText(); // החל טקסט תלוי-מין על התוכן שזה עתה הוזרק
   }
@@ -3060,8 +3073,49 @@
 
   function setPriority(muscleId, val, btn) {
     d.musclePriorities[muscleId] = val;
-    btn.closest('.pri-btns').querySelectorAll('.pri-btn').forEach(b=>b.classList.remove('sel'));
-    btn.classList.add('sel');
+    let capped = false;
+
+    // כלל 1: מקסימום 3 שרירים בתעדוף 5 — אם חורגים, המשבצת שנוספה נדחפת ל-4
+    const at5 = Object.keys(d.musclePriorities).filter(m => d.musclePriorities[m] === 5);
+    if (at5.length > 3) {
+      // מחזירים את הנוכחי ל-4 (הוא הגורם לחריגה, האחרים כבר היו שם)
+      d.musclePriorities[muscleId] = 4;
+      capped = true;
+    }
+
+    // כלל 2: תקציב תעדוף — 2×(מספר תעדוף5) + (מספר תעדוף4) ≤ 7
+    // אם חורגים, דוחפים תעדופי-4 (שאינם הנוכחי) אחורה ל-3
+    let c5 = Object.values(d.musclePriorities).filter(v => v === 5).length;
+    let at4 = Object.keys(d.musclePriorities).filter(m => d.musclePriorities[m] === 4);
+    while (2 * c5 + at4.length > 7) {
+      const toDrop = at4.find(m => m !== muscleId) || at4[0];
+      if (!toDrop) break;
+      d.musclePriorities[toDrop] = 3;
+      at4 = at4.filter(m => m !== toDrop);
+      capped = true;
+    }
+
+    // עדכן את כפתורי התעדוף של כל שריר שנגע בשינוי
+    document.querySelectorAll('.muscle-row[data-mid]').forEach(row => {
+      const mid = row.dataset.mid;
+      const cur = d.musclePriorities[mid];
+      if (cur !== undefined) {
+        row.querySelectorAll('.pri-btn').forEach(b => b.classList.toggle('sel', parseInt(b.textContent) === cur));
+      }
+    });
+
+    // הצג הערה רק כשהקאפ אכן הופעל
+    const note = document.getElementById('prio-cap-note');
+    if (note) {
+      if (capped) {
+        const c5final = Object.values(d.musclePriorities).filter(v => v === 5).length;
+        const c4final = Object.values(d.musclePriorities).filter(v => v === 4).length;
+        note.textContent = `תקציב תעדוף מלא (${c5final}×פוקוס + ${c4final}×גבוה) — שרירים נוספים מוגבלים לרמה 3 ומטה.`;
+        note.style.display = 'block';
+      } else {
+        note.style.display = 'none';
+      }
+    }
   }
   window.setPriority = setPriority;
 
@@ -4087,6 +4141,7 @@
         '.pdi-ss-b td{background:rgba(91,212,255,0.04)}',
         '.pdi-ss-num{font-size:10px;font-weight:700;color:var(--accent);text-align:center;vertical-align:middle!important;border-left:2px solid var(--accent2)!important;padding:5px 6px!important}',
         '.pdi-drop{color:var(--green);font-weight:700}',
+        '.pdi-video-link{display:inline-block;margin-right:5px;color:var(--accent2);font-size:8px;text-decoration:none;border:1px solid var(--accent2);border-radius:3px;padding:1px 4px;line-height:1.4;white-space:nowrap}',
         '.pdi-goal-note{display:block;font-size:8px;color:var(--accent);font-weight:600;margin-top:1px}',
         // Tips
         '.pdi-tips{margin:14px;background:rgba(8,127,163,0.06);border:1px solid var(--border);border-right:3px solid var(--accent2);border-radius:8px;padding:10px 12px}',
@@ -4620,7 +4675,7 @@
                 : '';
               tbodyRows += '<tr class="' + ssClass + '">'
                 + numCell
-                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
+                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + (EXERCISE_VIDEOS[e.ex.name] ? ' <a href="' + EXERCISE_VIDEOS[e.ex.name] + '" class="pdi-video-link">&#9654; סרטון</a>' : '') + '</td>'
                 + '<td>' + e.sets + '</td>'
                 + '<td>' + escHtml(e.reps) + '</td>'
                 + '<td>' + (e.drop ? '<span class="pdi-drop">✓</span>' : '') + '</td>'
@@ -4632,7 +4687,7 @@
             group.forEach(function(e) {
               tbodyRows += '<tr>'
                 + '<td style="text-align:center">' + num + '</td>'
-                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + '</td>'
+                + '<td>' + escHtml(e.ex.name) + (e.goalNote ? '<span class="pdi-goal-note">לשיפור ה' + escHtml(e.goalNote) + '</span>' : '') + (EXERCISE_VIDEOS[e.ex.name] ? ' <a href="' + EXERCISE_VIDEOS[e.ex.name] + '" class="pdi-video-link">&#9654; סרטון</a>' : '') + '</td>'
                 + '<td style="text-align:center">' + e.sets + '</td>'
                 + '<td style="text-align:center">' + escHtml(e.reps) + '</td>'
                 + '<td style="text-align:center">' + (e.drop ? '<span class="pdi-drop">✓</span>' : '') + '</td>'
@@ -4751,7 +4806,8 @@
         logging:         false,
         scrollX: 0, scrollY: 0
       },
-      jsPDF: { unit: 'mm', format: [pageW, 2000], orientation: 'portrait' }
+      jsPDF: { unit: 'mm', format: [pageW, 2000], orientation: 'portrait' },
+      enableLinks: true
     }).from(htmlStr);
 
     // מודד את הגובה האמיתי של התוכן אחרי שהוא עבר רינדור
@@ -6452,6 +6508,75 @@
       hamstring:  POOL_HAMSTRING,
       calves:     POOL_CALVES,
       abs:        POOL_ABS,
+    };
+
+    // ── מאגר סרטוני הדרכה — מיפוי שם תרגיל → לינק יוטיוב ──
+    // רק תרגילים שיש להם סרטון. הלינק מוצג בטבלת האימון ב-PDF.
+    const EXERCISE_VIDEOS = {
+      // חזה
+      'לחיצת חזה במכונה':                                    'https://youtu.be/N_9c-UtM5u4',
+      'לחיצת חזה עם משקולות יד':                             'https://youtu.be/YFn6-lXh9Wk',
+      'פרפר במכונה':                                          'https://youtu.be/yjTLtU_oOOY',
+      'פרפר בכבלים':                                          'https://youtu.be/bTm3vt3lhE8',
+      'פרפר בכבלים לחזה עליון':                              'https://youtu.be/s0cjKfJSKls',
+      'פרפר בכבלים לחזה תחתון':                              'https://youtu.be/MgvQ46fC6-U',
+      // גב
+      'מתח אחיזה רחבה':                                      'https://youtu.be/R6JM0tCmWr8',
+      'משיכת פולי אחיזה רחבה':                               'https://youtu.be/63hHEJFibrg',
+      'משיכת פולי אחיזה נטרלית':                             'https://youtu.be/K3rKH6pnWH8',
+      'חתירה במכונה עם תמיכה לחזה':                         'https://youtu.be/9rsrovRvvYE',
+      'חתירה רחבה במכונה':                                   'https://youtu.be/O6o8oWJUljw',
+      'פולאובר עם מוט קצר בכבלים':                           'https://youtu.be/_6QmOqTcDO4',
+      'מתח שלילי':                                            'https://youtu.be/l41OfKnWl_w',
+      // כתפיים
+      'לחיצת כתפיים עם משקולת יד':                          'https://youtu.be/PV6KbGry5lM',
+      'הרחקת כתפיים עם משקולות יד':                         'https://youtu.be/y_ObZWC0Y8w',
+      'הרחקת כתף כנגד כבל':                                 'https://youtu.be/dARFWckyAXY',
+      'הרחקה אופקית עם משקולת יד בהשענות קדימה':            'https://youtu.be/yRQq9fepWjM',
+      'הרחקה אופקית כנגד כבל':                              'https://youtu.be/sfq8EqafKCg',
+      'פייספול':                                              'https://youtu.be/RuWmhbPKv7o',
+      'כפיפת כתף עם משקולת יד':                             'https://youtu.be/VU0b4yRLfjs',
+      'חתירת כתפיים':                                        'https://youtu.be/Iav4-e9TJCw',
+      // יד אחורית
+      'לחיצה צרפתית עם משקולות יד בשכיבה':                 'https://youtu.be/iK9UwVSI2Jg',
+      'לחיצה צרפתית כנגד מוט דאבליו':                       'https://youtu.be/mY2w771bhmQ',
+      'פשיטת מרפקים מעל הראש עם כבל':                       'https://youtu.be/W5KwKy-t0_w',
+      'פשיטת מרפקים כנגד מוט קצר':                          'https://youtu.be/dGgeX9g135s',
+      'פשיטת מרפקים כנגד חבל':                              'https://youtu.be/VrCRHYuFPYE',
+      'קיק בק עם כבל':                                       'https://youtu.be/KOYETbcLG1g',
+      'קיק בק עם משקולת יד':                                'https://youtu.be/3aAAr-k0myY',
+      // יד קדמית
+      'כפיפת מרפקים על ספסל בשיפוע חיובי כנגד משקולות':    'https://youtu.be/yIpehvHSRo0',
+      'פריצר עם מוט דאבליו':                                 'https://youtu.be/vVL2QiVaOLY',
+      'פריצר כנגד משקולת יד':                               'https://youtu.be/3p8fUYSOXUw',
+      'פטישים כנגד משקולות יד':                             'https://youtu.be/hUQZL2-A_nY',
+      'פטישים כנגד כבל':                                    'https://youtu.be/hUQZL2-A_nY',
+      'כפיפת מרפקים בעמידה כנגד כבל':                       'https://youtu.be/-AxVhZROPhg',
+      // ישבן
+      'היפ טראסט עם מכונה':                                 'https://youtu.be/LA0VDnLnR4A',
+      'היפ טראסט עם מוט':                                   'https://youtu.be/zg9AJjcQDz4',
+      'הרחקת ירכיים במכונה':                                'https://youtu.be/BZFKnTl15BE',
+      'בעיטות חמור כנגד כבלים':                             'https://youtu.be/Pqs4fp0po3I',
+      'סטפ אפ':                                              'https://youtu.be/wDsLokldN68',
+      // ארבע ראשי
+      'סקווט עם מוט':                                        'https://youtu.be/sqOdSs-qeIU',
+      'לחיצת רגליים':                                        'https://youtu.be/9RFHZsQOumc',
+      'סקווט בסמית משין':                                    'https://youtu.be/fYA7dB4yQmg',
+      'פשיטת ברכיים במכונה':                                'https://youtu.be/emm0kixlpXs',
+      'סיסי סקווט':                                          'https://youtu.be/awUZ5NHuIfA',
+      'לאנץ בולגרי':                                         'https://youtu.be/RrObhl9uAA4',
+      // המסטרינג
+      'דדליפט רומני עם מוט':                                'https://youtu.be/HoZJ0agUvpg',
+      'דדליפט רומני עם משקולות יד':                         'https://youtu.be/ytF2tYSzFtI',
+      // תאומים
+      'עליות תאומים בסמית משין':                            'https://youtu.be/hPu1gEfqSaE',
+      'עליות תאומים בלחיצת רגליים':                         'https://youtu.be/GoRO7XO_nwA',
+      'עליות תאומים על מדרגה ברגל אחת עם משקולת יד':        'https://youtu.be/MLVSm2A8VW0',
+      // בטן
+      'כפיפות בטן כנגד מכונה':                              'https://youtu.be/qTwvEHXUE8Y',
+      'כפיפות בטן בשכיבה עם משקולת יד':                    'https://youtu.be/rQsHRX4VJhU',
+      'כפיפות בטן על בוסו עם משקולת יד':                   'https://youtu.be/10kZu7-CGPo',
+      'כפיפות בטן על בוסו כנגד כבלים':                     'https://youtu.be/lD358baZ8T4',
     };
 
     // ══════════════════════════════════════════════════════
