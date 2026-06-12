@@ -1,15 +1,16 @@
 const RESEND_KEY  = 're_ZnZPao29_72jKa2hw74LiaRpYW8z8YVNr';
-const RESEND_FROM = 'Dad Naor <onboarding@resend.dev>';
+const RESEND_FROM = 'דר נאור <plan@darnaor.com>';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { to, name, pdfBase64 } = req.body || {};
+  const { to, name, planHtml, pdfBase64 } = req.body || {};
   if (!to || !name) return res.status(400).json({ error: 'Missing to or name' });
 
   const safeName = String(name).replace(/[<>&"]/g, '');
 
-  const emailHtml = `<!DOCTYPE html>
+  // Use the full plan HTML from the quiz if provided, otherwise fallback to simple notification
+  const emailHtml = planHtml || `<!DOCTYPE html>
 <html dir="rtl" lang="he">
 <head><meta charset="UTF-8"><style>
   body{margin:0;padding:24px 12px;background:#040e12;font-family:Arial,sans-serif;direction:rtl;color:#e2edf2}
@@ -20,7 +21,7 @@ export default async function handler(req, res) {
 </style></head>
 <body><div class="wrap">
   <h1>שלום ${safeName}! 👋</h1>
-  <p>התוכנית האישית שלך <strong>מוכנה</strong> ומצורפת למייל הזה כ-PDF.</p>
+  <p>התוכנית האישית שלך <strong>מוכנה</strong>.</p>
   <p>שמור אותה — יש בה הכל: תפריט שבועי, תוכנית אימון, ורשימת קניות.</p>
   <p style="margin-top:20px;font-size:0.85rem;color:rgba(138,164,175,0.6)">דר נאור · darnaor.com · @dar__naor</p>
 </div></body></html>`;
