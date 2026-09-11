@@ -192,13 +192,7 @@
       font-weight: 700;
       font-size: 0.85rem;
       padding: 0.5rem 1.2rem;
-      margin: 0 auto 0;
-    }
-
-    .urgency-sub {
-      font-size: 0.78rem;
-      color: var(--muted);
-      margin: 0.4rem auto 1.5rem;
+      margin: 0 auto 1.5rem;
     }
 
     .form-sub {
@@ -260,6 +254,47 @@
     input[type="tel"]:focus,
     select:focus {
       border-color: var(--accent2);
+    }
+
+    /* Single-select "checkbox" style questions (button pills) */
+    .choice-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .choice-btn {
+      flex: 1 1 auto;
+      min-width: 110px;
+      background: #1a1c1d;
+      border: 1px solid #3f484d;
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 0.7rem 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .choice-btn:hover {
+      border-color: var(--accent2);
+    }
+
+    .choice-btn.active {
+      border-color: var(--accent);
+      background: rgba(8, 127, 163, 0.2);
+      color: var(--accent);
+    }
+
+    .btn-sub {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-top: 0.3rem;
     }
 
     /* Honeypot field — hidden from real users */
@@ -357,7 +392,6 @@
          Spot count ticks down deterministically over the month (real cap is
          5/month; this reflects that cap, not a live per-visitor counter). -->
     <p class="urgency" id="urgency-text"></p>
-    <p class="urgency-sub" id="urgency-sub"></p>
     <script>
       (function () {
         var TOTAL_SPOTS = 5;
@@ -367,30 +401,18 @@
         var taken = 1 + Math.floor((dayOfMonth - 1) / 6);
         var spotsLeft = Math.max(TOTAL_SPOTS - taken, 1);
         document.getElementById('urgency-text').textContent =
-          'נשארו ' + spotsLeft + ' מקומות לשיחות אבחון חינמיות החודש (מתוך ' + TOTAL_SPOTS + ')';
-        document.getElementById('urgency-sub').textContent =
-          'נשארו עוד ' + spotsLeft + ' מקומות החודש';
+          'נשארו ' + spotsLeft + ' מקומות (מתוך ' + TOTAL_SPOTS + ') לשיחות אבחון חינמיות החודש';
       })();
     </script>
 
     <!-- Lead form -->
     <div class="form-card">
-      <h2>קבלו שיחת אבחון אישית וחינמית</h2>
-      <p class="form-sub">30 דקות, ללא עלות וללא התחייבות — נבין ביחד מה מונע מכם היום מלהגיע לתוצאה</p>
+      <h2>לשיחת אבחון אישית יחד איתי מלאו את השאלון</h2>
+      <p class="form-sub">30 דקות ללא עלות או התחייבות. נבין את המצב האישי שלכם ואיך תוכלו כבר ממחר להתחיל ליישם את העקרונות של אכילה מדעת — שעבדו לי, ליועד ולמעל 300 מתאמנים כדי להשטיח את הבטן</p>
       <form id="lead-form">
         <div class="hp" aria-hidden="true">
           <label for="website_url">אל תמלא שדה זה</label>
           <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
-        </div>
-
-        <div>
-          <label for="from_name">שם מלא</label>
-          <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
-        </div>
-
-        <div>
-          <label for="phone">מספר טלפון</label>
-          <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
         </div>
 
         <div>
@@ -404,13 +426,66 @@
           </select>
         </div>
 
-        <button id="lead-submit-btn" type="submit">קבעו לי שיחת אבחון חינמית</button>
+        <div>
+          <label>לדעתכם אכילה מדעת תעזור לכם להשיג את המטרה הזאת?</label>
+          <input type="hidden" id="helps-input" name="helps_goal" required>
+          <div class="choice-group">
+            <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'בטוח/ה שכן', this)">בטוח/ה שכן</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'כנראה', this)">כנראה</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'לא בטוח/ה', this)">לא בטוח/ה</button>
+          </div>
+        </div>
+
+        <div>
+          <label>האם היום אתם מתאמנים?</label>
+          <input type="hidden" id="training-input" name="training" required>
+          <div class="choice-group">
+            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, במכון כושר', this)">כן, במכון כושר</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, באימוני סטודיו', this)">כן, באימוני סטודיו</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, בחוץ', this)">כן, בחוץ</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'לא, עדיין לא', this)">לא, עדיין לא</button>
+          </div>
+        </div>
+
+        <div>
+          <label>מה הכי מתאר את התזונה שלך היום?</label>
+          <input type="hidden" id="nutrition-input" name="nutrition" required>
+          <div class="choice-group">
+            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני לא מקפיד/ה כרגע', this)">אני לא מקפיד/ה כרגע</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'משתדל/ת לאכול בריא', this)">משתדל/ת לאכול בריא</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני בתפריט', this)">אני בתפריט</button>
+            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'מנסה לעקוב אחרי הקלוריות שלי', this)">מנסה לעקוב אחרי הקלוריות שלי</button>
+          </div>
+        </div>
+
+        <div>
+          <label for="from_name">שם מלא</label>
+          <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
+        </div>
+
+        <div>
+          <label for="phone">מספר טלפון</label>
+          <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
+        </div>
+
+        <button id="lead-submit-btn" type="submit">
+          קבעו לי שיחת אבחון חינמית
+          <span class="btn-sub">אצור קשר עוד היום עם כל מי שמתאים לשיחת האבחון, תהיו זמינים 🙂</span>
+        </button>
       </form>
     </div>
 
   </div>
 
   <script>
+    // מסמן את הכפתור שנבחר בתוך קבוצת השאלה, ושומר את הערך בשדה המוסתר
+    function selectChoice(hiddenId, value, btn) {
+      document.getElementById(hiddenId).value = value;
+      var buttons = btn.parentElement.querySelectorAll('.choice-btn');
+      buttons.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    }
+
     // שולח את הטופס דרך EmailJS ומעביר לדף התודה
     document.getElementById('lead-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -418,9 +493,17 @@
       // Honeypot — אם מולא, זה בוט
       if (document.getElementById('website_url').value !== '') return;
 
+      var goal = this.querySelector('[name="goal"]').value;
+      var helpsGoal = document.getElementById('helps-input').value;
+      var training = document.getElementById('training-input').value;
+      var nutrition = document.getElementById('nutrition-input').value;
       var name = this.querySelector('[name="from_name"]').value.trim();
       var phone = this.querySelector('[name="phone"]').value.trim();
 
+      if (!goal || !helpsGoal || !training || !nutrition) {
+        alert('אנא ענה/י על כל השאלות');
+        return;
+      }
       if (!name) {
         alert('אנא הזן את שמך המלא');
         return;
@@ -431,6 +514,7 @@
       }
 
       var btn = document.getElementById('lead-submit-btn');
+      var btnOriginalHtml = btn.innerHTML;
       btn.disabled = true;
       btn.textContent = 'שולח...';
 
@@ -442,7 +526,7 @@
           console.error('EmailJS error:', err);
           alert('שגיאה בשליחה, נסה שוב.');
           btn.disabled = false;
-          btn.textContent = 'אשמח לקבל פרטים';
+          btn.innerHTML = btnOriginalHtml;
         });
     });
   </script>
