@@ -45,12 +45,13 @@ function getLeadSheet() {
 }
 
 function appendLeadRow(sheet, data) {
-  var finder = sheet.createTextFinder(LEAD_SECTION_LABEL).matchEntireCell(false);
+  // מאתר את שורת הכותרות עצמה (התא שכתוב בו בדיוק "שם"), ולא מנחש
+  // מרחק שורות מהבאנר — כך זה עמיד גם אם גובה הבאנר משתנה
+  var finder = sheet.createTextFinder('שם').matchEntireCell(true);
   var match = finder.findNext();
-  if (!match) throw new Error('לא נמצאה טבלת "' + LEAD_SECTION_LABEL + '" בגיליון');
+  if (!match) throw new Error('לא נמצאה שורת הכותרות ("שם") בטבלת "' + LEAD_SECTION_LABEL + '"');
 
-  // מבנה הטבלה: 2 שורות כותרת ממוזגת, ואז שורת כותרות עמודות
-  var columnHeaderRow = match.getRow() + 2;
+  var columnHeaderRow = match.getRow();
   var insertRow = columnHeaderRow + 1;
 
   // מוסיף שורה חדשה מיד מתחת לכותרות — הליד החדש תמיד למעלה, וכל מה שמתחת זז
