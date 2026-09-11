@@ -119,30 +119,6 @@
       height: 100%;
       border: 0;
       display: block;
-      pointer-events: none;
-    }
-
-    /* Custom "click for sound" button — replaces YouTube's native controls */
-    .sound-btn {
-      position: absolute;
-      bottom: 14px;
-      inset-inline-start: 14px;
-      background: rgba(12, 14, 15, 0.85);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: inherit;
-      font-size: 0.85rem;
-      font-weight: 700;
-      border-radius: 999px;
-      padding: 0.6rem 1.1rem;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      transition: background 0.2s, border-color 0.2s;
-    }
-
-    .sound-btn:hover {
-      background: rgba(8, 127, 163, 0.35);
-      border-color: var(--accent2);
     }
 
     /* Fallback thumbnail (used while YouTube embedding is disabled) */
@@ -256,25 +232,66 @@
       border-color: var(--accent2);
     }
 
-    /* Single-select "checkbox" style questions (button pills) */
+    /* Numbered question blocks — separated by a divider line */
+    .q-block {
+      padding-top: 1.4rem;
+      margin-top: 1.4rem;
+      border-top: 1px solid rgba(63, 72, 77, 0.5);
+    }
+
+    .q-block:first-child {
+      padding-top: 0;
+      margin-top: 0;
+      border-top: none;
+    }
+
+    .q-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+    }
+
+    .q-num {
+      color: var(--accent);
+    }
+
+    .q-sub-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin: 0.9rem 0 0.6rem;
+    }
+
+    /* Single-select "checkbox" style questions (button pills), laid out
+       in one even row via CSS grid so they never wrap unpredictably */
     .choice-group {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
       gap: 0.5rem;
     }
 
+    .choice-group-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .choice-group-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
     .choice-btn {
-      flex: 1 1 auto;
-      min-width: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.4rem;
       background: #1a1c1d;
       border: 1px solid #3f484d;
       border-radius: 10px;
       color: var(--muted);
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.72rem;
       font-weight: 600;
+      line-height: 1.25;
       text-align: center;
-      padding: 0.7rem 0.6rem;
+      padding: 0.5rem 0.3rem;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -287,6 +304,7 @@
       border-color: var(--accent);
       background: rgba(8, 127, 163, 0.2);
       color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
     }
 
     .btn-sub {
@@ -336,6 +354,11 @@
       .wrap {
         padding: 2rem 1rem 3rem;
       }
+
+      .choice-btn {
+        font-size: 0.62rem;
+        padding: 0.4rem 0.2rem;
+      }
     }
   </style>
 </head>
@@ -352,39 +375,24 @@
     <!-- Headline -->
     <h1>איך 310 מתאמנים השיגו <span class="highlight">בטן שטוחה וגוף חטוב — לתמיד</span></h1>
 
-    <!-- Video — no native YouTube controls (avoids YouTube's clutter: title
-         bar, captions/settings icons, and the "watch next" overlay that pops
-         up on pause). We drive play/mute ourselves via the YouTube JS API. -->
-    <div class="video-box" id="video-wrap">
+    <!-- Video — same technique as darnaor.com: iframe embed with native
+         YouTube controls (so play/pause/seek/volume all work normally),
+         auto-starts muted after 6 seconds. -->
+    <div class="video-box">
       <iframe id="vsl-player"
-        src="https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&mute=1"
+        src="https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3"
         title="אכילה מדעת - דר נאור"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
       </iframe>
-      <button id="sound-btn" class="sound-btn" type="button">🔇 לחצו להפעלת קול</button>
     </div>
 
     <script>
       (function () {
-        var iframe = document.getElementById('vsl-player');
-        var soundBtn = document.getElementById('sound-btn');
-
-        // שולח פקודה לנגן יוטיוב דרך ה-API (בלי לטעון ספריית JS נוספת)
-        function ytCommand(func, args) {
-          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*');
-        }
-
-        // מתחיל להתנגן אוטומטית (מושתק) אחרי 6 שניות, בדיוק כמו בדף הראשי
+        var player = document.getElementById('vsl-player');
         setTimeout(function () {
-          ytCommand('playVideo');
+          player.src = 'https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3&autoplay=1&mute=1';
         }, 6000);
-
-        // לחיצה על הכפתור מפעילה קול ומסתירה את הכפתור
-        soundBtn.addEventListener('click', function () {
-          ytCommand('unMute');
-          ytCommand('setVolume', [100]);
-          soundBtn.style.display = 'none';
-        });
       })();
     </script>
 
@@ -415,8 +423,8 @@
           <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
         </div>
 
-        <div>
-          <label for="goal">מה המטרה העיקרית שלך?</label>
+        <div class="q-block">
+          <label for="goal" class="q-label"><span class="q-num">1.</span> מה המטרה העיקרית שלך?</label>
           <select id="goal" name="goal" required>
             <option value="" disabled selected>בחר/י מטרה</option>
             <option value="בטן שטוחה">בטן שטוחה</option>
@@ -424,22 +432,20 @@
             <option value="עליה במסת שריר">עליה במסת שריר</option>
             <option value="לא בטוח/ה, רוצה לדעת">לא בטוח/ה, רוצה לדעת</option>
           </select>
-        </div>
 
-        <div>
-          <label>לדעתכם אכילה מדעת תעזור לכם להשיג את המטרה הזאת?</label>
+          <label class="q-sub-label">ולדעתך, אכילה מדעת תוכל לעזור לך להשיג אותה?</label>
           <input type="hidden" id="helps-input" name="helps_goal" required>
-          <div class="choice-group">
+          <div class="choice-group choice-group-3">
             <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'בטוח/ה שכן', this)">בטוח/ה שכן</button>
             <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'כנראה', this)">כנראה</button>
             <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'לא בטוח/ה', this)">לא בטוח/ה</button>
           </div>
         </div>
 
-        <div>
-          <label>האם היום אתם מתאמנים?</label>
+        <div class="q-block">
+          <label class="q-label"><span class="q-num">2.</span> האם היום אתם מתאמנים?</label>
           <input type="hidden" id="training-input" name="training" required>
-          <div class="choice-group">
+          <div class="choice-group choice-group-4">
             <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, במכון כושר', this)">כן, במכון כושר</button>
             <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, באימוני סטודיו', this)">כן, באימוני סטודיו</button>
             <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, בחוץ', this)">כן, בחוץ</button>
@@ -447,10 +453,10 @@
           </div>
         </div>
 
-        <div>
-          <label>מה הכי מתאר את התזונה שלך היום?</label>
+        <div class="q-block">
+          <label class="q-label"><span class="q-num">3.</span> מה הכי מתאר את התזונה שלך היום?</label>
           <input type="hidden" id="nutrition-input" name="nutrition" required>
-          <div class="choice-group">
+          <div class="choice-group choice-group-4">
             <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני לא מקפיד/ה כרגע', this)">אני לא מקפיד/ה כרגע</button>
             <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'משתדל/ת לאכול בריא', this)">משתדל/ת לאכול בריא</button>
             <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני בתפריט', this)">אני בתפריט</button>
@@ -458,7 +464,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="q-block">
           <label for="from_name">שם מלא</label>
           <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
         </div>
