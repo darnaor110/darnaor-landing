@@ -31,8 +31,6 @@
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>emailjs.init('fPlut7Nf6sXIEMUU7');</script>
 
   <style>
     /* --- Design tokens, matching darnaor.com --- */
@@ -492,7 +490,11 @@
       btn.classList.add('active');
     }
 
-    // שולח את הטופס דרך EmailJS ומעביר לדף התודה
+    // כתובת ה-Web App של Google Apps Script (leads-to-sheet.gs) — לעדכן אחרי הפריסה
+    var APPS_SCRIPT_URL = 'PASTE_DEPLOYED_/exec_URL_HERE';
+    var APPS_SCRIPT_TOKEN = 'M0tJPU58G8vzQ6VTU7gVh9zvS2oNOk52'; // חייב להתאים לטוקן בסקריפט
+
+    // שולח את הטופס לגיליון + מייל (דרך Apps Script) ומעביר לדף התודה
     document.getElementById('lead-form').addEventListener('submit', function (e) {
       e.preventDefault();
 
@@ -524,12 +526,23 @@
       btn.disabled = true;
       btn.textContent = 'שולח...';
 
-      emailjs.sendForm('service_484l3rn', 'template_27g5m3l', this)
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          token: APPS_SCRIPT_TOKEN,
+          name: name,
+          phone: phone,
+          goal: goal,
+          helpsGoal: helpsGoal,
+          training: training,
+          nutrition: nutrition
+        })
+      })
         .then(function () {
           window.location.href = 'thank-you.html';
         })
         .catch(function (err) {
-          console.error('EmailJS error:', err);
+          console.error('Submit error:', err);
           alert('שגיאה בשליחה, נסה שוב.');
           btn.disabled = false;
           btn.innerHTML = btnOriginalHtml;
