@@ -192,7 +192,13 @@
       font-weight: 700;
       font-size: 0.85rem;
       padding: 0.5rem 1.2rem;
-      margin: 0 auto 1.5rem;
+      margin: 0 auto 0;
+    }
+
+    .urgency-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin: 0.4rem auto 1.5rem;
     }
 
     .form-sub {
@@ -351,16 +357,19 @@
          Spot count ticks down deterministically over the month (real cap is
          5/month; this reflects that cap, not a live per-visitor counter). -->
     <p class="urgency" id="urgency-text"></p>
+    <p class="urgency-sub" id="urgency-sub"></p>
     <script>
       (function () {
         var TOTAL_SPOTS = 5;
         var today = new Date();
         var dayOfMonth = today.getDate();
-        // כל 6 ימים בחודש "נתפס" עוד מקום, עד למינימום 1
-        var taken = Math.floor((dayOfMonth - 1) / 6);
+        // מתחיל מ-1 מקום "תפוס" כבר ביום הראשון, ואז עוד מקום כל 6 ימים, עד למינימום 1
+        var taken = 1 + Math.floor((dayOfMonth - 1) / 6);
         var spotsLeft = Math.max(TOTAL_SPOTS - taken, 1);
         document.getElementById('urgency-text').textContent =
           'נשארו ' + spotsLeft + ' מקומות לשיחות אבחון חינמיות החודש (מתוך ' + TOTAL_SPOTS + ')';
+        document.getElementById('urgency-sub').textContent =
+          'נשארו עוד ' + spotsLeft + ' מקומות החודש';
       })();
     </script>
 
