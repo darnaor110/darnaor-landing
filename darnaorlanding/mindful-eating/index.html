@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>אכילה מדעת - דר נאור</title>
+  <meta property="og:title" content="אכילה מדעת - דר נאור">
+  <meta property="og:description" content="הגישה שעזרה לי ול-280+ מהמתאמנים שלי להשטיח את הבטן, לתמיד">
+  <meta property="og:type" content="website">
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', ''); // TODO: Add Pixel ID
+    fbq('track', 'PageView');
+  </script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W0DP7RG7V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-5W0DP7RG7V');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('fPlut7Nf6sXIEMUU7');</script>
+
+  <style>
+    /* --- Design tokens, matching darnaor.com --- */
+    :root {
+      --bg: #0c0e0f;
+      --bg2: #121415;
+      --accent: #5bd4ff;
+      --accent2: #087fa3;
+      --text: #e2e2e3;
+      --muted: #8aa4af;
+      --border: rgba(8, 127, 163, 0.3);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 1.2rem 4rem;
+      text-align: center;
+    }
+
+    /* Logo */
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    .logo span {
+      color: var(--accent2);
+    }
+
+    /* Subtitle */
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 1.2rem;
+    }
+
+    /* Headline */
+    h1 {
+      font-size: clamp(1.4rem, 4vw, 2.1rem);
+      font-weight: 800;
+      line-height: 1.35;
+      max-width: 620px;
+      margin: 0 auto 2rem;
+      text-shadow: 0 0 20px rgba(91, 212, 255, 0.15);
+    }
+
+    h1 .highlight {
+      color: var(--accent);
+    }
+
+    /* Video */
+    .video-box {
+      width: 100%;
+      max-width: 560px;
+      aspect-ratio: 16 / 9;
+      margin: 0 auto 2.5rem;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #2a3438;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(8, 127, 163, 0.08);
+      background: #000;
+    }
+
+    .video-box iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    /* Fallback thumbnail (used while YouTube embedding is disabled) */
+    .video-fallback {
+      position: relative;
+      display: block;
+      text-decoration: none;
+    }
+
+    .video-fallback img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-fallback .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(8, 127, 163, 0.85);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 0 30px rgba(8, 127, 163, 0.5);
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .video-fallback:hover .play-btn {
+      background: var(--accent2);
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    /* Urgency line above the form */
+    .urgency {
+      display: inline-block;
+      background: rgba(8, 127, 163, 0.12);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.5rem 1.2rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .form-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: -1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Form card */
+    .form-card {
+      background: rgba(8, 127, 163, 0.05);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      max-width: 440px;
+      margin: 0 auto;
+      text-align: right;
+    }
+
+    .form-card h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      background: #1a1c1d;
+      border: 1px solid #3f484d;
+      border-radius: 10px;
+      color: var(--text);
+      padding: 0.9rem 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    select:focus {
+      border-color: var(--accent2);
+    }
+
+    /* Honeypot field — hidden from real users */
+    .hp {
+      position: absolute;
+      left: -9999px;
+      top: -9999px;
+    }
+
+    button[type="submit"] {
+      background: var(--accent2);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 1.1rem 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 0.4rem;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    button[type="submit"]:active {
+      transform: scale(0.97);
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 480px) {
+      .wrap {
+        padding: 2rem 1rem 3rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- Logo -->
+    <div class="logo">דר נאור <span>— חטובים לנצח</span></div>
+
+    <!-- Subtitle -->
+    <p class="subtitle">בלי דיאטות קיצוניות, בלי לספור כל קלוריה, ובלי להיות תלויים בכוח רצון שנגמר</p>
+
+    <!-- Headline -->
+    <h1>איך 310 מתאמנים השיגו <span class="highlight">בטן שטוחה וגוף חטוב — לתמיד</span></h1>
+
+    <!-- Video — same technique as darnaor.com: iframe embed (shows YouTube's
+         own thumbnail until played), then auto-starts muted after 6 seconds.
+         NOTE: this only works once "Allow embedding" is turned on for this
+         video in YouTube Studio — otherwise it shows YouTube's error 153. -->
+    <div class="video-box">
+      <iframe id="vsl-player"
+        src="https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3"
+        title="אכילה מדעת - דר נאור"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <script>
+      // מתחיל להתנגן אוטומטית (מושתק) אחרי 6 שניות, בדיוק כמו בדף הראשי
+      (function () {
+        var player = document.getElementById('vsl-player');
+        setTimeout(function () {
+          player.src = 'https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3&autoplay=1&mute=1';
+        }, 6000);
+      })();
+    </script>
+
+    <!-- Urgency line — mirrors the offer stated in the video -->
+    <p class="urgency">יש מקום ל-5 שיחות אבחון חינמיות בלבד החודש</p>
+
+    <!-- Lead form -->
+    <div class="form-card">
+      <h2>קבלו שיחת אבחון אישית וחינמית</h2>
+      <p class="form-sub">30 דקות, ללא עלות וללא התחייבות — נבין ביחד מה מונע מכם היום מלהגיע לתוצאה</p>
+      <form id="lead-form">
+        <div class="hp" aria-hidden="true">
+          <label for="website_url">אל תמלא שדה זה</label>
+          <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div>
+          <label for="from_name">שם מלא</label>
+          <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
+        </div>
+
+        <div>
+          <label for="phone">מספר טלפון</label>
+          <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
+        </div>
+
+        <div>
+          <label for="goal">מה המטרה העיקרית שלך?</label>
+          <select id="goal" name="goal" required>
+            <option value="" disabled selected>בחר/י מטרה</option>
+            <option value="בטן שטוחה">בטן שטוחה</option>
+            <option value="חיטוב כללי">חיטוב כללי</option>
+            <option value="עליה במסת שריר">עליה במסת שריר</option>
+            <option value="לא בטוח/ה, רוצה לדעת">לא בטוח/ה, רוצה לדעת</option>
+          </select>
+        </div>
+
+        <button id="lead-submit-btn" type="submit">קבעו לי שיחת אבחון חינמית</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    // שולח את הטופס דרך EmailJS ומעביר לדף התודה
+    document.getElementById('lead-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Honeypot — אם מולא, זה בוט
+      if (document.getElementById('website_url').value !== '') return;
+
+      var name = this.querySelector('[name="from_name"]').value.trim();
+      var phone = this.querySelector('[name="phone"]').value.trim();
+
+      if (!name) {
+        alert('אנא הזן את שמך המלא');
+        return;
+      }
+      if (!/^(\+972|0)[0-9]{9,10}$/.test(phone.replace(/[-\s]/g, ''))) {
+        alert('אנא הזן מספר טלפון תקין');
+        return;
+      }
+
+      var btn = document.getElementById('lead-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'שולח...';
+
+      emailjs.sendForm('service_484l3rn', 'template_27g5m3l', this)
+        .then(function () {
+          window.location.href = 'thank-you.html';
+        })
+        .catch(function (err) {
+          console.error('EmailJS error:', err);
+          alert('שגיאה בשליחה, נסה שוב.');
+          btn.disabled = false;
+          btn.textContent = 'אשמח לקבל פרטים';
+        });
+    });
+  </script>
+</body>
+
+</html>
