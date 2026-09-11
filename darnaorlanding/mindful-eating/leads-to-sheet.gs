@@ -52,10 +52,10 @@ function appendLeadRow(sheet, data) {
   if (!match) throw new Error('לא נמצאה שורת הכותרות ("שם") בטבלת "' + LEAD_SECTION_LABEL + '"');
 
   var columnHeaderRow = match.getRow();
-  var insertRow = columnHeaderRow + 1;
+  var dataStartRow = columnHeaderRow + 1;
 
-  // מוסיף שורה חדשה מיד מתחת לכותרות — הליד החדש תמיד למעלה, וכל מה שמתחת זז
-  sheet.insertRowBefore(insertRow);
+  // מחפש את השורה הריקה הבאה בעמודת "שם" (במקום לדחוף הכל למטה)
+  var insertRow = findNextEmptyRow(sheet, dataStartRow);
 
   var now = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jerusalem', 'dd/MM/yyyy HH:mm');
 
@@ -74,6 +74,21 @@ function appendLeadRow(sheet, data) {
 
   sheet.getRange(insertRow, 2, 1, rowValues.length).setValues([rowValues]);
   return insertRow;
+}
+
+// סורק את עמודת "שם" (B) מ-startRow ומטה ומחזיר את השורה הריקה הראשונה
+function findNextEmptyRow(sheet, startRow) {
+  var lastRow = Math.max(sheet.getLastRow(), startRow);
+  var numRows = lastRow - startRow + 1;
+  var values = sheet.getRange(startRow, 2, numRows, 1).getValues();
+
+  for (var i = 0; i < values.length; i++) {
+    if (values[i][0] === '' || values[i][0] === null) {
+      return startRow + i;
+    }
+  }
+  // כל השורות שנסרקו תפוסות — הבא בתור מיד אחרי האחרונה
+  return startRow + values.length;
 }
 
 function sendNotificationEmail(data) {
