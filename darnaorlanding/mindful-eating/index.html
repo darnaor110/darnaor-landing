@@ -347,8 +347,22 @@
       })();
     </script>
 
-    <!-- Urgency line — mirrors the offer stated in the video -->
-    <p class="urgency">יש מקום ל-5 שיחות אבחון חינמיות בלבד החודש</p>
+    <!-- Urgency line — mirrors the offer stated in the video.
+         Spot count ticks down deterministically over the month (real cap is
+         5/month; this reflects that cap, not a live per-visitor counter). -->
+    <p class="urgency" id="urgency-text"></p>
+    <script>
+      (function () {
+        var TOTAL_SPOTS = 5;
+        var today = new Date();
+        var dayOfMonth = today.getDate();
+        // כל 6 ימים בחודש "נתפס" עוד מקום, עד למינימום 1
+        var taken = Math.floor((dayOfMonth - 1) / 6);
+        var spotsLeft = Math.max(TOTAL_SPOTS - taken, 1);
+        document.getElementById('urgency-text').textContent =
+          'נשארו ' + spotsLeft + ' מקומות לשיחות אבחון חינמיות החודש (מתוך ' + TOTAL_SPOTS + ')';
+      })();
+    </script>
 
     <!-- Lead form -->
     <div class="form-card">
