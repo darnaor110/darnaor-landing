@@ -102,6 +102,7 @@
 
     /* Video */
     .video-box {
+      position: relative;
       width: 100%;
       max-width: 560px;
       aspect-ratio: 16 / 9;
@@ -118,6 +119,30 @@
       height: 100%;
       border: 0;
       display: block;
+      pointer-events: none;
+    }
+
+    /* Custom "click for sound" button — replaces YouTube's native controls */
+    .sound-btn {
+      position: absolute;
+      bottom: 14px;
+      inset-inline-start: 14px;
+      background: rgba(12, 14, 15, 0.85);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 0.6rem 1.1rem;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .sound-btn:hover {
+      background: rgba(8, 127, 163, 0.35);
+      border-color: var(--accent2);
     }
 
     /* Fallback thumbnail (used while YouTube embedding is disabled) */
@@ -286,26 +311,39 @@
     <!-- Headline -->
     <h1>איך 310 מתאמנים השיגו <span class="highlight">בטן שטוחה וגוף חטוב — לתמיד</span></h1>
 
-    <!-- Video — same technique as darnaor.com: iframe embed (shows YouTube's
-         own thumbnail until played), then auto-starts muted after 6 seconds.
-         NOTE: this only works once "Allow embedding" is turned on for this
-         video in YouTube Studio — otherwise it shows YouTube's error 153. -->
-    <div class="video-box">
+    <!-- Video — no native YouTube controls (avoids YouTube's clutter: title
+         bar, captions/settings icons, and the "watch next" overlay that pops
+         up on pause). We drive play/mute ourselves via the YouTube JS API. -->
+    <div class="video-box" id="video-wrap">
       <iframe id="vsl-player"
-        src="https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3"
+        src="https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&mute=1"
         title="אכילה מדעת - דר נאור"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
       </iframe>
+      <button id="sound-btn" class="sound-btn" type="button">🔇 לחצו להפעלת קול</button>
     </div>
 
     <script>
-      // מתחיל להתנגן אוטומטית (מושתק) אחרי 6 שניות, בדיוק כמו בדף הראשי
       (function () {
-        var player = document.getElementById('vsl-player');
+        var iframe = document.getElementById('vsl-player');
+        var soundBtn = document.getElementById('sound-btn');
+
+        // שולח פקודה לנגן יוטיוב דרך ה-API (בלי לטעון ספריית JS נוספת)
+        function ytCommand(func, args) {
+          iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: func, args: args || [] }), '*');
+        }
+
+        // מתחיל להתנגן אוטומטית (מושתק) אחרי 6 שניות, בדיוק כמו בדף הראשי
         setTimeout(function () {
-          player.src = 'https://www.youtube.com/embed/5wsnwRjo2DU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3&autoplay=1&mute=1';
+          ytCommand('playVideo');
         }, 6000);
+
+        // לחיצה על הכפתור מפעילה קול ומסתירה את הכפתור
+        soundBtn.addEventListener('click', function () {
+          ytCommand('unMute');
+          ytCommand('setVolume', [100]);
+          soundBtn.style.display = 'none';
+        });
       })();
     </script>
 
