@@ -138,10 +138,50 @@
       color: #fff;
     }
 
-    /* On phones the labels can wrap to two lines — keep both buttons the same height */
+    /* Phones: tighter spacing so the whole page fits on one screen without scrolling.
+       Labels can wrap to two lines, so both buttons share a minimum height. */
     @media (max-width: 560px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        padding: 20px 16px;
+      }
+
+      .checkmark {
+        font-size: 2rem;
+        margin-bottom: 0.3rem;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+        margin-bottom: 0.6rem;
+      }
+
+      p {
+        font-size: 0.95rem;
+        line-height: 1.55;
+        margin-bottom: 1rem;
+      }
+
+      .must-watch {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .video-box {
+        margin-bottom: 1rem;
+      }
+
       .btn {
-        min-height: 4.2rem;
+        min-height: 3.4rem;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+      }
+
+      .action-note {
+        font-size: 0.78rem;
       }
     }
   </style>
@@ -179,7 +219,7 @@
           </svg>
           הצטרפו לקבוצת הוואטסאפ
         </a>
-        <p class="action-note">בקבוצה: עדכונים חינמיים והיכרות עם אחרים שנמצאים בתהליך</p>
+        <p class="action-note">קהילה סגורה עם עדכונים וטיפים בלעדיים</p>
       </div>
     </div>
   </div>
