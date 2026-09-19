@@ -26,12 +26,11 @@
       font-family: 'Assistant', sans-serif;
       background-color: var(--bg);
       color: var(--text);
-    }
-
-    .top {
+      min-height: 100vh;
       display: flex;
+      align-items: center;
       justify-content: center;
-      padding: 3rem 1.2rem 2.5rem;
+      padding: 20px;
     }
 
     .container {
@@ -61,336 +60,62 @@
       color: #9abaca;
     }
 
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 0.6rem;
       background: var(--accent2);
+      border: 1.5px solid var(--accent2);
       color: #fff;
       padding: 0.9rem 1.8rem;
       border-radius: 999px;
       text-decoration: none;
       font-weight: 700;
       font-size: 1rem;
-      transition: background 0.2s, color 0.2s;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
 
     .btn:hover {
       background: var(--accent);
+      border-color: var(--accent);
       color: var(--bg);
     }
 
-    /* Client messages — "magnetic" scattered cards, same element as the landing page */
-    .proof-title {
-      text-align: center;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 0;
-      padding: 0 1.2rem;
-    }
-
-    .proof {
-      position: relative;
-      background: #0d0d0d;
-      padding: 1.5rem 0 2rem;
-      overflow: hidden;
-    }
-
-    .proof-grid {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background-image: linear-gradient(rgba(0, 229, 204, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 204, 0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-
-    #mag-stage {
-      position: relative;
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      height: 600px;
-      overflow: hidden;
-      user-select: none;
-    }
-
-    .mag-card {
-      position: absolute;
-      width: 220px;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      will-change: transform;
-      touch-action: none;
-    }
-
-    .mag-card.is-hovered {
-      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.8), 0 0 24px rgba(0, 229, 204, 0.25);
-    }
-
-    .mag-card .mag-pin {
-      position: absolute;
-      top: -6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #00e5cc;
-      box-shadow: 0 0 8px rgba(0, 229, 204, 0.85);
-      z-index: 2;
-    }
-
-    .mag-card img {
-      width: 100%;
-      display: block;
-      pointer-events: none;
-    }
-
-    @media (max-width: 767px) {
-      #mag-stage {
-        height: 420px;
-      }
-
-      .mag-card {
-        width: 150px;
-      }
+    /* Secondary button — outlined so Instagram stays the main action */
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
     }
   </style>
 </head>
 <body>
-  <div class="top">
-    <div class="container">
-      <div class="checkmark">✓</div>
-      <h1>תודה שסמכתם עלי והשארתם פרטים!</h1>
-      <p>
-        אצור איתכם קשר בשעות הקרובות (ביום העסקים הזה או הבא), אז תהיו מוכנים לטלפון ממספר לא מוכר, ותשימו את הטלפון על צלצול :)
-      </p>
+  <div class="container">
+    <div class="checkmark">✓</div>
+    <h1>תודה שסמכתם עלי והשארתם פרטים!</h1>
+    <p>
+      אצור איתכם קשר בשעות הקרובות (ביום העסקים הזה או הבא), אז תהיו מוכנים לטלפון ממספר לא מוכר, ותשימו את הטלפון על צלצול :)
+    </p>
+    <div class="actions">
       <a class="btn" href="https://www.instagram.com/dar__naor/" target="_blank" rel="noopener noreferrer">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
         </svg>
         בינתיים, בואו להכיר אותי באינסטגרם
       </a>
+      <a class="btn btn-secondary" href="https://chat.whatsapp.com/JFlP7xpDP9jLn8ckzvJONC" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.438h.004c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        הצטרפו לקבוצת הוואטסאפ (עדכונים חינמיים)
+      </a>
     </div>
   </div>
-
-  <p class="proof-title">הודעות ממתאמנים</p>
-  <section class="proof">
-    <div class="proof-grid"></div>
-    <div id="mag-stage"></div>
-  </section>
-
-  <script>
-    // כרטיסי הודעות מתאמנים שמתפזרים ונדחפים מהעכבר — אותו אלמנט כמו בדף הנחיתה
-    (function () {
-      var IMGS = [
-        '../images/screenshotsfromclients/collage1_part1.jpg',
-        '../images/screenshotsfromclients/collage1_part2.jpg',
-        '../images/screenshotsfromclients/collage1_part3.jpg',
-        '../images/screenshotsfromclients/collage1_part4.jpg',
-        '../images/screenshotsfromclients/collage1_part6.jpg',
-        '../images/screenshotsfromclients/collage2_part1.jpg',
-        '../images/screenshotsfromclients/collage2_part2.jpg',
-        '../images/screenshotsfromclients/collage2_part3.jpg',
-        '../images/screenshotsfromclients/collage2_part4.jpg',
-        '../images/screenshotsfromclients/collage2_part5.jpg',
-        '../images/screenshotsfromclients/collage3_part2.jpg',
-        '../images/screenshotsfromclients/collage3_part3.jpg',
-        '../images/screenshotsfromclients/collage3_part6.jpg',
-        '../images/screenshotsfromclients/collage4_part3.jpg',
-        '../images/screenshotsfromclients/collage4_part4.jpg',
-        '../images/screenshotsfromclients/collage4_part8.jpg',
-        '../images/screenshotsfromclients/WhatsApp Image 2026-05-23 at 02.21.20.jpeg',
-        '../images/screenshotsfromclients/WhatsApp Image 2026-05-23 at 02.21.20 (1).jpeg',
-        '../images/screenshotsfromclients/WhatsApp Image 2026-05-23 at 02.21.20 (2).jpeg'
-      ];
-
-      // מחולל מספרים קבוע — הפריסה זהה בכל טעינה
-      var seed = 137;
-      function rand() {
-        seed = (seed * 1664525 + 1013904223) & 0x7fffffff;
-        return seed / 0x7fffffff;
-      }
-
-      var REPEL_R = 110;
-      var REPEL_F = 9;
-      var SPRING_K = 0.055;
-      var DAMPING = 0.72;
-
-      var stage = document.getElementById('mag-stage');
-      var isMobile = window.innerWidth < 768;
-      var CARD_W = isMobile ? 150 : 220;
-      var maxZ = IMGS.length + 1;
-
-      var pxStage = -9999;
-      var pyStage = -9999;
-      var pInStage = false;
-      var cards = [];
-
-      function init() {
-        var W = stage.offsetWidth || 1000;
-        var H = stage.offsetHeight || 480;
-
-        // רשת של 7 עמודות על 3 שורות, כרטיס אחד בכל תא
-        var COLS = 7;
-        var ROWS = 3;
-        var cellW = W / COLS;
-        var cellH = H / ROWS;
-
-        IMGS.forEach(function (src, i) {
-          var col = i % COLS;
-          var row = Math.floor(i / COLS);
-          // מרכז התא + סטייה אקראית עד 35% מגודל התא
-          var bx = (col + 0.5) * cellW - CARD_W / 2 + (rand() - 0.5) * cellW * 0.7;
-          var by = (row + 0.5) * cellH - 60 + (rand() - 0.5) * cellH * 0.7;
-          bx = Math.max(-CARD_W * 0.25, Math.min(bx, W - CARD_W * 0.75));
-          by = Math.max(-10, Math.min(by, H - 80));
-          var rot = (rand() - 0.5) * 26;
-
-          var card = document.createElement('div');
-          card.className = 'mag-card';
-          card.style.left = bx + 'px';
-          card.style.top = by + 'px';
-          card.style.zIndex = i + 1;
-          card.style.transform = 'rotate(' + rot + 'deg)';
-
-          var pin = document.createElement('div');
-          pin.className = 'mag-pin';
-
-          var img = document.createElement('img');
-          img.src = src;
-          img.alt = 'הודעה ממתאמן';
-          img.loading = 'lazy';
-          img.draggable = false;
-
-          card.appendChild(pin);
-          card.appendChild(img);
-          stage.appendChild(card);
-
-          var s = { el: card, bx: bx, by: by, rot: rot, dx: 0, dy: 0, vx: 0, vy: 0, hovered: false };
-          cards.push(s);
-
-          // מחשב הזזה נוספת כדי שהכרטיס המוגדל יישאר כולו בתוך הבמה
-          function nudgeIntoView(dx, dy) {
-            var sw = stage.offsetWidth;
-            var sh = stage.offsetHeight;
-            var cw = card.offsetWidth;
-            var ch = card.offsetHeight;
-            var sc = 1.09;
-            var pad = 12;
-
-            var left = s.bx + dx - (cw * sc - cw) / 2;
-            var right = left + cw * sc;
-            var top = s.by + dy - (ch * sc - ch) / 2;
-            var bottom = top + ch * sc;
-
-            var nx = 0;
-            var ny = 0;
-            if (left < pad) nx = pad - left;
-            if (right > sw - pad) nx = (sw - pad) - right;
-            if (top < pad) ny = pad - top;
-            if (bottom > sh - pad) ny = (sh - pad) - bottom;
-            return { x: nx, y: ny };
-          }
-
-          function applyHover(withTransition) {
-            var n = nudgeIntoView(s.dx, s.dy);
-            var fx = (s.dx + n.x).toFixed(1);
-            var fy = (s.dy + n.y).toFixed(1);
-            if (withTransition) {
-              card.style.transition = 'transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s';
-            }
-            card.style.transform = 'translate(' + fx + 'px,' + fy + 'px) rotate(0deg) scale(1.09)';
-          }
-
-          card.addEventListener('mouseenter', function () {
-            s.hovered = true;
-            card.classList.add('is-hovered');
-            card.style.zIndex = ++maxZ;
-            applyHover(true);
-          });
-          card.addEventListener('mouseleave', function () {
-            s.hovered = false;
-            card.classList.remove('is-hovered');
-            card.style.transition = 'transform 0.18s ease, box-shadow 0.2s';
-            card.style.transform = 'translate(' + s.dx.toFixed(1) + 'px,' + s.dy.toFixed(1) + 'px) rotate(' + s.rot + 'deg)';
-            setTimeout(function () { card.style.transition = ''; }, 200);
-          });
-
-          // נגיעה במובייל
-          card.addEventListener('pointerdown', function (e) {
-            if (e.pointerType !== 'touch') return;
-            s.hovered = true;
-            card.classList.add('is-hovered');
-            card.style.zIndex = ++maxZ;
-            applyHover(true);
-            setTimeout(function () {
-              s.hovered = false;
-              card.classList.remove('is-hovered');
-              card.style.transition = 'transform 0.18s ease';
-              card.style.transform = 'translate(' + s.dx.toFixed(1) + 'px,' + s.dy.toFixed(1) + 'px) rotate(' + s.rot + 'deg)';
-              setTimeout(function () { card.style.transition = ''; }, 200);
-            }, 900);
-          });
-        });
-
-        // עוקב אחרי מיקום המצביע ביחס לבמה
-        stage.addEventListener('pointermove', function (e) {
-          var r = stage.getBoundingClientRect();
-          pxStage = e.clientX - r.left;
-          pyStage = e.clientY - r.top;
-          pInStage = true;
-        });
-        stage.addEventListener('pointerleave', function () { pInStage = false; });
-
-        // לולאת הפיזיקה: דחיפה מהמצביע + קפיץ שמחזיר כל כרטיס למקומו
-        function loop() {
-          cards.forEach(function (s) {
-            if (s.hovered) return;
-
-            var fx = 0;
-            var fy = 0;
-
-            if (pInStage) {
-              var cx = s.bx + s.dx + CARD_W * 0.5;
-              var cy = s.by + s.dy + 60;
-              var ddx = cx - pxStage;
-              var ddy = cy - pyStage;
-              var dist = Math.sqrt(ddx * ddx + ddy * ddy);
-              if (dist < REPEL_R && dist > 1) {
-                var strength = REPEL_F * (1 - dist / REPEL_R);
-                fx += (ddx / dist) * strength;
-                fy += (ddy / dist) * strength;
-              }
-            }
-
-            fx += -s.dx * SPRING_K;
-            fy += -s.dy * SPRING_K;
-
-            s.vx = (s.vx + fx) * DAMPING;
-            s.vy = (s.vy + fy) * DAMPING;
-            s.dx += s.vx;
-            s.dy += s.vy;
-
-            if (!s.el.style.transition) {
-              s.el.style.transform = 'translate(' + s.dx.toFixed(2) + 'px,' + s.dy.toFixed(2) + 'px) rotate(' + s.rot + 'deg)';
-            }
-          });
-          requestAnimationFrame(loop);
-        }
-        requestAnimationFrame(loop);
-      }
-
-      if (document.readyState === 'loading') {
-        window.addEventListener('load', init);
-      } else {
-        setTimeout(init, 0);
-      }
-    })();
-  </script>
 </body>
 </html>
