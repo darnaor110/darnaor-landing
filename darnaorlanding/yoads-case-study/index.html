@@ -253,6 +253,76 @@
       border-color: var(--accent2);
     }
 
+    /* Multi-step form: one step visible at a time */
+    .step-progress {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .step-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .step-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(63, 72, 77, 0.5);
+      overflow: hidden;
+    }
+
+    .step-bar i {
+      display: block;
+      height: 100%;
+      width: 33.33%;
+      background: var(--accent2);
+      transition: width 0.3s;
+    }
+
+    .step-back {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .step-back:hover {
+      color: var(--accent);
+    }
+
+    .form-step {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form-step[hidden] {
+      display: none;
+    }
+
+    .form-step.fade-in {
+      animation: stepIn 0.3s ease;
+    }
+
+    @keyframes stepIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
     /* Numbered question blocks — separated by a divider line */
     .q-block {
       padding-top: 1.4rem;
@@ -270,10 +340,6 @@
       font-size: 0.9rem;
       font-weight: 700;
       margin-bottom: 0.7rem;
-    }
-
-    .q-num {
-      color: var(--accent);
     }
 
     .q-sub-label {
@@ -514,59 +580,74 @@
           <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off">
         </div>
 
-        <div class="q-block">
-          <label for="goal" class="q-label"><span class="q-num">1.</span> מה המטרה העיקרית שלך?</label>
-          <select id="goal" name="goal" required>
-            <option value="" disabled selected>בחר/י מטרה</option>
-            <option value="בטן שטוחה">בטן שטוחה</option>
-            <option value="חיטוב כללי">חיטוב כללי</option>
-            <option value="עליה במסת שריר">עליה במסת שריר</option>
-            <option value="לא בטוח/ה האמת, מה שיגרום לי להראות הכי טוב">לא בטוח/ה האמת, מה שיגרום לי להראות הכי טוב</option>
-          </select>
+        <div class="step-progress">
+          <span class="step-label" id="step-label">שלב 1 מתוך 3</span>
+          <div class="step-bar"><i id="step-fill"></i></div>
+          <button type="button" class="step-back" id="step-back" hidden>חזרה</button>
+        </div>
 
-          <label class="q-sub-label">ולדעתך, אכילה מדעת תוכל לעזור לך להשיג אותה?</label>
-          <input type="hidden" id="helps-input" name="helps_goal" required>
-          <div class="choice-group choice-group-3">
-            <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'בטוח/ה שכן', this)">בטוח/ה שכן</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'כנראה', this)">כנראה</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'לא בטוח/ה', this)">לא בטוח/ה</button>
+        <!-- Step 1: goal -->
+        <div class="form-step" data-step="1">
+          <div class="q-block">
+            <label for="goal" class="q-label">מה המטרה העיקרית שלך?</label>
+            <select id="goal" name="goal" required>
+              <option value="" disabled selected>בחר/י מטרה</option>
+              <option value="בטן שטוחה">בטן שטוחה</option>
+              <option value="חיטוב כללי">חיטוב כללי</option>
+              <option value="עליה במסת שריר">עליה במסת שריר</option>
+              <option value="לא בטוח/ה האמת, מה שיגרום לי להראות הכי טוב">לא בטוח/ה האמת, מה שיגרום לי להראות הכי טוב</option>
+            </select>
+
+            <label class="q-sub-label">ולדעתך, אכילה מדעת תוכל לעזור לך להשיג אותה?</label>
+            <input type="hidden" id="helps-input" name="helps_goal" required>
+            <div class="choice-group choice-group-3">
+              <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'בטוח/ה שכן', this)">בטוח/ה שכן</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'כנראה', this)">כנראה</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'לא בטוח/ה', this)">לא בטוח/ה</button>
+            </div>
           </div>
         </div>
 
-        <div class="q-block">
-          <label class="q-label"><span class="q-num">2.</span> האם היום אתם מתאמנים?</label>
-          <input type="hidden" id="training-input" name="training" required>
-          <div class="choice-group choice-group-4">
-            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, במכון כושר', this)">כן, במכון כושר</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, באימוני סטודיו', this)">כן, באימוני סטודיו</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, בחוץ', this)">כן, בחוץ</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'לא, עדיין לא', this)">לא, עדיין לא</button>
+        <!-- Step 2: training + nutrition -->
+        <div class="form-step" data-step="2" hidden>
+          <div class="q-block">
+            <label class="q-label">האם היום אתם מתאמנים?</label>
+            <input type="hidden" id="training-input" name="training" required>
+            <div class="choice-group choice-group-4">
+              <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, במכון כושר', this)">כן, במכון כושר</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, באימוני סטודיו', this)">כן, באימוני סטודיו</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'כן, בחוץ', this)">כן, בחוץ</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('training-input', 'לא, עדיין לא', this)">לא, עדיין לא</button>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <label class="q-label">מה הכי מתאר את התזונה שלך היום?</label>
+            <input type="hidden" id="nutrition-input" name="nutrition" required>
+            <div class="choice-group choice-group-4">
+              <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני לא מקפיד/ה כרגע', this)">אני לא מקפיד/ה כרגע</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'משתדל/ת לאכול בריא', this)">משתדל/ת לאכול בריא</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני בתפריט', this)">אני בתפריט</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'מנסה לעקוב אחרי הערכים התזונתיים', this)">מנסה לעקוב אחרי הערכים התזונתיים</button>
+            </div>
           </div>
         </div>
 
-        <div class="q-block">
-          <label class="q-label"><span class="q-num">3.</span> מה הכי מתאר את התזונה שלך היום?</label>
-          <input type="hidden" id="nutrition-input" name="nutrition" required>
-          <div class="choice-group choice-group-4">
-            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני לא מקפיד/ה כרגע', this)">אני לא מקפיד/ה כרגע</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'משתדל/ת לאכול בריא', this)">משתדל/ת לאכול בריא</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'אני בתפריט', this)">אני בתפריט</button>
-            <button type="button" class="choice-btn" onclick="selectChoice('nutrition-input', 'מנסה לעקוב אחרי הערכים התזונתיים', this)">מנסה לעקוב אחרי הערכים התזונתיים</button>
+        <!-- Step 3: contact details -->
+        <div class="form-step" data-step="3" hidden>
+          <div>
+            <label for="from_name">שם מלא</label>
+            <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
           </div>
-        </div>
 
-        <div class="q-block">
-          <label for="from_name">שם מלא</label>
-          <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
-        </div>
+          <div>
+            <label for="phone">מספר טלפון</label>
+            <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
+          </div>
 
-        <div>
-          <label for="phone">מספר טלפון</label>
-          <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
+          <button id="lead-submit-btn" type="submit">גם אני רוצה שיחה עם דר,<br>כדי להצליח סוף סוף להשטיח את הבטן</button>
+          <p class="form-note">במידה ותתאימו לשיחת האבחון אצור איתכם קשר בשעות הקרובות</p>
         </div>
-
-        <button id="lead-submit-btn" type="submit">גם אני רוצה שיחה עם דר,<br>כדי להצליח סוף סוף להשטיח את הבטן</button>
-        <p class="form-note">במידה ותתאימו לשיחת האבחון אצור איתכם קשר בשעות הקרובות</p>
       </form>
     </div>
 
@@ -794,7 +875,55 @@
       var buttons = btn.parentElement.querySelectorAll('.choice-btn');
       buttons.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
+      maybeAdvance();
     }
+
+    // טופס רב-שלבי: מציג שלב אחד בכל פעם ועובר אוטומטית כשכל תשובות השלב מולאו
+    var formSteps = document.querySelectorAll('.form-step');
+    var currentStep = 1;
+
+    function showStep(n, animate) {
+      currentStep = n;
+      formSteps.forEach(function (el) {
+        var isActive = Number(el.dataset.step) === n;
+        el.hidden = !isActive;
+        el.classList.remove('fade-in');
+        if (isActive && animate) {
+          void el.offsetWidth; // מאפס את האנימציה כדי שתרוץ שוב
+          el.classList.add('fade-in');
+        }
+      });
+      document.getElementById('step-label').textContent = 'שלב ' + n + ' מתוך ' + formSteps.length;
+      document.getElementById('step-fill').style.width = (n / formSteps.length * 100) + '%';
+      document.getElementById('step-back').hidden = n === 1;
+
+      // אם הכרטיס יצא מחוץ למסך (בעיקר במובייל) מחזיר אותו לתצוגה
+      var card = document.querySelector('.form-card');
+      if (animate && card.getBoundingClientRect().top < 0) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function isStepAnswered(n) {
+      if (n === 1) return document.getElementById('goal').value && document.getElementById('helps-input').value;
+      if (n === 2) return document.getElementById('training-input').value && document.getElementById('nutrition-input').value;
+      return false;
+    }
+
+    function maybeAdvance() {
+      var stepAtClick = currentStep;
+      if (!isStepAnswered(stepAtClick)) return;
+      // השהיה קצרה כדי שהמשתמש יראה שהבחירה נרשמה
+      setTimeout(function () {
+        if (currentStep === stepAtClick) showStep(stepAtClick + 1, true);
+      }, 350);
+    }
+
+    document.getElementById('goal').addEventListener('change', maybeAdvance);
+    document.getElementById('step-back').addEventListener('click', function () {
+      showStep(currentStep - 1, true);
+    });
+    showStep(1, false);
 
     // כתובת ה-Web App של Google Apps Script (leads-to-sheet.gs) — לעדכן אחרי הפריסה
     var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxuJ01IAYif9c0nB8tQKCEDKPEzqM4x0yC7xQXm29OlUdHB-MXGPeJHOk7n1s_6ZT_k/exec';
