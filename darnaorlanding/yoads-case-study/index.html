@@ -200,6 +200,17 @@
       text-align: right;
     }
 
+    .form-note {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .chevron {
+      vertical-align: -2px;
+      margin-inline-start: 0.2rem;
+    }
+
     .form-card h2 {
       font-size: 1.2rem;
       font-weight: 700;
@@ -493,8 +504,10 @@
 
     <!-- Lead form -->
     <div class="form-card">
-      <h2>לשיחת אבחון אישית יחד איתי מלאו את השאלון</h2>
-      <p class="form-sub">30 דקות ללא עלות או התחייבות. נבין את המצב האישי שלכם ואיך תוכלו כבר ממחר להתחיל ליישם את העקרונות של אכילה מדעת — שעבדו לי, ליועד ולמעל 300 מתאמנים כדי להשטיח את הבטן</p>
+      <h2>לתפוס שיחת אבחון השבוע
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </h2>
+      <p class="form-sub">בשיחה נבין יחד מה מונע מכם להתקדם ואיך פותרים את זה כבר השבוע, דרך העקרונות של אכילה מדעת, שעבדו ליועד ולמעל 300 מתאמנים להשטיח את הבטן. כחצי שעה, כמובן ללא עלות או התחייבות.</p>
       <form id="lead-form">
         <div class="hp" aria-hidden="true">
           <label for="website_url">אל תמלא שדה זה</label>
@@ -552,7 +565,8 @@
           <input type="tel" id="phone" name="phone" placeholder="050-1234567" autocomplete="tel" required>
         </div>
 
-        <button id="lead-submit-btn" type="submit">אני רוצה פגישה עם דר, כדי להבין מה תוקע אותי ואיך לפתור את זה כבר השבוע</button>
+        <button id="lead-submit-btn" type="submit">גם אני רוצה שיחה עם דר,<br>כדי להצליח סוף סוף להשטיח את הבטן</button>
+        <p class="form-note">במידה ותתאימו לשיחת האבחון אצור איתכם קשר בשעות הקרובות</p>
       </form>
     </div>
 
