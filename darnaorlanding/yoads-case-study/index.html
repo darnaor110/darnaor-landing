@@ -77,12 +77,13 @@
       color: var(--accent2);
     }
 
-    /* Audience callout — first line of the page (pain + calling the audience) */
+    /* Audience callout — small eyebrow above the headline (pain + calling the audience) */
     .callout {
-      font-size: clamp(1.05rem, 3vw, 1.35rem);
-      font-weight: 700;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
       max-width: 640px;
-      margin: 0 auto 1.4rem;
+      margin: 0 auto 0.8rem;
       text-wrap: balance;
     }
 
@@ -94,10 +95,12 @@
       margin: 0 auto 2rem;
     }
 
-    .subtitle strong {
-      display: block;
-      margin-top: 0.7rem;
-      color: var(--text);
+    /* "Works even if" line — sits right above the CTA */
+    .works-even-if {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 1.5rem;
     }
 
     /* Headline */
@@ -120,7 +123,7 @@
       width: 100%;
       max-width: 560px;
       aspect-ratio: 16 / 9;
-      margin: 0 auto 2.5rem;
+      margin: 0 auto 1.5rem;
       border-radius: 20px;
       overflow: hidden;
       border: 1px solid #2a3438;
@@ -454,7 +457,7 @@
     <h1>לצערנו המוח מתוכנת להשמין<br><span class="highlight">הנה איך משכנעים אותו לרצות להתחטב</span></h1>
 
     <!-- Subtitle -->
-    <p class="subtitle">דרך הסיפור של יועד תגלו איך 310 מתאמנים השטיחו את הבטן <u style="text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px;">אחת ולתמיד</u> בלי לסמוך על כוח הרצון, ועם האוכל ושגרת האימונים שהם אוהבים<strong>גם לך זה יצליח, אפילו אם אין לך זמן וכבר ניסית בעבר ולא הצלחת</strong></p>
+    <p class="subtitle">דרך הסיפור של יועד תגלו איך 310 מתאמנים השטיחו את הבטן <u style="text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px;">אחת ולתמיד</u> בלי לסמוך על כוח הרצון, ועם האוכל ושגרת האימונים שהם אוהבים</p>
 
     <!-- Video — same technique as darnaor.com: iframe embed with native
          YouTube controls (so play/pause/seek/volume all work normally),
@@ -476,6 +479,8 @@
         }, 6000);
       })();
     </script>
+
+    <p class="works-even-if">גם לך זה יצליח, אפילו אם אין לך זמן וכבר ניסית בעבר ולא הצלחת</p>
 
     <!-- Urgency line — mirrors the offer stated in the video.
          Spot count ticks down deterministically over the month (real cap is
