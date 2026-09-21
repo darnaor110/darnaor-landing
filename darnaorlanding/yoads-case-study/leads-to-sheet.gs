@@ -59,6 +59,9 @@ function appendLeadRow(sheet, data) {
 
   var now = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jerusalem', 'dd/MM/yyyy HH:mm');
 
+  // עמודה I (שהייתה "אכילה מדעת תעזור לדעתך?") מכילה עכשיו גיל ומין, למשל "34, זכר"
+  var ageGender = [data.age, data.gender].filter(Boolean).join(', ');
+
   var rowValues = [
     data.name || '',
     data.phone || '',
@@ -67,7 +70,7 @@ function appendLeadRow(sheet, data) {
     '',
     '',
     data.goal || '',
-    data.helpsGoal || '',
+    ageGender,
     data.training || '',
     data.nutrition || ''
   ];
@@ -99,8 +102,9 @@ function sendNotificationEmail(data) {
       'התקבל ליד חדש מדף הנחיתה "אכילה מדעת".\n\n' +
       'שם: ' + (data.name || '') + '\n' +
       'טלפון: ' + (data.phone || '') + '\n' +
-      'מטרה: ' + (data.goal || '') + '\n' +
-      'אכילה מדעת תעזור לדעתו/ה?: ' + (data.helpsGoal || '') + '\n' +
+      'גיל: ' + (data.age || '') + '\n' +
+      'מין: ' + (data.gender || '') + '\n' +
+      'מה רוצה לראות במראה בעוד 3 חודשים: ' + (data.goal || '') + '\n' +
       'מתאמן/ת היום?: ' + (data.training || '') + '\n' +
       'סטטוס תזונתי: ' + (data.nutrition || '') + '\n\n' +
       'נרשם אוטומטית בגיליון, בטבלת "' + LEAD_SECTION_LABEL + '".'

@@ -77,7 +77,7 @@
     /* Subtitle */
     .subtitle {
       font-size: 0.95rem;
-      color: var(--muted);
+      color: var(--text);
       max-width: 680px;
       margin: 0 auto 2rem;
       text-wrap: balance;
@@ -343,8 +343,30 @@
       gap: 0.5rem;
     }
 
+    .choice-group[hidden] {
+      display: none;
+    }
+
+    .choice-group-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .choice-group-2 .choice-btn {
+      font-size: 0.9rem;
+    }
+
     .choice-group-3 {
       grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Long answers: one per row */
+    .choice-group-stack {
+      grid-template-columns: 1fr;
+    }
+
+    .choice-group-stack .choice-btn {
+      font-size: 0.9rem;
+      padding: 0.8rem 1rem;
     }
 
     .choice-group-4 {
@@ -557,7 +579,7 @@
       <h2>לתפוס שיחת אבחון השבוע
         <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </h2>
-      <p class="form-sub">בשיחה נבין יחד מה מונע מכם להתקדם ואיך פותרים את זה כבר השבוע, דרך העקרונות של אכילה מדעת, שעבדו ליועד ולמעל 300 מתאמנים להשטיח את הבטן. כחצי שעה, כמובן ללא עלות או התחייבות.</p>
+      <p class="form-sub">רוצה להשיג בטן שטוחה אחת לתמיד בלי לסבול מדיאטות? במקום עוד 'שיטה' לציית לה, תלמדו איך לבנות לעצמכם תהליך שעובד לאורך זמן. מלא/י את השאלון כדי להגיע לשיחת אבחון.</p>
       <form id="lead-form">
         <div class="hp" aria-hidden="true">
           <label for="website_url">אל תמלא שדה זה</label>
@@ -565,35 +587,46 @@
         </div>
 
         <div class="step-progress">
-          <span class="step-label" id="step-label">שלב 1 מתוך 3</span>
+          <span class="step-label" id="step-label">שלב 1 מתוך 4</span>
           <div class="step-bar"><i id="step-fill"></i></div>
           <button type="button" class="step-back" id="step-back" hidden>חזרה</button>
         </div>
 
-        <!-- Step 1: goal -->
+        <!-- Step 1: age + gender -->
         <div class="form-step" data-step="1">
           <div class="q-block">
-            <label for="goal" class="q-label">מה המטרה העיקרית שלך?</label>
-            <select id="goal" name="goal" required>
-              <option value="" disabled selected>בחר/י מטרה</option>
-              <option value="בטן שטוחה">בטן שטוחה</option>
-              <option value="חיטוב כללי">חיטוב כללי</option>
-              <option value="עליה במסת שריר">עליה במסת שריר</option>
-              <option value="לא בטוח/ה האמת, מה שיגרום לי להראות הכי טוב">לא בטוח/ה האמת, מה שיגרום לי להראות הכי טוב</option>
-            </select>
+            <label for="age" class="q-label">מה הגיל שלך?</label>
+            <input type="text" id="age" name="age" inputmode="numeric" maxlength="2" placeholder="גיל" autocomplete="off">
 
-            <label class="q-sub-label">ולדעתך, אכילה מדעת תוכל לעזור לך להשיג אותה?</label>
-            <input type="hidden" id="helps-input" name="helps_goal" required>
-            <div class="choice-group choice-group-3">
-              <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'בטוח/ה שכן', this)">בטוח/ה שכן</button>
-              <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'כנראה', this)">כנראה</button>
-              <button type="button" class="choice-btn" onclick="selectChoice('helps-input', 'לא בטוח/ה', this)">לא בטוח/ה</button>
+            <label class="q-sub-label">מין</label>
+            <input type="hidden" id="gender-input" name="gender">
+            <div class="choice-group choice-group-2">
+              <button type="button" class="choice-btn" onclick="selectChoice('gender-input', 'זכר', this)">זכר</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('gender-input', 'נקבה', this)">נקבה</button>
             </div>
           </div>
         </div>
 
-        <!-- Step 2: training + nutrition -->
+        <!-- Step 2: what they want to see in the mirror (answers depend on gender) -->
         <div class="form-step" data-step="2" hidden>
+          <div class="q-block">
+            <label class="q-label">מה הכי תרצה/י לראות במראה בעוד 3 חודשים?</label>
+            <input type="hidden" id="goal" name="goal">
+            <div class="choice-group choice-group-stack" id="goal-male" hidden>
+              <button type="button" class="choice-btn" onclick="selectChoice('goal', 'להוריד את הבטן', this)">להוריד את הבטן</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('goal', 'להגדיל את מסת השריר', this)">להגדיל את מסת השריר</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('goal', 'לא ממש מבין בזה, מה שיעזור לי להראות טוב יותר', this)">לא ממש מבין בזה, מה שיעזור לי להראות טוב יותר</button>
+            </div>
+            <div class="choice-group choice-group-stack" id="goal-female" hidden>
+              <button type="button" class="choice-btn" onclick="selectChoice('goal', 'להוריד את הבטן והשומן העיקש', this)">להוריד את הבטן והשומן העיקש</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('goal', 'לבנות מסת שריר במקומות הנכונים', this)">לבנות מסת שריר במקומות הנכונים</button>
+              <button type="button" class="choice-btn" onclick="selectChoice('goal', 'לא בטוחה ממש, מה שיגרום לי להראות הכי טוב', this)">לא בטוחה ממש, מה שיגרום לי להראות הכי טוב</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: training + nutrition -->
+        <div class="form-step" data-step="3" hidden>
           <div class="q-block">
             <label class="q-label">האם היום אתם מתאמנים?</label>
             <input type="hidden" id="training-input" name="training" required>
@@ -617,8 +650,8 @@
           </div>
         </div>
 
-        <!-- Step 3: contact details -->
-        <div class="form-step" data-step="3" hidden>
+        <!-- Step 4: contact details -->
+        <div class="form-step" data-step="4" hidden>
           <div>
             <label for="from_name">שם מלא</label>
             <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
@@ -859,7 +892,27 @@
       var buttons = btn.parentElement.querySelectorAll('.choice-btn');
       buttons.forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
+      if (hiddenId === 'gender-input') onGenderChosen(value);
       maybeAdvance();
+    }
+
+    // גיל תקין: שתי ספרות בין 14 ל-99
+    function isValidAge() {
+      var value = document.getElementById('age').value;
+      return /^\d{2}$/.test(value) && Number(value) >= 14;
+    }
+
+    // מציג את התשובות המתאימות למין שנבחר ומנקה בחירה קודמת (למקרה שחזרו אחורה והחליפו)
+    function onGenderChosen(gender) {
+      var isMale = gender === 'זכר';
+      document.getElementById('goal-male').hidden = !isMale;
+      document.getElementById('goal-female').hidden = isMale;
+      document.getElementById('goal').value = '';
+      document.querySelectorAll('#goal-male .choice-btn, #goal-female .choice-btn').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      // אם עדיין לא הוזן גיל תקין - מחזיר את הפוקוס לשדה הגיל
+      if (!isValidAge()) document.getElementById('age').focus();
     }
 
     // טופס רב-שלבי: מציג שלב אחד בכל פעם ועובר אוטומטית כשכל תשובות השלב מולאו
@@ -889,8 +942,9 @@
     }
 
     function isStepAnswered(n) {
-      if (n === 1) return document.getElementById('goal').value && document.getElementById('helps-input').value;
-      if (n === 2) return document.getElementById('training-input').value && document.getElementById('nutrition-input').value;
+      if (n === 1) return isValidAge() && document.getElementById('gender-input').value;
+      if (n === 2) return document.getElementById('goal').value;
+      if (n === 3) return document.getElementById('training-input').value && document.getElementById('nutrition-input').value;
       return false;
     }
 
@@ -903,7 +957,10 @@
       }, 350);
     }
 
-    document.getElementById('goal').addEventListener('change', maybeAdvance);
+    document.getElementById('age').addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, ''); // רק ספרות
+      maybeAdvance();
+    });
     document.getElementById('step-back').addEventListener('click', function () {
       showStep(currentStep - 1, true);
     });
@@ -920,14 +977,15 @@
       // Honeypot — אם מולא, זה בוט
       if (document.getElementById('website_url').value !== '') return;
 
-      var goal = this.querySelector('[name="goal"]').value;
-      var helpsGoal = document.getElementById('helps-input').value;
+      var age = document.getElementById('age').value;
+      var gender = document.getElementById('gender-input').value;
+      var goal = document.getElementById('goal').value;
       var training = document.getElementById('training-input').value;
       var nutrition = document.getElementById('nutrition-input').value;
       var name = this.querySelector('[name="from_name"]').value.trim();
       var phone = this.querySelector('[name="phone"]').value.trim();
 
-      if (!goal || !helpsGoal || !training || !nutrition) {
+      if (!age || !gender || !goal || !training || !nutrition) {
         alert('אנא ענה/י על כל השאלות');
         return;
       }
@@ -951,8 +1009,9 @@
           token: APPS_SCRIPT_TOKEN,
           name: name,
           phone: phone,
+          age: age,
+          gender: gender,
           goal: goal,
-          helpsGoal: helpsGoal,
           training: training,
           nutrition: nutrition
         })
