@@ -172,7 +172,6 @@
       font-size: 0.85rem;
       color: var(--muted);
       text-align: center;
-      margin-top: -1rem;
       margin-bottom: 1.5rem;
     }
 
@@ -191,19 +190,6 @@
       font-size: 0.8rem;
       color: var(--muted);
       text-align: center;
-    }
-
-    .chevron {
-      vertical-align: -2px;
-      margin-inline-start: 0.2rem;
-    }
-
-    .form-card h2 {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-align: center;
-      margin-bottom: 1.5rem;
     }
 
     form {
@@ -576,9 +562,6 @@
 
     <!-- Lead form -->
     <div class="form-card">
-      <h2>לתפוס שיחת אבחון השבוע
-        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </h2>
       <p class="form-sub">רוצה להשיג בטן שטוחה אחת לתמיד בלי לסבול מדיאטות? במקום עוד 'שיטה' לציית לה, תלמדו איך לבנות לעצמכם תהליך שעובד לאורך זמן. מלא/י את השאלון כדי להגיע לשיחת אבחון.</p>
       <form id="lead-form">
         <div class="hp" aria-hidden="true">
@@ -610,7 +593,7 @@
         <!-- Step 2: what they want to see in the mirror (answers depend on gender) -->
         <div class="form-step" data-step="2" hidden>
           <div class="q-block">
-            <label class="q-label">מה הכי תרצה/י לראות במראה בעוד 3 חודשים?</label>
+            <label class="q-label" id="goal-question">מה הכי תרצה/י לראות במראה בעוד 3 חודשים?</label>
             <input type="hidden" id="goal" name="goal">
             <div class="choice-group choice-group-stack" id="goal-male" hidden>
               <button type="button" class="choice-btn" onclick="selectChoice('goal', 'להוריד את הבטן', this)">להוריד את הבטן</button>
@@ -905,6 +888,8 @@
     // מציג את התשובות המתאימות למין שנבחר ומנקה בחירה קודמת (למקרה שחזרו אחורה והחליפו)
     function onGenderChosen(gender) {
       var isMale = gender === 'זכר';
+      document.getElementById('goal-question').textContent =
+        'מה הכי ' + (isMale ? 'תרצה' : 'תרצי') + ' לראות במראה בעוד 3 חודשים?';
       document.getElementById('goal-male').hidden = !isMale;
       document.getElementById('goal-female').hidden = isMale;
       document.getElementById('goal').value = '';
