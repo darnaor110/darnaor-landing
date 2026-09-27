@@ -1,8 +1,12 @@
 {
   "version": 2,
   "redirects": [
-    { "source": "/yoads-case-study",      "destination": "/ilays-case-study", "permanent": true },
-    { "source": "/yoads-case-study/(.*)", "destination": "/ilays-case-study/$1", "permanent": true }
+    { "source": "/yoads-case-study",      "destination": "/CaseStudy", "permanent": true },
+    { "source": "/yoads-case-study/(.*)", "destination": "/CaseStudy/$1", "permanent": true },
+    { "source": "/ilays-case-study",      "destination": "/CaseStudy", "permanent": true },
+    { "source": "/ilays-case-study/(.*)", "destination": "/CaseStudy/$1", "permanent": true },
+    { "source": "/:slug(casestudy|Casestudy|caseStudy|CASESTUDY)", "destination": "/CaseStudy", "permanent": false },
+    { "source": "/:slug(casestudy|Casestudy|caseStudy|CASESTUDY)/(.*)", "destination": "/CaseStudy/$1", "permanent": false }
   ],
   "rewrites": [
     { "source": "/freeprogram",      "destination": "/fitness-quiz/safequiz/index.html" },
