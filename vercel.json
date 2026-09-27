@@ -1,5 +1,9 @@
 {
   "version": 2,
+  "redirects": [
+    { "source": "/yoads-case-study",      "destination": "/ilays-case-study", "permanent": true },
+    { "source": "/yoads-case-study/(.*)", "destination": "/ilays-case-study/$1", "permanent": true }
+  ],
   "rewrites": [
     { "source": "/freeprogram",      "destination": "/fitness-quiz/safequiz/index.html" },
     { "source": "/freeprogram/(.*)", "destination": "/fitness-quiz/safequiz/$1" },
