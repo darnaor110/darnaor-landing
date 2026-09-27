@@ -542,21 +542,20 @@
       })();
     </script>
 
-    <!-- Urgency line — mirrors the offer stated in the video.
-         Spot count ticks down deterministically over the month (real cap is
-         5/month; this reflects that cap, not a live per-visitor counter). -->
+    <!-- Urgency line — mirrors the offer stated in the video (3 spots/week).
+         Count ticks down deterministically as the week progresses and resets
+         Sunday; reflects the real weekly cap, not a live per-visitor counter. -->
     <p class="urgency" id="urgency-text"></p>
     <script>
       (function () {
-        var TOTAL_SPOTS = 5;
-        var today = new Date();
-        var dayOfMonth = today.getDate();
-        // מתחיל מ-1 מקום "תפוס" כבר ביום הראשון, ואז עוד מקום כל 6 ימים, עד למינימום 1
-        var taken = 1 + Math.floor((dayOfMonth - 1) / 6);
-        var spotsLeft = Math.max(TOTAL_SPOTS - taken, 1);
-        var spotsText = spotsLeft === 1 ? 'נשאר מקום אחד' : 'נשארו ' + spotsLeft + ' מקומות';
-        document.getElementById('urgency-text').textContent =
-          spotsText + ' (מתוך ' + TOTAL_SPOTS + ') לשיחות אבחון חינמיות החודש';
+        var TOTAL_SPOTS = 3;                  // התקרה האמיתית: 3 שיחות אבחון בשבוע
+        var dayOfWeek = new Date().getDay();  // 0 = יום ראשון (תחילת השבוע)
+        // מקום אחד "נתפס" כל שני ימים, ותמיד נשאר לפחות מקום אחד
+        var taken = Math.min(Math.floor(dayOfWeek / 2), TOTAL_SPOTS - 1);
+        var spotsLeft = TOTAL_SPOTS - taken;
+        document.getElementById('urgency-text').textContent = spotsLeft === 1
+          ? 'נשאר מקום אחד אחרון לשיחת אבחון חינמית השבוע'
+          : 'נשארו ' + spotsLeft + ' מקומות לשיחות אבחון חינמיות השבוע';
       })();
     </script>
 
