@@ -28,6 +28,11 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-5W0DP7RG7V');
+
+    // שולח אירוע בשם קבוע לגוגל אנליטיקס (אם יש חוסם פרסומות - פשוט לא נשלח כלום)
+    function trackEvent(name, params) {
+      gtag('event', name, params || {});
+    }
   </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -534,11 +539,70 @@
     </div>
 
     <script>
+      // נגן הסרטון דרך ה-API של יוטיוב: מתחיל מושתק אחרי 6 שניות, ומודד כמה באמת צפו.
+      // "צופה אמיתי" = לחץ פליי בעצמו או הפעיל קול. סרטון שרץ מושתק ברקע בלי שנגעו בו לא נספר בצפייה.
       (function () {
-        var player = document.getElementById('vsl-player');
-        setTimeout(function () {
-          player.src = 'https://www.youtube.com/embed/OWA2O568JRU?enablejsapi=1&modestbranding=1&fs=1&rel=0&controls=1&iv_load_policy=3&autoplay=1&mute=1';
-        }, 6000);
+        var player;
+        var clickedPlay = false;   // לחץ פליי לפני ההפעלה האוטומטית
+        var autoStarted = false;
+        var soundOn = false;
+        var firstPlaySent = false;
+        var milestones = [10, 25, 50, 75, 90];
+        var sentMilestones = {};
+
+        function isRealViewer() {
+          return clickedPlay || soundOn;
+        }
+
+        window.onYouTubeIframeAPIReady = function () {
+          player = new YT.Player('vsl-player', {
+            events: {
+              onReady: function () {
+                setTimeout(function () {
+                  if (firstPlaySent) return; // כבר לחצו פליי - לא מתחילים מחדש
+                  autoStarted = true;
+                  player.mute();
+                  player.playVideo();
+                }, 6000);
+                setInterval(checkProgress, 1000);
+              },
+              onStateChange: function (e) {
+                if (e.data === YT.PlayerState.PLAYING && !firstPlaySent) {
+                  firstPlaySent = true;
+                  clickedPlay = !autoStarted;
+                  trackEvent(autoStarted ? 'vsl_play_auto' : 'vsl_play_click');
+                }
+                if (e.data === YT.PlayerState.ENDED && isRealViewer()) trackEvent('vsl_complete');
+              }
+            }
+          });
+        };
+
+        // פעם בשנייה: בודק אם הופעל קול ועד איפה הגיעו בסרטון
+        function checkProgress() {
+          if (!player || typeof player.getPlayerState !== 'function') return;
+          if (player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+
+          if (!soundOn && !player.isMuted()) {
+            soundOn = true;
+            trackEvent('vsl_sound_on');
+          }
+          if (!isRealViewer()) return;
+
+          var duration = player.getDuration();
+          if (!duration) return;
+          var percent = player.getCurrentTime() / duration * 100;
+          milestones.forEach(function (m) {
+            if (percent >= m && !sentMilestones[m]) {
+              sentMilestones[m] = true;
+              trackEvent('vsl_watched_' + m);
+            }
+          });
+        }
+
+        var tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
       })();
     </script>
 
@@ -904,6 +968,13 @@
     // טופס רב-שלבי: מציג שלב אחד בכל פעם ועובר אוטומטית כשכל תשובות השלב מולאו
     var formSteps = document.querySelectorAll('.form-step');
     var currentStep = 1;
+    var sentSteps = {};
+
+    // אנליטיקס: הנגיעה הראשונה בשאלון (כמה התחילו למלא)
+    document.getElementById('lead-form').addEventListener('pointerdown', function onFirstTouch() {
+      trackEvent('form_start');
+      this.removeEventListener('pointerdown', onFirstTouch);
+    });
 
     function showStep(n, animate) {
       currentStep = n;
@@ -916,6 +987,11 @@
           el.classList.add('fade-in');
         }
       });
+      // אנליטיקס: כל שלב נספר פעם אחת בלבד (גם אם חזרו אחורה והתקדמו שוב)
+      if (n > 1 && !sentSteps[n]) {
+        sentSteps[n] = true;
+        trackEvent('form_step_' + n);
+      }
       document.getElementById('step-label').textContent = 'שלב ' + n + ' מתוך ' + formSteps.length;
       document.getElementById('step-fill').style.width = (n / formSteps.length * 100) + '%';
       document.getElementById('step-back').hidden = n === 1;
@@ -1003,7 +1079,15 @@
         })
       })
         .then(function () {
-          window.location.href = 'thank-you.html';
+          // אנליטיקס: ליד נשלח. מחכים שהאירוע יישלח לפני המעבר לדף התודה (עד שנייה וחצי מקסימום)
+          var redirected = false;
+          function goToThankYou() {
+            if (redirected) return;
+            redirected = true;
+            window.location.href = 'thank-you.html';
+          }
+          trackEvent('generate_lead', { event_callback: goToThankYou, event_timeout: 1500 });
+          setTimeout(goToThankYou, 1500);
         })
         .catch(function (err) {
           console.error('Submit error:', err);
