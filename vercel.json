@@ -6,7 +6,12 @@
     { "source": "/ilays-case-study",      "destination": "/CaseStudy", "permanent": true },
     { "source": "/ilays-case-study/(.*)", "destination": "/CaseStudy/$1", "permanent": true },
     { "source": "/:slug(casestudy|Casestudy|caseStudy|CASESTUDY)", "destination": "/CaseStudy", "permanent": false },
-    { "source": "/:slug(casestudy|Casestudy|caseStudy|CASESTUDY)/(.*)", "destination": "/CaseStudy/$1", "permanent": false }
+    { "source": "/:slug(casestudy|Casestudy|caseStudy|CASESTUDY)/(.*)", "destination": "/CaseStudy/$1", "permanent": false },
+    { "source": "/bio",          "destination": "/CaseStudy/?utm_source=instagram&utm_medium=bio", "permanent": false },
+    { "source": "/dm",           "destination": "/CaseStudy/?utm_source=instagram&utm_medium=dm", "permanent": false },
+    { "source": "/wa",           "destination": "/CaseStudy/?utm_source=whatsapp&utm_medium=chat", "permanent": false },
+    { "source": "/s/:campaign",  "destination": "/CaseStudy/?utm_source=instagram&utm_medium=story&utm_campaign=:campaign", "permanent": false },
+    { "source": "/ad/:campaign", "destination": "/CaseStudy/?utm_source=meta&utm_medium=paid&utm_campaign=:campaign", "permanent": false }
   ],
   "rewrites": [
     { "source": "/freeprogram",      "destination": "/fitness-quiz/safequiz/index.html" },

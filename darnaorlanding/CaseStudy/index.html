@@ -33,7 +33,29 @@
     function trackEvent(name, params) {
       gtag('event', name, params || {});
     }
+
+    // מקור ההגעה (מהקישורים המתויגים: darnaor.com/bio, /dm, /wa, /s/..., /ad/...) — נשמר לכל הביקור
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var parts = ['utm_source', 'utm_medium', 'utm_campaign']
+        .map(function (key) { return params.get(key); })
+        .filter(Boolean);
+      try {
+        if (parts.length) sessionStorage.setItem('leadSource', parts.join(' / '));
+      } catch (e) { /* דפדפן שחוסם אחסון - פשוט בלי מקור */ }
+    })();
+
+    function getLeadSource() {
+      try {
+        return sessionStorage.getItem('leadSource') || '';
+      } catch (e) {
+        return '';
+      }
+    }
   </script>
+
+  <!-- Vercel Web Analytics: כניסות לפי מקור, מכשיר ומדינה -->
+  <script defer src="/_vercel/insights/script.js"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap" rel="stylesheet">
 
@@ -1075,7 +1097,8 @@
           gender: gender,
           goal: goal,
           training: training,
-          nutrition: nutrition
+          nutrition: nutrition,
+          source: getLeadSource()
         })
       })
         .then(function () {
@@ -1084,7 +1107,7 @@
           function goToThankYou() {
             if (redirected) return;
             redirected = true;
-            window.location.href = 'thank-you.html';
+            window.location.href = '/CaseStudy/thank-you.html';
           }
           trackEvent('generate_lead', { event_callback: goToThankYou, event_timeout: 1500 });
           setTimeout(goToThankYou, 1500);

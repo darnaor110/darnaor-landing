@@ -66,7 +66,7 @@ function appendLeadRow(sheet, data) {
     data.name || '',
     data.phone || '',
     now,
-    'דף נחיתה - אכילה מדעת',
+    leadSourceLabel(data),
     '',
     '',
     data.goal || '',
@@ -77,6 +77,11 @@ function appendLeadRow(sheet, data) {
 
   sheet.getRange(insertRow, 2, 1, rowValues.length).setValues([rowValues]);
   return insertRow;
+}
+
+// מקור הליד לעמודת "מקור ליד": מאיזה קישור מתויג הגיע (ביו / סטורי / הודעות / וואטסאפ / ממומן)
+function leadSourceLabel(data) {
+  return 'קייס סטאדי | ' + (data.source || 'ישיר');
 }
 
 // סורק את עמודת "שם" (B) מ-startRow ומטה ומחזיר את השורה הריקה הראשונה
@@ -102,6 +107,7 @@ function sendNotificationEmail(data) {
       'התקבל ליד חדש מדף הנחיתה "אכילה מדעת".\n\n' +
       'שם: ' + (data.name || '') + '\n' +
       'טלפון: ' + (data.phone || '') + '\n' +
+      'מקור: ' + leadSourceLabel(data) + '\n' +
       'גיל: ' + (data.age || '') + '\n' +
       'מין: ' + (data.gender || '') + '\n' +
       'מה רוצה לראות במראה בעוד 3 חודשים: ' + (data.goal || '') + '\n' +
