@@ -4,6 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>תודה רבה - דר נאור</title>
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2285962592186514');
+    fbq('track', 'PageView');
+
+    // ליד: נשלח רק אם הגיעו לכאן אחרי שליחת הטופס בדף הקייס סטאדי, ופעם אחת בלבד
+    (function () {
+      try {
+        if (sessionStorage.getItem('leadSubmitted') === '1') {
+          fbq('track', 'Lead');
+          sessionStorage.removeItem('leadSubmitted');
+        }
+      } catch (e) { /* דפדפן שחוסם אחסון - בלי אירוע ליד */ }
+    })();
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2285962592186514&ev=PageView&noscript=1" /></noscript>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W0DP7RG7V"></script>
   <script>

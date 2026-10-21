@@ -18,9 +18,11 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', ''); // TODO: Add Pixel ID
+    fbq('init', '2285962592186514');
     fbq('track', 'PageView');
   </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=2285962592186514&ev=PageView&noscript=1" /></noscript>
   <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-5W0DP7RG7V"></script>
   <script>
@@ -30,8 +32,10 @@
     gtag('config', 'G-5W0DP7RG7V');
 
     // שולח אירוע בשם קבוע לגוגל אנליטיקס (אם יש חוסם פרסומות - פשוט לא נשלח כלום)
+    // ואותו אירוע גם לפיקסל של מטא, כדי שאפשר יהיה לבנות קהלים (למשל: מי שצפה בחצי מהסרטון)
     function trackEvent(name, params) {
       gtag('event', name, params || {});
+      if (window.fbq && name !== 'generate_lead') fbq('trackCustom', name);
     }
 
     // מקור ההגעה (מהקישורים המתויגים: darnaor.com/bio, /dm, /wa, /s/..., /ad/...) — נשמר לכל הביקור
@@ -1102,6 +1106,8 @@
         })
       })
         .then(function () {
+          // סימון שהליד באמת נשלח: דף התודה שולח למטא אירוע Lead רק אם הסימון קיים (ככה רענון של דף התודה לא נספר שוב)
+          try { sessionStorage.setItem('leadSubmitted', '1'); } catch (e) { /* בלי אחסון - פשוט בלי סימון */ }
           // אנליטיקס: ליד נשלח. מחכים שהאירוע יישלח לפני המעבר לדף התודה (עד שנייה וחצי מקסימום)
           var redirected = false;
           function goToThankYou() {
