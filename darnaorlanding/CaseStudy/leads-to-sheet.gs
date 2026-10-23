@@ -1,38 +1,59 @@
 // Apps Script bound to the business Google Sheet — receives leads from the
-// mindful-eating landing page form, logs each one into the "מעקב לידים"
-// section, and emails a notification immediately.
+// CaseStudy landing page form, logs each one into the "מעקב לידים" table,
+// and emails a notification immediately.
 //
-// SETUP:
+// SETUP / UPDATE:
 // 1. Open the spreadsheet: https://docs.google.com/spreadsheets/d/1lGw2Fj1aLWQtNkuMpkUMsQtOXk5my0wyhkbyRUOllA4/edit
 // 2. Extensions > Apps Script
-// 3. Delete any placeholder code, paste this whole file in
-// 4. Deploy > New deployment > type: Web app
-//      Execute as: Me
-//      Who has access: Anyone
-// 5. Copy the /exec URL it gives you and send it back — it goes into the
-//    APPS_SCRIPT_URL constant in mindful-eating/index.html
+// 3. Select all, delete, paste this whole file in, Save
+// 4. Deploy > Manage deployments > pencil on the existing deployment >
+//    Version: New version > Deploy
+//    (NOT "New deployment": that makes a new URL the page doesn't call)
 
+var SCRIPT_VERSION = 'casestudy-2026-10-23'; // מוחזר בכל תשובה, כדי לוודא איזו גרסה באוויר
 var SPREADSHEET_ID = '1lGw2Fj1aLWQtNkuMpkUMsQtOXk5my0wyhkbyRUOllA4';
 var SHEET_GID = 1209798032;
 var SHARED_TOKEN = 'M0tJPU58G8vzQ6VTU7gVh9zvS2oNOk52'; // must match the client
 var NOTIFY_EMAIL = 'darnaor110@gmail.com';
 var LEAD_SECTION_LABEL = 'מעקב לידים';
 
+// רשימה אחת של העמודות (מעמודה B והלאה) - ממנה נבנים גם השורה בגיליון, גם הכותרות וגם המייל,
+// כדי שלא יהיה שוב פער ביניהם. email: התווית במייל (null = לא מופיע במייל)
+var FIELDS = [
+  { header: 'שם',                                  email: 'שם',                                  value: function (d) { return d.name || ''; } },
+  { header: 'טלפון',                               email: 'טלפון',                               value: function (d) { return d.phone || ''; }, text: true },
+  { header: 'מתי השאיר פרטים',                     email: null,                                  value: function () { return nowText(); } },
+  { header: 'מקור ליד',                            email: 'מקור',                                value: function (d) { return leadSourceLabel(d); } },
+  { header: 'סגר?',                                email: null,                                  value: function () { return ''; } },
+  { header: 'הערות',                               email: null,                                  value: function () { return ''; } },
+  { header: 'מה רוצה לראות במראה בעוד 3 חודשים',   email: 'מה רוצה לראות במראה בעוד 3 חודשים',   value: function (d) { return d.goal || ''; } },
+  { header: 'גיל, מין',                            email: 'גיל, מין',                            value: function (d) { return [d.age, d.gender].filter(Boolean).join(', '); } },
+  { header: 'מתאמן/ת היום?',                       email: 'מתאמן/ת היום?',                       value: function (d) { return d.training || ''; } },
+  { header: 'מה מתאר את התזונה היום',              email: 'מה מתאר את התזונה היום',              value: function (d) { return d.nutrition || ''; } }
+];
+
 function doPost(e) {
+  var data;
   try {
-    var data = JSON.parse(e.postData.contents);
-    if (data.token !== SHARED_TOKEN) {
-      return jsonOutput({ ok: false, error: 'unauthorized' });
-    }
-
-    var sheet = getLeadSheet();
-    var insertRow = appendLeadRow(sheet, data);
-    sendNotificationEmail(data);
-
-    return jsonOutput({ ok: true, row: insertRow });
+    data = JSON.parse(e.postData.contents);
   } catch (err) {
-    return jsonOutput({ ok: false, error: String(err) });
+    return jsonOutput({ ok: false, error: 'bad request', version: SCRIPT_VERSION });
   }
+  if (data.token !== SHARED_TOKEN) {
+    return jsonOutput({ ok: false, error: 'unauthorized', version: SCRIPT_VERSION });
+  }
+
+  // קודם מנסים לרשום בגיליון. גם אם זה נכשל - המייל נשלח בכל מקרה, כדי שאף ליד לא ילך לאיבוד
+  var insertRow = null;
+  var sheetError = '';
+  try {
+    insertRow = appendLeadRow(getLeadSheet(), data);
+  } catch (err) {
+    sheetError = String(err);
+  }
+
+  sendNotificationEmail(data, sheetError);
+  return jsonOutput({ ok: !sheetError, row: insertRow, error: sheetError || undefined, version: SCRIPT_VERSION });
 }
 
 function getLeadSheet() {
@@ -45,75 +66,64 @@ function getLeadSheet() {
 }
 
 function appendLeadRow(sheet, data) {
-  // מאתר את שורת הכותרות עצמה (התא שכתוב בו בדיוק "שם"), ולא מנחש
-  // מרחק שורות מהבאנר — כך זה עמיד גם אם גובה הבאנר משתנה
-  var finder = sheet.createTextFinder('שם').matchEntireCell(true);
-  var match = finder.findNext();
+  // מאתר את שורת הכותרות עצמה (התא שכתוב בו בדיוק "שם")
+  var match = sheet.createTextFinder('שם').matchEntireCell(true).findNext();
   if (!match) throw new Error('לא נמצאה שורת הכותרות ("שם") בטבלת "' + LEAD_SECTION_LABEL + '"');
 
-  var columnHeaderRow = match.getRow();
-  var dataStartRow = columnHeaderRow + 1;
+  var headerRow = match.getRow();
+  var firstCol = match.getColumn();
 
-  // מחפש את השורה הריקה הבאה בעמודת "שם" (במקום לדחוף הכל למטה)
-  var insertRow = findNextEmptyRow(sheet, dataStartRow);
+  // מעדכן את הכותרות כך שתמיד יתאימו לשאלות בטופס
+  sheet.getRange(headerRow, firstCol, 1, FIELDS.length)
+    .setValues([FIELDS.map(function (f) { return f.header; })]);
 
-  var now = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'Asia/Jerusalem', 'dd/MM/yyyy HH:mm');
+  // השורה הריקה הבאה בעמודת "שם"
+  var insertRow = findNextEmptyRow(sheet, headerRow + 1, firstCol);
 
-  // עמודה I (שהייתה "אכילה מדעת תעזור לדעתך?") מכילה עכשיו גיל ומין, למשל "34, זכר"
-  var ageGender = [data.age, data.gender].filter(Boolean).join(', ');
+  // עמודות טקסט (טלפון) - פורמט טקסט לפני הכתיבה, כדי שה-0 בהתחלה לא ייעלם
+  FIELDS.forEach(function (f, i) {
+    if (f.text) sheet.getRange(insertRow, firstCol + i).setNumberFormat('@');
+  });
 
-  var rowValues = [
-    data.name || '',
-    data.phone || '',
-    now,
-    leadSourceLabel(data),
-    '',
-    '',
-    data.goal || '',
-    ageGender,
-    data.training || '',
-    data.nutrition || ''
-  ];
-
-  sheet.getRange(insertRow, 2, 1, rowValues.length).setValues([rowValues]);
+  var rowValues = FIELDS.map(function (f) { return f.value(data); });
+  sheet.getRange(insertRow, firstCol, 1, rowValues.length).setValues([rowValues]);
   return insertRow;
 }
 
-// מקור הליד לעמודת "מקור ליד": מאיזה קישור מתויג הגיע (ביו / סטורי / הודעות / וואטסאפ / ממומן)
+// מקור הליד: מאיזה קישור מתויג הגיע (ביו / סטורי / הודעות / וואטסאפ / ממומן)
 function leadSourceLabel(data) {
   return 'קייס סטאדי | ' + (data.source || 'ישיר');
 }
 
-// סורק את עמודת "שם" (B) מ-startRow ומטה ומחזיר את השורה הריקה הראשונה
-function findNextEmptyRow(sheet, startRow) {
-  var lastRow = Math.max(sheet.getLastRow(), startRow);
-  var numRows = lastRow - startRow + 1;
-  var values = sheet.getRange(startRow, 2, numRows, 1).getValues();
+// התאריך והשעה עכשיו, בשעון ישראל
+function nowText() {
+  return Utilities.formatDate(new Date(), 'Asia/Jerusalem', 'dd/MM/yyyy HH:mm');
+}
 
+// סורק את עמודת "שם" מ-startRow ומטה ומחזיר את השורה הריקה הראשונה
+function findNextEmptyRow(sheet, startRow, col) {
+  var lastRow = Math.max(sheet.getLastRow(), startRow);
+  var values = sheet.getRange(startRow, col, lastRow - startRow + 1, 1).getValues();
   for (var i = 0; i < values.length; i++) {
-    if (values[i][0] === '' || values[i][0] === null) {
-      return startRow + i;
-    }
+    if (values[i][0] === '' || values[i][0] === null) return startRow + i;
   }
-  // כל השורות שנסרקו תפוסות — הבא בתור מיד אחרי האחרונה
   return startRow + values.length;
 }
 
-function sendNotificationEmail(data) {
+function sendNotificationEmail(data, sheetError) {
+  // גוף המייל נבנה מאותה רשימת שדות כמו הגיליון
+  var lines = FIELDS
+    .filter(function (f) { return f.email; })
+    .map(function (f) { return f.email + ': ' + f.value(data); });
+
+  var footer = sheetError
+    ? '⚠️ לא נרשם בגיליון: ' + sheetError
+    : 'נרשם אוטומטית בגיליון, בטבלת "' + LEAD_SECTION_LABEL + '".';
+
   MailApp.sendEmail({
     to: NOTIFY_EMAIL,
-    subject: 'ליד חדש מדף הנחיתה - אכילה מדעת: ' + (data.name || ''),
-    body:
-      'התקבל ליד חדש מדף הנחיתה "אכילה מדעת".\n\n' +
-      'שם: ' + (data.name || '') + '\n' +
-      'טלפון: ' + (data.phone || '') + '\n' +
-      'מקור: ' + leadSourceLabel(data) + '\n' +
-      'גיל: ' + (data.age || '') + '\n' +
-      'מין: ' + (data.gender || '') + '\n' +
-      'מה רוצה לראות במראה בעוד 3 חודשים: ' + (data.goal || '') + '\n' +
-      'מתאמן/ת היום?: ' + (data.training || '') + '\n' +
-      'סטטוס תזונתי: ' + (data.nutrition || '') + '\n\n' +
-      'נרשם אוטומטית בגיליון, בטבלת "' + LEAD_SECTION_LABEL + '".'
+    subject: 'ליד חדש מהקייס סטאדי: ' + (data.name || ''),
+    body: 'התקבל ליד חדש מדף הקייס סטאדי.\n\n' + lines.join('\n') + '\n\n' + footer
   });
 }
 
