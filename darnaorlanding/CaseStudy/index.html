@@ -56,6 +56,27 @@
         return '';
       }
     }
+
+    // מתי הדף נפתח - כדי לשלוח עם הטופס כמה זמן הליד היה בדף
+    var PAGE_START_TIME = Date.now();
+
+    // כמה צפו בסרטון - הנגן מעדכן את זה, והטופס שולח את זה לגיליון
+    var vslStats = { started: false, realViewer: false, soundOn: false, maxPercent: 0 };
+
+    // "4:32 דק׳" - הזמן מפתיחת הדף ועד עכשיו
+    function getTimeOnPage() {
+      var totalSec = Math.round((Date.now() - PAGE_START_TIME) / 1000);
+      var min = Math.floor(totalSec / 60);
+      var sec = totalSec % 60;
+      return min + ':' + (sec < 10 ? '0' : '') + sec + ' דק׳';
+    }
+
+    // "62% (עם קול)" - עד איפה הליד הגיע בסרטון
+    function getVideoWatched() {
+      if (!vslStats.started) return 'לא הופעל';
+      if (!vslStats.realViewer) return 'רץ מושתק, לא נגע בו';
+      return Math.round(vslStats.maxPercent) + '% (' + (vslStats.soundOn ? 'עם קול' : 'בלי קול') + ')';
+    }
   </script>
 
   <!-- Vercel Web Analytics: כניסות לפי מקור, מכשיר ומדינה -->
@@ -596,6 +617,8 @@
                 if (e.data === YT.PlayerState.PLAYING && !firstPlaySent) {
                   firstPlaySent = true;
                   clickedPlay = !autoStarted;
+                  vslStats.started = true;
+                  vslStats.realViewer = isRealViewer();
                   trackEvent(autoStarted ? 'vsl_play_auto' : 'vsl_play_click');
                 }
                 if (e.data === YT.PlayerState.ENDED && isRealViewer()) trackEvent('vsl_complete');
@@ -611,13 +634,17 @@
 
           if (!soundOn && !player.isMuted()) {
             soundOn = true;
+            vslStats.soundOn = true;
             trackEvent('vsl_sound_on');
           }
           if (!isRealViewer()) return;
+          vslStats.realViewer = true;
 
           var duration = player.getDuration();
           if (!duration) return;
           var percent = player.getCurrentTime() / duration * 100;
+          // שומרים את הנקודה הכי רחוקה שהגיעו אליה (גם אם אחר כך חזרו אחורה)
+          if (percent > vslStats.maxPercent) vslStats.maxPercent = percent;
           milestones.forEach(function (m) {
             if (percent >= m && !sentMilestones[m]) {
               sentMilestones[m] = true;
@@ -1102,7 +1129,9 @@
           goal: goal,
           training: training,
           nutrition: nutrition,
-          source: getLeadSource()
+          source: getLeadSource(),
+          timeOnPage: getTimeOnPage(),
+          videoWatched: getVideoWatched()
         })
       })
         .then(function () {

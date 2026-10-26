@@ -10,7 +10,7 @@
 //    Version: New version > Deploy
 //    (NOT "New deployment": that makes a new URL the page doesn't call)
 
-var SCRIPT_VERSION = 'casestudy-2026-10-23'; // מוחזר בכל תשובה, כדי לוודא איזו גרסה באוויר
+var SCRIPT_VERSION = 'casestudy-2026-10-26'; // מוחזר בכל תשובה, כדי לוודא איזו גרסה באוויר
 var SPREADSHEET_ID = '1lGw2Fj1aLWQtNkuMpkUMsQtOXk5my0wyhkbyRUOllA4';
 var SHEET_GID = 1209798032;
 var SHARED_TOKEN = 'M0tJPU58G8vzQ6VTU7gVh9zvS2oNOk52'; // must match the client
@@ -29,7 +29,9 @@ var FIELDS = [
   { header: 'מה רוצה לראות במראה בעוד 3 חודשים',   email: 'מה רוצה לראות במראה בעוד 3 חודשים',   value: function (d) { return d.goal || ''; } },
   { header: 'גיל, מין',                            email: 'גיל, מין',                            value: function (d) { return [d.age, d.gender].filter(Boolean).join(', '); } },
   { header: 'מתאמן/ת היום?',                       email: 'מתאמן/ת היום?',                       value: function (d) { return d.training || ''; } },
-  { header: 'מה מתאר את התזונה היום',              email: 'מה מתאר את התזונה היום',              value: function (d) { return d.nutrition || ''; } }
+  { header: 'מה מתאר את התזונה היום',              email: 'מה מתאר את התזונה היום',              value: function (d) { return d.nutrition || ''; } },
+  { header: 'זמן בדף עד השליחה',                   email: 'זמן בדף עד השליחה',                   value: function (d) { return d.timeOnPage || ''; } },
+  { header: 'כמה צפה בסרטון',                      email: 'כמה צפה בסרטון',                      value: function (d) { return d.videoWatched || ''; } }
 ];
 
 function doPost(e) {
@@ -73,12 +75,23 @@ function appendLeadRow(sheet, data) {
   var headerRow = match.getRow();
   var firstCol = match.getColumn();
 
+  // אם הטבלה צרה מדי לכל העמודות - מוסיפים עמודות בסוף (אחרת הכתיבה נכשלת)
+  var lastNeededCol = firstCol + FIELDS.length - 1;
+  if (sheet.getMaxColumns() < lastNeededCol) {
+    sheet.insertColumnsAfter(sheet.getMaxColumns(), lastNeededCol - sheet.getMaxColumns());
+  }
+
   // מעדכן את הכותרות כך שתמיד יתאימו לשאלות בטופס
   sheet.getRange(headerRow, firstCol, 1, FIELDS.length)
     .setValues([FIELDS.map(function (f) { return f.header; })]);
 
   // השורה הריקה הבאה בעמודת "שם"
   var insertRow = findNextEmptyRow(sheet, headerRow + 1, firstCol);
+
+  // אם הגענו לסוף הטבלה - מוסיפים שורות (אחרת הליד ה-27 בערך כבר לא היה נרשם)
+  if (sheet.getMaxRows() < insertRow) {
+    sheet.insertRowsAfter(sheet.getMaxRows(), insertRow - sheet.getMaxRows());
+  }
 
   // עמודות טקסט (טלפון) - פורמט טקסט לפני הכתיבה, כדי שה-0 בהתחלה לא ייעלם
   FIELDS.forEach(function (f, i) {
