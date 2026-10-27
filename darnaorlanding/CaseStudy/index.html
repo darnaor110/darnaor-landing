@@ -207,24 +207,59 @@
       transform: translate(-50%, -50%) scale(1.08);
     }
 
-    /* Urgency line above the form */
+    /* Urgency pill below the form */
     .urgency {
       display: inline-block;
       background: rgba(8, 127, 163, 0.12);
       border: 1px solid var(--border);
-      border-radius: 999px;
+      border-radius: 18px;
       color: var(--accent);
       font-weight: 700;
       font-size: 0.85rem;
       padding: 0.5rem 1.2rem;
-      margin: 0 auto 1.5rem;
+      margin: 1.5rem auto 0;
+    }
+
+    /* Second, smaller line inside the urgency pill (why spots are limited) */
+    .urgency-note {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
     }
 
     .form-sub {
       font-size: 0.85rem;
       color: var(--text);
       text-align: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* What they get in the call: short checklist, centered block with right-aligned lines */
+    .call-perks-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .call-perks {
+      list-style: none;
+      width: fit-content;
+      margin: 0 auto 1.2rem;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .call-perks li {
+      margin-bottom: 0.3rem;
+    }
+
+    .call-perks li::before {
+      content: '✓ ';
+      color: var(--accent);
+      font-weight: 800;
     }
 
     /* Form card */
@@ -365,13 +400,6 @@
       font-size: 0.9rem;
       font-weight: 700;
       margin-bottom: 0.7rem;
-    }
-
-    .q-sub-label {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--muted);
-      margin: 0.9rem 0 0.6rem;
     }
 
     /* Single-select "checkbox" style questions (button pills), laid out
@@ -568,7 +596,7 @@
     <p class="callout">מתאמנים, ועדיין מתביישים בבטן כשרואים אותה במראה במקלחת?</p>
 
     <!-- Headline -->
-    <h1>לצערנו המוח מתוכנת להשמין,<br><span class="highlight">מזל שאפשר לשכנע אותו לרצות להתחטב</span></h1>
+    <h1>הגוף שלך מעדיף השמנה.<br><span class="highlight">ככה משכנעים אותו להתחטב</span></h1>
 
     <!-- Subtitle -->
     <p class="subtitle">310 מתאמנים השטיחו את הבטן <u style="text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px;">אחת ולתמיד</u>, בלי כוח רצון ועם האוכל והאימונים שהם אוהבים. בסיפור של עילי תראו איך. גם לך זה יעבוד (אפילו אם אין לך זמן או שדיאטות לא עובדות לך).</p>
@@ -659,28 +687,20 @@
       })();
     </script>
 
-    <!-- Urgency line — mirrors the offer stated in the video (3 spots/week).
-         Count ticks down deterministically as the week progresses and resets
-         Sunday; reflects the real weekly cap, not a live per-visitor counter. -->
-    <p class="urgency" id="urgency-text"></p>
-    <script>
-      (function () {
-        var TOTAL_SPOTS = 3;                  // התקרה האמיתית: 3 שיחות אבחון בשבוע
-        var dayOfWeek = new Date().getDay();  // 0 = יום ראשון (תחילת השבוע)
-        // מקום אחד "נתפס" כל שני ימים, ותמיד נשאר לפחות מקום אחד
-        var taken = Math.min(Math.floor(dayOfWeek / 2), TOTAL_SPOTS - 1);
-        var spotsLeft = TOTAL_SPOTS - taken;
-        document.getElementById('urgency-text').textContent = spotsLeft === 1
-          ? 'נשאר מקום אחד אחרון לשיחת אבחון חינמית השבוע'
-          : 'נשארו ' + spotsLeft + ' מקומות לשיחות אבחון חינמיות השבוע';
-      })();
-    </script>
-
     <!-- Lead form -->
     <div class="form-card">
-      <p class="form-sub">רוצה להשיג בטן שטוחה אחת ולתמיד, ונמאס לך מדיאטות?<br>
-        במקום עוד 'שיטה' שתגרום לך להיכשל, נלמד איך לשכנע את המוח לרצות להתחטב, ולהתאים את התהליך לחיים שלך, במקום להפך.<br><br>
-        מלא/י את השאלון כדי לקבל שיחת אבחון.</p>
+      <p class="form-sub">רוצה <strong>להשיג בטן שטוחה אחת ולתמיד</strong>, ונמאס לך מדיאטות?<br>
+        במקום עוד 'שיטה' שתגרום לך להיכשל, נלמד איך לשכנע את המוח לרצות להתחטב, ולהתאים את התהליך לחיים שלך, במקום להפך.</p>
+
+      <!-- What they get in the call -->
+      <p class="call-perks-title">מה תקבלו בשיחה:</p>
+      <ul class="call-perks">
+        <li>נבין מה מנע ממך להתחטב עד היום</li>
+        <li>פעולות פשוטות שיעזרו לך לפתור את זה</li>
+        <li>אם תרצו לשמוע על ליווי מלא איתי ותתאימו, אסביר הכל</li>
+      </ul>
+
+      <p class="form-sub">מלא/י את השאלון כדי לקבל שיחת אבחון.</p>
       <form id="lead-form">
         <div class="hp" aria-hidden="true">
           <label for="website_url">אל תמלא שדה זה</label>
@@ -688,18 +708,23 @@
         </div>
 
         <div class="step-progress">
-          <span class="step-label" id="step-label">שלב 1 מתוך 4</span>
+          <span class="step-label" id="step-label">שלב 1 מתוך 5</span>
           <div class="step-bar"><i id="step-fill"></i></div>
           <button type="button" class="step-back" id="step-back" hidden>חזרה</button>
         </div>
 
-        <!-- Step 1: age + gender -->
+        <!-- Step 1: age -->
         <div class="form-step" data-step="1">
           <div class="q-block">
             <label for="age" class="q-label">מה הגיל שלך?</label>
             <input type="text" id="age" name="age" inputmode="numeric" maxlength="2" placeholder="גיל" autocomplete="off">
+          </div>
+        </div>
 
-            <label class="q-sub-label">מין</label>
+        <!-- Step 2: gender -->
+        <div class="form-step" data-step="2" hidden>
+          <div class="q-block">
+            <label class="q-label">מה המין שלך?</label>
             <input type="hidden" id="gender-input" name="gender">
             <div class="choice-group choice-group-2">
               <button type="button" class="choice-btn" onclick="selectChoice('gender-input', 'זכר', this)">זכר</button>
@@ -708,8 +733,8 @@
           </div>
         </div>
 
-        <!-- Step 2: what they want to see in the mirror (answers depend on gender) -->
-        <div class="form-step" data-step="2" hidden>
+        <!-- Step 3: what they want to see in the mirror (answers depend on gender) -->
+        <div class="form-step" data-step="3" hidden>
           <div class="q-block">
             <label class="q-label" id="goal-question">מה הכי תרצה/י לראות במראה בעוד 3 חודשים?</label>
             <input type="hidden" id="goal" name="goal">
@@ -726,8 +751,8 @@
           </div>
         </div>
 
-        <!-- Step 3: training + nutrition -->
-        <div class="form-step" data-step="3" hidden>
+        <!-- Step 4: training + nutrition -->
+        <div class="form-step" data-step="4" hidden>
           <div class="q-block">
             <label class="q-label">האם היום אתם מתאמנים?</label>
             <input type="hidden" id="training-input" name="training" required>
@@ -751,8 +776,8 @@
           </div>
         </div>
 
-        <!-- Step 4: contact details -->
-        <div class="form-step" data-step="4" hidden>
+        <!-- Step 5: contact details -->
+        <div class="form-step" data-step="5" hidden>
           <div>
             <label for="from_name">שם מלא</label>
             <input type="text" id="from_name" name="from_name" placeholder="הכנס את שמך המלא" autocomplete="name" required>
@@ -768,6 +793,26 @@
         </div>
       </form>
     </div>
+
+    <!-- Urgency pill below the form — mirrors the offer stated in the video (3 spots/week).
+         Count ticks down deterministically as the week progresses and resets
+         Sunday; reflects the real weekly cap, not a live per-visitor counter. -->
+    <p class="urgency">
+      <span id="urgency-text"></span>
+      <span class="urgency-note">(לצערי אני סטודנט והזמן שלי לפגישות כאלו מוגבל)</span>
+    </p>
+    <script>
+      (function () {
+        var TOTAL_SPOTS = 3;                  // התקרה האמיתית: 3 שיחות אבחון בשבוע
+        var dayOfWeek = new Date().getDay();  // 0 = יום ראשון (תחילת השבוע)
+        // מקום אחד "נתפס" כל שני ימים, ותמיד נשאר לפחות מקום אחד
+        var taken = Math.min(Math.floor(dayOfWeek / 2), TOTAL_SPOTS - 1);
+        var spotsLeft = TOTAL_SPOTS - taken;
+        document.getElementById('urgency-text').textContent = spotsLeft === 1
+          ? 'נשאר מקום אחד אחרון לשיחת אבחון חינמית השבוע'
+          : 'נשארו ' + spotsLeft + ' מקומות לשיחות אבחון חינמיות השבוע';
+      })();
+    </script>
 
   </div>
 
@@ -1014,8 +1059,6 @@
       document.querySelectorAll('#goal-male .choice-btn, #goal-female .choice-btn').forEach(function (b) {
         b.classList.remove('active');
       });
-      // אם עדיין לא הוזן גיל תקין - מחזיר את הפוקוס לשדה הגיל
-      if (!isValidAge()) document.getElementById('age').focus();
     }
 
     // טופס רב-שלבי: מציג שלב אחד בכל פעם ועובר אוטומטית כשכל תשובות השלב מולאו
@@ -1057,9 +1100,10 @@
     }
 
     function isStepAnswered(n) {
-      if (n === 1) return isValidAge() && document.getElementById('gender-input').value;
-      if (n === 2) return document.getElementById('goal').value;
-      if (n === 3) return document.getElementById('training-input').value && document.getElementById('nutrition-input').value;
+      if (n === 1) return isValidAge();
+      if (n === 2) return document.getElementById('gender-input').value;
+      if (n === 3) return document.getElementById('goal').value;
+      if (n === 4) return document.getElementById('training-input').value && document.getElementById('nutrition-input').value;
       return false;
     }
 
@@ -1068,7 +1112,10 @@
       if (!isStepAnswered(stepAtClick)) return;
       // השהיה קצרה כדי שהמשתמש יראה שהבחירה נרשמה
       setTimeout(function () {
-        if (currentStep === stepAtClick) showStep(stepAtClick + 1, true);
+        if (currentStep !== stepAtClick) return;
+        // אחרי הגיל: סוגר את המקלדת בטלפון כדי שכפתורי השלב הבא ייראו
+        if (stepAtClick === 1) document.getElementById('age').blur();
+        showStep(stepAtClick + 1, true);
       }, 350);
     }
 
