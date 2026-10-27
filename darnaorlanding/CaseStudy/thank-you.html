@@ -173,6 +173,72 @@
       color: #fff;
     }
 
+    /* "When is it best to call you?" — shown only right after a real form submit */
+    .call-time {
+      margin-bottom: 1.6rem;
+    }
+
+    .call-time-q {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .call-time-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+
+    .call-time-options button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+      background: #1a1c1d;
+      border: 1px solid #3f484d;
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 0.6rem 0.3rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .call-time-options button small {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .call-time-options button:hover,
+    .call-time-options button:focus-visible {
+      border-color: var(--accent2);
+    }
+
+    .call-time-options button.active {
+      background: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .call-time-options button.active small {
+      color: #fff;
+    }
+
+    .call-time-options button:disabled {
+      cursor: default;
+    }
+
+    .call-time-status {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0.6rem 0 0;
+    }
+
     /* Phones: tighter spacing so the whole page fits on one screen without scrolling.
        Labels can wrap to two lines, so both buttons share a minimum height. */
     @media (max-width: 560px) {
@@ -198,6 +264,20 @@
         font-size: 0.95rem;
         line-height: 1.55;
         margin-bottom: 1rem;
+      }
+
+      .call-time {
+        margin-bottom: 1rem;
+      }
+
+      .call-time-q {
+        font-size: 0.95rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .call-time-options button {
+        font-size: 0.85rem;
+        padding: 0.45rem 0.2rem;
       }
 
       .must-watch {
@@ -228,6 +308,16 @@
     <p>
       אצור איתכם קשר בשעות הקרובות (ביום העסקים הזה או הבא), אז תהיו מוכנים לטלפון ממספר לא מוכר, ותשימו את הטלפון על צלצול :)
     </p>
+    <!-- When to call: hidden unless the visitor just submitted the form -->
+    <div class="call-time" id="call-time" hidden>
+      <p class="call-time-q">מתי הכי נוח לך שאתקשר?</p>
+      <div class="call-time-options">
+        <button type="button" data-time="בוקר (9:00-12:00)">בוקר<small>9:00-12:00</small></button>
+        <button type="button" data-time="צהריים (12:00-16:00)">צהריים<small>12:00-16:00</small></button>
+        <button type="button" data-time="ערב (16:00-20:00)">ערב<small>16:00-20:00</small></button>
+      </div>
+      <p class="call-time-status" id="call-time-status" hidden></p>
+    </div>
     <p class="must-watch">חובה לצפות עד הסוף</p>
     <div class="video-box">
       <iframe
@@ -267,6 +357,43 @@
     document.getElementById('wa-btn').addEventListener('click', function () {
       gtag('event', 'click_whatsapp_group');
     });
+
+    // שאלת "מתי נוח שאתקשר": נשמרת בשורה של הליד בגיליון (דרך Apps Script) + מייל לדר
+    (function () {
+      var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxuJ01IAYif9c0nB8tQKCEDKPEzqM4x0yC7xQXm29OlUdHB-MXGPeJHOk7n1s_6ZT_k/exec';
+      var leadId = null;
+      try { leadId = sessionStorage.getItem('leadId'); } catch (e) { /* בלי אחסון - בלי השאלה */ }
+      if (!leadId) return; // הגיעו לדף בלי למלא את הטופס - לא מציגים את השאלה
+
+      var box = document.getElementById('call-time');
+      var status = document.getElementById('call-time-status');
+      var buttons = box.querySelectorAll('button');
+      box.hidden = false;
+
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var time = btn.dataset.time;
+          buttons.forEach(function (b) { b.disabled = true; b.classList.toggle('active', b === btn); });
+          status.hidden = false;
+          status.textContent = 'שומר...';
+
+          fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ type: 'call_time', leadId: leadId, time: time })
+          })
+            .then(function () {
+              status.textContent = 'מעולה, אתקשר ב' + time.split(' ')[0] + ' ✓';
+              try { sessionStorage.removeItem('leadId'); } catch (e) { /* לא קריטי */ }
+              gtag('event', 'call_time_chosen', { time: time.split(' ')[0] });
+            })
+            .catch(function () {
+              // לא נשמר - מאפשרים לבחור שוב
+              status.textContent = 'לא הצלחתי לשמור, נסו שוב';
+              buttons.forEach(function (b) { b.disabled = false; b.classList.remove('active'); });
+            });
+        });
+      });
+    })();
   </script>
 </body>
 </html>

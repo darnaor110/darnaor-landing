@@ -1197,6 +1197,9 @@
       btn.disabled = true;
       btn.textContent = 'שולח...';
 
+      // מזהה אקראי לליד: דף התודה משתמש בו כדי לרשום את הזמן הנוח לשיחה בשורה הנכונה בגיליון
+      var leadId = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+
       fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
@@ -1210,12 +1213,17 @@
           nutrition: nutrition,
           source: getLeadSource(),
           timeOnPage: getTimeOnPage(),
-          videoWatched: getVideoWatched()
+          videoWatched: getVideoWatched(),
+          leadId: leadId
         })
       })
         .then(function () {
           // סימון שהליד באמת נשלח: דף התודה שולח למטא אירוע Lead רק אם הסימון קיים (ככה רענון של דף התודה לא נספר שוב)
-          try { sessionStorage.setItem('leadSubmitted', '1'); } catch (e) { /* בלי אחסון - פשוט בלי סימון */ }
+          // + המזהה של הליד, בשביל שאלת הזמן הנוח לשיחה בדף התודה
+          try {
+            sessionStorage.setItem('leadSubmitted', '1');
+            sessionStorage.setItem('leadId', leadId);
+          } catch (e) { /* בלי אחסון - פשוט בלי סימון */ }
           // אנליטיקס: ליד נשלח. מחכים שהאירוע יישלח לפני המעבר לדף התודה (עד שנייה וחצי מקסימום)
           var redirected = false;
           function goToThankYou() {

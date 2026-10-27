@@ -10,7 +10,7 @@
 //    Version: New version > Deploy
 //    (NOT "New deployment": that makes a new URL the page doesn't call)
 
-var SCRIPT_VERSION = 'casestudy-2026-10-26'; // מוחזר בכל תשובה, כדי לוודא איזו גרסה באוויר
+var SCRIPT_VERSION = 'casestudy-2026-10-27'; // מוחזר בכל תשובה, כדי לוודא איזו גרסה באוויר
 var SPREADSHEET_ID = '1lGw2Fj1aLWQtNkuMpkUMsQtOXk5my0wyhkbyRUOllA4';
 var SHEET_GID = 1209798032;
 var SHARED_TOKEN = 'M0tJPU58G8vzQ6VTU7gVh9zvS2oNOk52'; // must match the client
@@ -31,8 +31,15 @@ var FIELDS = [
   { header: 'מתאמן/ת היום?',                       email: 'מתאמן/ת היום?',                       value: function (d) { return d.training || ''; } },
   { header: 'מה מתאר את התזונה היום',              email: 'מה מתאר את התזונה היום',              value: function (d) { return d.nutrition || ''; } },
   { header: 'זמן בדף עד השליחה',                   email: 'זמן בדף עד השליחה',                   value: function (d) { return d.timeOnPage || ''; } },
-  { header: 'כמה צפה בסרטון',                      email: 'כמה צפה בסרטון',                      value: function (d) { return d.videoWatched || ''; } }
+  { header: 'כמה צפה בסרטון',                      email: 'כמה צפה בסרטון',                      value: function (d) { return d.videoWatched || ''; } },
+  // מתמלא אחר כך מדף התודה, כשהליד בוחר מתי נוח לו לקבל שיחה
+  { header: 'זמן נוח לשיחה',                       email: null,                                  value: function () { return ''; } },
+  // מזהה אקראי שהדף יוצר לכל ליד, כדי שדף התודה יעדכן בדיוק את השורה הנכונה
+  { header: 'מזהה ליד',                            email: null,                                  value: function (d) { return d.leadId || ''; } }
 ];
+
+// התשובות האפשריות בדף התודה (כל ערך אחר נדחה)
+var CALL_TIMES = ['בוקר (9:00-12:00)', 'צהריים (12:00-16:00)', 'ערב (16:00-20:00)'];
 
 function doPost(e) {
   var data;
@@ -41,6 +48,17 @@ function doPost(e) {
   } catch (err) {
     return jsonOutput({ ok: false, error: 'bad request', version: SCRIPT_VERSION });
   }
+
+  // בחירת זמן לשיחה מדף התודה. בלי טוקן: היא רק מעדכנת שורה שהמזהה האקראי שלה תואם
+  if (data.type === 'call_time') {
+    try {
+      saveCallTime(getLeadSheet(), data);
+      return jsonOutput({ ok: true, version: SCRIPT_VERSION });
+    } catch (err) {
+      return jsonOutput({ ok: false, error: String(err), version: SCRIPT_VERSION });
+    }
+  }
+
   if (data.token !== SHARED_TOKEN) {
     return jsonOutput({ ok: false, error: 'unauthorized', version: SCRIPT_VERSION });
   }
@@ -67,13 +85,50 @@ function getLeadSheet() {
   return sheets[0];
 }
 
-function appendLeadRow(sheet, data) {
-  // מאתר את שורת הכותרות עצמה (התא שכתוב בו בדיוק "שם")
+// מאתר את שורת הכותרות עצמה (התא שכתוב בו בדיוק "שם")
+function findHeader(sheet) {
   var match = sheet.createTextFinder('שם').matchEntireCell(true).findNext();
   if (!match) throw new Error('לא נמצאה שורת הכותרות ("שם") בטבלת "' + LEAD_SECTION_LABEL + '"');
+  return { row: match.getRow(), col: match.getColumn() };
+}
 
-  var headerRow = match.getRow();
-  var firstCol = match.getColumn();
+// מספר העמודה של שדה לפי הכותרת שלו
+function fieldColumn(firstCol, header) {
+  for (var i = 0; i < FIELDS.length; i++) {
+    if (FIELDS[i].header === header) return firstCol + i;
+  }
+  throw new Error('אין שדה בשם ' + header);
+}
+
+// דף התודה: רושם את הזמן שהליד בחר בשורה שלו, ושולח מייל קצר
+function saveCallTime(sheet, data) {
+  var leadId = String(data.leadId || '');
+  if (leadId.length < 10) throw new Error('bad lead id');
+  if (CALL_TIMES.indexOf(data.time) === -1) throw new Error('bad time');
+
+  var header = findHeader(sheet);
+  var idCol = fieldColumn(header.col, 'מזהה ליד');
+  var numRows = Math.max(sheet.getLastRow() - header.row, 1);
+  var found = sheet.getRange(header.row + 1, idCol, numRows, 1)
+    .createTextFinder(leadId).matchEntireCell(true).findNext();
+  if (!found) throw new Error('lead not found');
+
+  var row = found.getRow();
+  sheet.getRange(row, fieldColumn(header.col, 'זמן נוח לשיחה')).setValue(data.time);
+  var name = sheet.getRange(row, header.col).getValue();
+  var phone = sheet.getRange(row, fieldColumn(header.col, 'טלפון')).getDisplayValue();
+
+  MailApp.sendEmail({
+    to: NOTIFY_EMAIL,
+    subject: 'זמן לשיחה: ' + name + ' - ' + data.time,
+    body: name + ' (' + phone + ') בחר/ה בדף התודה מתי נוח לקבל שיחה:\n\n' + data.time + '\n\nנרשם בגיליון, בעמודה "זמן נוח לשיחה".'
+  });
+}
+
+function appendLeadRow(sheet, data) {
+  var header = findHeader(sheet);
+  var headerRow = header.row;
+  var firstCol = header.col;
 
   // אם הטבלה צרה מדי לכל העמודות - מוסיפים עמודות בסוף (אחרת הכתיבה נכשלת)
   var lastNeededCol = firstCol + FIELDS.length - 1;
