@@ -143,11 +143,26 @@
       line-height: 1.35;
       max-width: 680px;
       margin: 0 auto 1rem;
+      text-wrap: balance; /* splits a long question into two even lines on phones */
       text-shadow: 0 0 20px rgba(91, 212, 255, 0.15);
     }
 
     .highlight {
       color: var(--accent);
+    }
+
+    /* Headline: the small note under the question, and the blue answer on its own line */
+    h1 .h1-note {
+      display: block;
+      font-size: 0.55em;
+      font-weight: 600;
+      color: var(--muted);
+      text-shadow: none;
+      margin: 0.15rem 0 0.35rem;
+    }
+
+    h1 .highlight {
+      display: block;
     }
 
     /* Video */
@@ -632,10 +647,10 @@
     <p class="callout">מתאמנים, ועדיין מתביישים בבטן כשרואים אותה במראה במקלחת?</p>
 
     <!-- Headline -->
-    <h1>למה הגוף מעדיף להשמין?<br><span class="highlight">ככה משכנעים אותו כן להתחטב</span></h1>
+    <h1>למה הגוף שלך אוגר שומן בבטן ובצדדים?<span class="h1-note">(גם אם אתה מתאמן או רץ)</span><span class="highlight">ככה משכנעים אותו כן להתחטב</span></h1>
 
     <!-- Subtitle -->
-    <p class="subtitle"><strong class="highlight">310 מתאמנים</strong> השטיחו את הבטן <u style="text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px;">אחת ולתמיד</u> עם גישת "אכילה מדעת", בלי כוח רצון ועם האוכל שהם אוהבים. בסיפור של עילי תראו איך.</p>
+    <p class="subtitle"><strong class="highlight">310 מתאמנים</strong> השטיחו את הבטן <u style="text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px;">אחת ולתמיד</u> עם גישת "אכילה מדעת" - עם האוכל שהם אוהבים וללא תלות בכוח רצון. כדי שתדע בדיוק איך לעשות את זה <strong>חובה לצפות עד הסוף:</strong></p>
 
     <!-- Video — same technique as darnaor.com: iframe embed with native
          YouTube controls (so play/pause/seek/volume all work normally),
